@@ -19,14 +19,14 @@ echo "Job name: ${JOB_NAME}"
 echo "Hostname: ${HOSTNAME}"
 echo "Task id: ${SGE_TASK_ID}"
 
-## Load the R module (absent since the JHPCE upgrade to CentOS v7)
-module load conda_R
+## load CellRanger
+module load cellranger/6.1.1
 
 ## List current modules for reproducibility
 module list
 
-## Edit with your job command
-module load cellranger/6.1.1
+## Locate file
+FILE1=$(awk 'BEGIN {FS="\t"} {print \$1}' ${JOB_ID}.txt | awk "NR==${SGE_TASK_ID}")
 
 echo "**** Job ends ****"
 date
