@@ -33,7 +33,7 @@ date
 ## Run CellRanger
 cellranger count --id=${SAMPLE} \
     --transcriptome=/dcs04/lieber/lcolladotor/annotationFiles_LIBD001/10x/refdata-gex-GRCh38-2020-A \
-    --fastqs=/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/raw-data/FASTQ/${SAMPLE}_L001,/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/raw-data/FASTQ/${SAMPLE}_L002 \
+    --fastqs=/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/raw-data/FASTQ/${SAMPLE} \
     --sample=${SAMPLE} \
     --jobmode=local \
     --localcores=4 \
