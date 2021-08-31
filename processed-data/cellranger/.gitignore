@@ -1,0 +1,7 @@
+*.bam
+*.cloupe
+*.h5
+*.bam.bai
+*.mri.tgz
+analysis
+SC_RNA_COUNTER_CS
