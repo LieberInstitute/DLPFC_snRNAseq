@@ -9,7 +9,7 @@ find_metrics_csv <- function(x) {
 
 metrics_to_numbers <- function(x) {
     res <- sapply(x, function(col) {
-        if(any(grepl("%", col))) {
+        if (any(grepl("%", col))) {
             as.numeric(gsub("%", "", col))
         } else {
             as.numeric(gsub(",", "", col))

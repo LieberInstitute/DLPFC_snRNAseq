@@ -46,7 +46,8 @@ tran_metrics$set <- ifelse(grepl("Feb2021", tran_metrics$metrics_csv), "Tran2020
 
 ## Save for later
 dir.create(here("processed-data", "02_cellranger_metrics"),
-    showWarnings = FALSE)
+    showWarnings = FALSE
+)
 save(
     tran_metrics,
     file = here(
@@ -65,7 +66,7 @@ write.csv(
 )
 
 ## Reproducibility information
-print('Reproducibility information:')
+print("Reproducibility information:")
 Sys.time()
 proc.time()
 options(width = 120)

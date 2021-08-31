@@ -31,7 +31,8 @@ cellranger_metrics$set <- ifelse(grepl("1c-k|2c-k|3c-k", cellranger_metrics$metr
 
 ## Save for later
 dir.create(here("processed-data", "02_cellranger_metrics"),
-    showWarnings = FALSE)
+    showWarnings = FALSE
+)
 save(
     cellranger_metrics,
     file = here(
@@ -50,11 +51,10 @@ write.csv(
 )
 
 ## Reproducibility information
-print('Reproducibility information:')
+print("Reproducibility information:")
 Sys.time()
 proc.time()
 options(width = 120)
 session_info()
 
 ## Same as 01_Tran_et_al_metrics.R
-

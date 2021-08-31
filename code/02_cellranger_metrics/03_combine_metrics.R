@@ -10,7 +10,8 @@ load(here(
     "02_cellranger_metrics",
     "tran_metrics.Rdata"
 ),
-    verbose = TRUE)
+verbose = TRUE
+)
 
 load(
     here(
@@ -39,7 +40,7 @@ pdf(
     width = 12,
     height = 10
 )
-for (i in colnames(all_metrics)[- which(colnames(all_metrics) %in% c("Sample.ID", "metrics_csv", "Q30.Bases.in.Sample.Index", "set"))]) {
+for (i in colnames(all_metrics)[-which(colnames(all_metrics) %in% c("Sample.ID", "metrics_csv", "Q30.Bases.in.Sample.Index", "set"))]) {
     set.seed(20210831)
     p <-
         ggboxplot(
@@ -63,7 +64,7 @@ dev.off()
 
 
 ## Reproducibility information
-print('Reproducibility information:')
+print("Reproducibility information:")
 Sys.time()
 proc.time()
 options(width = 120)
