@@ -2,6 +2,7 @@
 
 library("here")
 library("sessioninfo")
+library("ggpubr")
 
 ## Load previous files
 load(here(
@@ -24,6 +25,8 @@ load(
 all_metrics <- merge(tran_metrics, cellranger_metrics, all = TRUE)
 dim(all_metrics)
 
+all_metrics$Sample.ID <- basename(gsub("outs/metrics_summary.csv", "", all_metrics$metrics_csv))
+
 ## Compare metrics one at a time across studies
 ## Used https://rpkgs.datanovia.com/ggpubr/reference/ggboxplot.html
 pdf(
@@ -33,19 +36,20 @@ pdf(
         "cross_study_cellranger_metrics_boxplots.pdf"
     ),
     useDingbats = FALSE,
-    width = 10
+    width = 12,
+    height = 10
 )
-for (i in colnames(all_metrics)[-c(1, ncol(all_metrics))]) {
-    set.seed(20210714)
+for (i in colnames(all_metrics)[- which(colnames(all_metrics) %in% c("Sample.ID", "metrics_csv", "Q30.Bases.in.Sample.Index", "set"))]) {
+    set.seed(20210831)
     p <-
         ggboxplot(
             all_metrics,
-            x = "study",
+            x = "set",
             y = i,
-            color = "study",
+            color = "set",
             palette = "Dark2",
             add = "jitter",
-            shape = "study",
+            shape = "set",
             label = "Sample.ID",
             repel = TRUE,
             font.label = list(size = 5),
