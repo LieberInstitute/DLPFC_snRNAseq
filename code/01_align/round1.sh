@@ -1,6 +1,6 @@
 #!/bin/bash
 #$ -cwd
-#$ -l bluejay,mem_free=35G,h_vmem=35G,h_fsize=100G
+#$ -l bluejay,mem_free=5G,h_vmem=5G,h_fsize=100G
 #$ -pe local 4
 #$ -N round1
 #$ -o logs/round1.$TASK_ID.txt
@@ -37,7 +37,7 @@ cellranger count --id=${SAMPLE} \
     --sample=${SAMPLE} \
     --jobmode=local \
     --localcores=4 \
-    --localmem=140 \
+    --localmem=20 \
     --include-introns
 
 ## Move output
