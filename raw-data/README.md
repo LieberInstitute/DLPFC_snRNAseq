@@ -3,6 +3,10 @@
 ## FASTQ
 
 ```bash
+## Pilot (one sample) - calling 'round 0'
+mkdir round0
+ln -s /dcs04/lieber/lcolladotor/rawDataTDSC_LIBD001/raw-data/2021-03-15_KMay022421/Br2743_DLPFC_mid_L00*/* round0/
+
 ## 1c-k
 mkdir 1c-k
 ln -s /dcs04/lieber/lcolladotor/rawDataTDSC_LIBD001/raw-data/2021-05-21_ASpa050421/1c_k_L00*/* 1c-k/

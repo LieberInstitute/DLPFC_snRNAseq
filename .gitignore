@@ -3,4 +3,4 @@
 .RData
 .Ruserdata
 processed-data/
-raw-data/
+raw-data/FASTQ/
