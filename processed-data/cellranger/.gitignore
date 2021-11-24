@@ -5,3 +5,4 @@
 *.mri.tgz
 analysis
 SC_RNA_COUNTER_CS
+*bc_matrix

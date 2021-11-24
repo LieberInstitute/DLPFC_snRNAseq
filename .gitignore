@@ -2,7 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
-processed-data/
 raw-data/FASTQ/
 # Reference files with donor info:
 raw-data/snRNAseq_Deconvolution_Project_Master_Spreadsheet.xlsx
