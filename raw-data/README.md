@@ -7,6 +7,8 @@ sampleInfo <- as.data.frame(read_excel("./snRNAseq_Deconvolution_Project_Master_
 
 # Pull out DLPFC samples (suffix: "_k"--i.e. Kelsey prepped these)
 samples.dlpfc <- sampleInfo[grep("_k", sampleInfo[ ,"Sample #"]), 1:3]
+# Add changed FASTQ file prefix...
+samples.dlpfc$filePrefix <- gsub("_","-", samples.dlpfc[ ,"Sample #"])
 samples.dlpfc$Tissue <- gsub(" ","_", samples.dlpfc$Tissue)
 samples.dlpfc$Brain <- paste0("Br",samples.dlpfc$Brain)
 
@@ -15,6 +17,8 @@ write.table(samples.dlpfc, quote=F, col.names=F, row.names=F, sep="\t",
 
 # Do same for LC (Matt processed: "_m")
 samples.lc <- sampleInfo[grep("_m", sampleInfo[ ,"Sample #"]), 1:3]
+# Add changed FASTQ file prefix...
+samples.lc$filePrefix <- gsub("_","-", samples.lc[ ,"Sample #"])
 samples.lc$Brain <- paste0("Br",samples.lc$Brain)
 
 write.table(samples.lc, quote=F, col.names=F, row.names=F, sep="\t",
