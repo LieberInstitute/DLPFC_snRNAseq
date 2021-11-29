@@ -1,19 +1,19 @@
-1c-k    DLPFC_Mid   Br2720  1c-k
-2c-k    DLPFC_Ant   Br5432  2c-k
-3c-k    DLPFC_Ant   Br6471  3c-k
-4c_k	DLPFC_Mid	Br6522	4c-k
-5c_k	DLPFC_Post	Br6522	5c-k
-6c_k	DLPFC_Mid	Br6471	6c-k
-7c_k	DLPFC_Post	Br8492	7c-k
-8c_k	DLPFC_Ant	Br2743	8c-k
-9c_k	DLPFC_Post	Br2720	9c-k
-10c_k	DLPFC_Mid	Br8492	10c-k
-11c_k	DLPFC_Ant	Br3942	11c-k
-12c_k	DLPFC_Post	Br6423	12c-k
-13c_k	DLPFC_Mid	Br8667	13c-k
-14c_k	DLPFC_Ant	Br6423	14c-k
-15c_k	DLPFC_Mid	Br3942	15c-k
-16c_k	DLPFC_Ant	Br8325	16c-k
-17c_k	DLPFC_Mid	Br8325	17c-k
-18c_k	DLPFC_Ant	Br8667	18c-k
-round0  TODO    TODO    round0
+1c-k    DLPFC_Mid   Br2720  1c-k    round1
+2c-k    DLPFC_Ant   Br6432  2c-k    round1
+3c-k    DLPFC_Ant   Br6471  3c-k    round1
+4c_k	DLPFC_Mid	Br6522	4c-k    round2
+5c_k	DLPFC_Post	Br6522	5c-k    round2
+6c_k	DLPFC_Mid	Br6471	6c-k    round2
+7c_k	DLPFC_Post	Br8492	7c-k    round2
+8c_k	DLPFC_Ant	Br2743	8c-k    round3
+9c_k	DLPFC_Post	Br2720	9c-k    round3
+10c_k	DLPFC_Mid	Br8492	10c-k   round3
+11c_k	DLPFC_Ant	Br3942	11c-k   round3
+12c_k	DLPFC_Post	Br6423	12c-k   round4
+13c_k	DLPFC_Mid	Br8667	13c-k   round4
+14c_k	DLPFC_Ant	Br6423	14c-k   round4
+15c_k	DLPFC_Mid	Br3942	15c-k   round4
+16c_k	DLPFC_Ant	Br8325	16c-k   round5
+17c_k	DLPFC_Mid	Br8325	17c-k   round5
+18c_k	DLPFC_Ant	Br8667	18c-k   round5
+round0  round0    round0    round0  round0
