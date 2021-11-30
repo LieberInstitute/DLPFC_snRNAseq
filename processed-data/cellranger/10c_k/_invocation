@@ -1,0 +1,36 @@
+@include "rna/sc_rna_counter_cs.mro"
+
+call SC_RNA_COUNTER_CS(
+    sample_id             = "10c_k",
+    sample_def            = [
+        {
+            "fastq_id": null,
+            "fastq_mode": "ILMN_BCL2FASTQ",
+            "gem_group": null,
+            "lanes": null,
+            "library_type": "Gene Expression",
+            "read_path": "/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/raw-data/FASTQ/10c_k",
+            "sample_indices": ["any"],
+            "sample_names": ["10c-k"],
+            "subsample_rate": null,
+            "target_set": null,
+            "target_set_name": null,
+        },
+    ],
+    sample_desc           = "",
+    reference_path        = "/dcs04/lieber/lcolladotor/annotationFiles_LIBD001/10x/refdata-gex-GRCh38-2020-A",
+    recovered_cells       = null,
+    no_bam                = false,
+    no_secondary_analysis = false,
+    no_target_umi_filter  = false,
+    force_cells           = null,
+    include_introns       = true,
+    chemistry             = "auto",
+    r1_length             = null,
+    r2_length             = null,
+    targeting_method      = null,
+    aligner               = null,
+    trim_polya_min_score  = 20,
+    trim_tso_min_score    = 20,
+    feature_reference     = null,
+)
