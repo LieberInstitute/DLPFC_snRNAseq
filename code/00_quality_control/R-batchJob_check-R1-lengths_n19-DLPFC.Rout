@@ -1,0 +1,1015 @@
+
+R version 4.0.4 RC (2021-02-08 r79975) -- "Lost Library Book"
+Copyright (C) 2021 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> ### MNT 29Nov2021 =======
+>   # Check Read 1 files for discrepant read lengths, as seen before in Tran-Maynard 2021 project:
+>   # Should be exactly 28bp = 16 [BC] + 12 [UMI]
+> 
+> library(ShortRead)
+Loading required package: BiocGenerics
+Loading required package: parallel
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:parallel’:
+
+    clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,
+    clusterExport, clusterMap, parApply, parCapply, parLapply,
+    parLapplyLB, parRapply, parSapply, parSapplyLB
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, append, as.data.frame, basename, cbind, colnames,
+    dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,
+    grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,
+    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
+    rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,
+    union, unique, unsplit, which.max, which.min
+
+Loading required package: BiocParallel
+Loading required package: Biostrings
+Loading required package: S4Vectors
+Loading required package: stats4
+
+Attaching package: ‘S4Vectors’
+
+The following object is masked from ‘package:base’:
+
+    expand.grid
+
+Loading required package: IRanges
+Loading required package: XVector
+
+Attaching package: ‘Biostrings’
+
+The following object is masked from ‘package:base’:
+
+    strsplit
+
+Loading required package: Rsamtools
+Loading required package: GenomeInfoDb
+Loading required package: GenomicRanges
+Loading required package: GenomicAlignments
+Loading required package: SummarizedExperiment
+Loading required package: MatrixGenerics
+Loading required package: matrixStats
+
+Attaching package: ‘MatrixGenerics’
+
+The following objects are masked from ‘package:matrixStats’:
+
+    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
+    colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+    colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
+    colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
+    colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+    colWeightedMeans, colWeightedMedians, colWeightedSds,
+    colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+    rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+    rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+    rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
+    rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+    rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
+    rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+    rowWeightedSds, rowWeightedVars
+
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+
+Attaching package: ‘Biobase’
+
+The following object is masked from ‘package:MatrixGenerics’:
+
+    rowMedians
+
+The following objects are masked from ‘package:matrixStats’:
+
+    anyMissing, rowMedians
+
+> library(jaffelab)
+Loading required package: rafalib
+> 
+> FASTQ.dir <- "/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/raw-data/FASTQ/"
+> 
+> ### Read in abridged sample info (MNT generated for processing through CR)
+> samples.dlpfc <- read.table("/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/raw-data/sample_libs_rounds2-5.tsv",
++                             sep="\t", header=F)$V1
+> 
+> # Add in Round1 samples (Leo had processed these & adjusted the FASTQ dir names: '-' instead of '_')
+> samples.dlpfc <- c(paste0(1:3, "c-k"), samples.dlpfc)
+> 
+> # Add in 'round0': pilot sample from cryosection:
+> samples.dlpfc <- c("round0", samples.dlpfc)
+> 
+> R1files <- data.frame(
++   sampleName = unlist(sapply(samples.dlpfc, function(x){
++     rep(x,length(list.files(paste0(FASTQ.dir, x), pattern="R1")))}), use.names=F),
++   
++   R1 = unlist(sapply(samples.dlpfc,function(x){list.files(paste0(FASTQ.dir,x),
++                                                    pattern="R1")}), use.names=F)
++ )
+> dim(R1files)  # 68: [2 lanes x 4(=='round0' + 3 'Round1')] + [4 lanes x 15(rounds2-5)]
+[1] 68  2
+> 
+> for(i in 1:nrow(R1files)){
++   cat(paste0("Checking R1 length distribution for: ", R1files[i,2], "\n"))
++   temp.R1s <- readFastq(paste0(FASTQ.dir, R1files[i,1], "/", R1files[i,2]),
++                         withIds=F)
++   print(head(sread(temp.R1s), n=4))
++   print(table(width(sread(temp.R1s))))
++   rm(temp.R1s)
++   cat("\n\n")
++ }
+Checking R1 length distribution for: Br2743-DLPFC-mid_S1_L001_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 GAGTGTTTCCACCTGTCTTAGTTAATGT
+[2]    28 CCGTGAGCACTTACAGTTTTAGTATTTG
+[3]    28 TGACCCTGTTGTGCCGAAGTATTCTGTC
+[4]    28 TCTAACTAGATGACATCGCACCTACCCG
+
+       28 
+103606895 
+
+
+Checking R1 length distribution for: Br2743-DLPFC-mid_S1_L002_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNCGTGGCATAGATCCCCGTTTGTTGGA
+[2]    28 ANCTTCTCACTCCGGATGTTACTAGTGT
+[3]    28 TNCGTGTTCATTGGTGGCGCCCCCCTAA
+[4]    28 CNGTCAGGTCTTACTTCCCAGACTGGAA
+
+      28 
+94188304 
+
+
+Checking R1 length distribution for: 1c-k_S13_L001_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNAATTTAGTAGTCTCTGTTTTTTAGTC
+[2]    28 ANGAGTCATTGCTTTGGGTCCACCCTCA
+[3]    28 ANAACAAGTCATAGTCGGGACGCGTAAG
+[4]    28 CNACATTAGGTGCTAGGACCTTGCTGGT
+
+      28 
+99039167 
+
+
+Checking R1 length distribution for: 1c-k_S13_L002_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANTTCCTCAAGAGAGATACCTGACTGTG
+[2]    28 TNGCAGGAGCGCTGAACCCAACATCATA
+[3]    28 CNTTCATTAAGTTTCAGCTTTGCAACCA
+[4]    28 GNGGTTACAGCTAACTTAACTATACACA
+
+      28 
+98149789 
+
+
+Checking R1 length distribution for: 2c-k_S14_L001_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 GNGCCTGTCTACTCATTTCTTACACATG
+[2]    28 CNCAACTCAAGGATGCCCTTATAGAGTA
+[3]    28 GNGTGAACAGGATTCTTATAACGCAATG
+[4]    28 ANCACAGGTAGTACGGTAGATCAGGAAA
+
+      28 
+86444283 
+
+
+Checking R1 length distribution for: 2c-k_S14_L002_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 TNAGACTCAAGTGACGAGTCATAGAAGA
+[2]    28 TNCCAATGTTGCATGTATATGGGGCTTC
+[3]    28 TNTTACTCATATACCGCATACTACATCT
+[4]    28 CNGATACTCTTGTGCCATCCTGACCCGT
+
+      28 
+86003089 
+
+
+Checking R1 length distribution for: 3c-k_S15_L001_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANGTCCTTCAGTCTTTTTACACGTTAGC
+[2]    28 ANCACGAGTCATATGCATACTACCATCC
+[3]    28 ANTCTCGTCCAACTAGACATGGGTACAG
+[4]    28 TNCAGATGTGGACAGTCTTGATGCAAAT
+
+      28 
+81669229 
+
+
+Checking R1 length distribution for: 3c-k_S15_L002_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNTAAGCGTCTGCAATTTGAGTCACGGC
+[2]    28 ANGTCCTAGAATACACTTGAAATGCCGA
+[3]    28 TNGCATTAGTTCCTGAGTATTAACCAAC
+[4]    28 ANTCACGTCTCCAATTCAGGTGAATGTC
+
+      28 
+81152394 
+
+
+Checking R1 length distribution for: 4c-k_S1_L001_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANAGACCCAATAACGAAGGAAAGTGAAC
+[2]    28 CNTGCATTCACATACGTTATTCAACTGA
+[3]    28 TNATTAATGAAAACATTCTTGGCAAATG
+[4]    28 ANTGACCAGCAGGCTACTTTGAATGGAG
+
+      28 
+68254285 
+
+
+Checking R1 length distribution for: 4c-k_S1_L002_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANGTACCTCGCCACTTTTCGACATTTGC
+[2]    28 GNGATCGCATTGAGGGCGGTCGTCAGGC
+[3]    28 ANGATAATCATGCGGCAGGGCCTATGCG
+[4]    28 CNTTGAGGTGTTTGCAGATCGCAGAGTA
+
+      28 
+67985726 
+
+
+Checking R1 length distribution for: 4c-k_S1_L003_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 TNTACAGAGGCAGGTTCTTGCGTATCGC
+[2]    28 ANCGTCATCCTTATACAGACTGCTACCA
+[3]    28 CNCATAACAGGCTACCCACCAGCTGCGC
+[4]    28 ANGTTCGTCGCTGCGAACTCCATCACCG
+
+      28 
+68636559 
+
+
+Checking R1 length distribution for: 4c-k_S1_L004_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNTTCATGTATTCTCTTAGTTATCCTTA
+[2]    28 ANCACACAGCGCATCCTATGTTACTCAC
+[3]    28 GNCGTTAGTGCAACGACTTAATACAGTC
+[4]    28 CNATCCGTCTTCTCAATCGCAGAAACAG
+
+      28 
+68699570 
+
+
+Checking R1 length distribution for: 5c-k_S2_L001_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANCGATGTCTAACTGGGCAAACGCCATT
+[2]    28 CNCCTCCGTCAACCTAGTCGGGCTAGCC
+[3]    28 ANTTACCTCCATAAGCCAAGTAGCAGGA
+[4]    28 GNTGTCGTCGAACACTACAAGGCCATTA
+
+      28 
+74055076 
+
+
+Checking R1 length distribution for: 5c-k_S2_L002_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNCTAACCATGAAGCGACGCCAACGTCC
+[2]    28 ANTGTTCCATATGCGTGAACATCATTAT
+[3]    28 GNGATGAGTTAAGGATGTATAAGAATTG
+[4]    28 GNAACATAGCAGCGATTTAGAAATACTT
+
+      28 
+73107988 
+
+
+Checking R1 length distribution for: 5c-k_S2_L003_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 TNACAGGGTGAACTAATATGGTGGTTAT
+[2]    28 TNACAGGGTGAACTAATATGGTGGTTAT
+[3]    28 ANGGCTCGTGGCCACTGTTGTTCCTTAA
+[4]    28 CNTGCATAGATTGCGGCTCTTACGAAAT
+
+      28 
+73740444 
+
+
+Checking R1 length distribution for: 5c-k_S2_L004_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNGGCAGGTTCCGCTTACTGTAGTACGT
+[2]    28 ANTAAGAAGGACTAATGACCGCGCTTAT
+[3]    28 ANAGAGAGTTCCGCGATCTAGAATGGCG
+[4]    28 TNCACCATCCGTAATGGGAGGGAAAACT
+
+      28 
+73559440 
+
+
+Checking R1 length distribution for: 6c-k_S3_L001_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANCCTTTGTACGTTCAATTAGGATTCCC
+[2]    28 CNTCGGGAGTATAGACAATACGTGACCC
+[3]    28 CNAATTTGTAGTGTGGGCTATTTCTAGT
+[4]    28 GNAACATAGGTCGAGTCGAGTGTTTTAA
+
+      28 
+76697744 
+
+
+Checking R1 length distribution for: 6c-k_S3_L002_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANTCACGAGGCATCAGGACCGTGGAGCG
+[2]    28 CNGCAGGGTCCAAATCGTCTTTAATACA
+[3]    28 TNTAAGTGGAGAACTTAATATATTTATG
+[4]    28 ANTAGTCAGCGTGTTTCCTGCTGGACCT
+
+      28 
+75993813 
+
+
+Checking R1 length distribution for: 6c-k_S3_L003_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANGATCTTCGCCGAACCCTATATGGTAG
+[2]    28 ANCGTTCCAGTAGAATCTCTTATCCTGG
+[3]    28 TNTACCGAGCCACAAGCCGAACATGCGG
+[4]    28 GNTGCTCTCCAAACCAAACGAGTACCTG
+
+      28 
+76639464 
+
+
+Checking R1 length distribution for: 6c-k_S3_L004_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 TNCAGAACAGAGGACTTTTGAATAAGCA
+[2]    28 CNGGCAGAGGTAATCAGCAAGAACTTAG
+[3]    28 ANCACGATCTGATGGTAAATTTTAAACG
+[4]    28 CNTGAATAGGACAGTCATATCAATATAG
+
+      28 
+76534291 
+
+
+Checking R1 length distribution for: 7c-k_S4_L001_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 GNAGCTAGTCCAAATCCCTTAGCCTATT
+[2]    28 ANTGTTCTCTCACTCGATTACTCGATTC
+[3]    28 CNAGAAGCAAAGGCGTTAGTCTCCGATC
+[4]    28 TNCTTGCTCAGCGGAACCGGGGGCCGGA
+
+       28 
+113070604 
+
+
+Checking R1 length distribution for: 7c-k_S4_L002_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 GNACGTGCAACGGCCTTTTCTCTTCTAG
+[2]    28 TNACTCGTCGTTGTGAAGCGGGGTGCTA
+[3]    28 ANCGCTGGTCTTACTTCTTCTAACCCGT
+[4]    28 GNACATAGTACGATGGTTTCGTAAGCGT
+
+       28 
+112530992 
+
+
+Checking R1 length distribution for: 7c-k_S4_L003_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 TNCTTGAGTAACGTTCTTTCCGCTTGTA
+[2]    28 GNAACCGAGTACAGCGACCATCCTCTGA
+[3]    28 ANGCCATCATGCCGCAATATTCCGCGTA
+[4]    28 ANCACACCATGCCATACTCACCAATCTC
+
+       28 
+113339130 
+
+
+Checking R1 length distribution for: 7c-k_S4_L004_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 TNAGTGAGTTCCTAAGCTCTTAAAGTTG
+[2]    28 TNGCATTAGGGCTGATGCCCTTCGCGGC
+[3]    28 GNAATCTTCCACGGACACGGCCCGAAAG
+[4]    28 CNATGGCCACCGTCGAACCTGCATCGGC
+
+       28 
+113181009 
+
+
+Checking R1 length distribution for: 8c-k_S5_L001_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNACTTGCAGCTGTTACAGTTTATACTC
+[2]    28 TNCACCGTCCTTTAGTCGTATGTATCGG
+[3]    28 TNGTTCTTGATTAATGAAAACATTCTTG
+[4]    28 ANATGCTCACGGCCATGGTGTAACCACA
+
+      28 
+81009023 
+
+
+Checking R1 length distribution for: 8c-k_S5_L002_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANGAATAGTGGCAGATAATAGACAACTC
+[2]    28 TNTGTGAGTTTGATCGAGTTAAGCATAG
+[3]    28 TNCTGCCAGCTAAATGGCAGCATGGGAA
+[4]    28 GNTGGAGAGATTAGTGGTGGCGGAACGT
+
+      28 
+80407093 
+
+
+Checking R1 length distribution for: 8c-k_S5_L003_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANCTTCACACTCCACTAATCCCATGACT
+[2]    28 TNACAGTCAATCAAGAATGCTTACCTAC
+[3]    28 TNTGCGGAGCATTGTCTCCCCACCTTTG
+[4]    28 ANTTCTGCATTCTTCTGCTGTCTTAAAG
+
+      28 
+80911468 
+
+
+Checking R1 length distribution for: 8c-k_S5_L004_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANTGGCTCATCATTTCTCCTTGTGTAGT
+[2]    28 TNAGCGTTCGCGTTTCGGGACAATTCAG
+[3]    28 CNGCGTGGTACTCCCTTCAAACTTGACT
+[4]    28 ANGAGGTTCGGTCGACGGGGGTATAAGA
+
+      28 
+80786539 
+
+
+Checking R1 length distribution for: 9c-k_S6_L001_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNACGGCGTGTCCGTGAACACCATGGGT
+[2]    28 GNAGTTAAGCTCCATAGGCATATCAAGT
+[3]    28 GNGCTGGCAACCTAACCATCACTTTTAT
+[4]    28 TNTGTTCTCTGAGGCCGGCGTACGGCGC
+
+      28 
+81863814 
+
+
+Checking R1 length distribution for: 9c-k_S6_L002_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 GNCCCTTGTGAACTAAATCATATTGCAA
+[2]    28 CNGTAGAAGTTCCGTACTATAAGGCAGC
+[3]    28 ANGATGTGTTCACGATAAAACAAGCGAC
+[4]    28 ANCAACACACGCACCACTGAAGTCTTTG
+
+      28 
+81069849 
+
+
+Checking R1 length distribution for: 9c-k_S6_L003_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNGGTATTCCGTCCTACGCTTTTACAAC
+[2]    28 TNATGCCCACCATATGCTCGACACACCT
+[3]    28 TNTATGCCAGATACTCGTCAAATGATAT
+[4]    28 GNAGGATAGAGTGACCTAGTGATACTTT
+
+      28 
+81390922 
+
+
+Checking R1 length distribution for: 9c-k_S6_L004_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNTCAAACAGTCCGTTGGTGGATCTTAC
+[2]    28 CNCAACAGTAACATAGAGCATGCTGTAT
+[3]    28 CNTGCAATCTCCCAACTTAGTTACTGCC
+[4]    28 GNCTGTGGTTTCGCTGGATAGTAGGTAG
+
+      28 
+81201526 
+
+
+Checking R1 length distribution for: 10c-k_S7_L001_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANTCCTAGTTTGAAAGCCCCCACTATTT
+[2]    28 CNTCCTTGTTTCGGCGCGTTCCAGTGCC
+[3]    28 CNTGATACATAGACTCGAGTGTGCGCAT
+[4]    28 TNCATTCCAACGACTTGGACAATCAGCC
+
+      28 
+75733241 
+
+
+Checking R1 length distribution for: 10c-k_S7_L002_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNGCAGCCAAACCATCCTCGCGCGGCGC
+[2]    28 ANAGCCGCTCCGCCAGGGCCGTGGGCCG
+[3]    28 CNTCAGTTCACGAACTGCTGGCTGCACA
+[4]    28 ANGGATCGTACCGTCGGACGATCCCTAC
+
+      28 
+74793431 
+
+
+Checking R1 length distribution for: 10c-k_S7_L003_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNCATGGAGAATCCCTGAGTTTCTACGA
+[2]    28 GNCCGTGGTGTCTTGAATTTGAATGAGT
+[3]    28 TNTGATGTCCATTCGCTGTTCGTCAGAG
+[4]    28 TNGCACTGTACGATGGCAGAGCACCCAC
+
+      28 
+75317123 
+
+
+Checking R1 length distribution for: 10c-k_S7_L004_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 TNGCACTGTACGATGGAGGACGCTCTGC
+[2]    28 GNGCCATCATGACGTTGGCGCAAGACTC
+[3]    28 GNGATCCCACATAGCTAGACCTTGTCAC
+[4]    28 ANTCCCATCTCGAGTACATAGTTCACAT
+
+      28 
+75024793 
+
+
+Checking R1 length distribution for: 11c-k_S8_L001_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 GNGTGGCAGGTCGACACTTTAACTTTTA
+[2]    28 ANACTCAGTCGTCATATACTCCGGAGTG
+[3]    28 TNCCCACCACCACATACCTAACCCAGTG
+[4]    28 GNTAGAGAGACTCTTGTTGAATGGGGGG
+
+      28 
+81204284 
+
+
+Checking R1 length distribution for: 11c-k_S8_L002_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANTCCTATCACCTTATTGTTGTTTGTTT
+[2]    28 CNGTGCGAGAACCCGATGCAAAAGTCTA
+[3]    28 ANTACGAAGACTCTTGCGATTCAATAGC
+[4]    28 ANTCTCCGTCTCGACGGATCCTCTTAAT
+
+      28 
+80984438 
+
+
+Checking R1 length distribution for: 11c-k_S8_L003_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANTTCACTCCACAGCGCCCTTCTCTTCG
+[2]    28 CNCTTAGAGTCAGCCCTATCATAAACAC
+[3]    28 TNCTGAAAGAAGCCACCTTAACGAAATT
+[4]    28 TNCCCGTAGGTTGACGCACAGATTCTAA
+
+      28 
+81697769 
+
+
+Checking R1 length distribution for: 11c-k_S8_L004_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 GNAGAATCAGAACTAAGCACACCCCCTG
+[2]    28 TNAGGCAAGGGCAACTATGTCAATATGA
+[3]    28 TNCCCACTCAAAGAACTAGTGTCCGCAT
+[4]    28 ANAAGTACACTCTGCTAGTTCTGTGGGT
+
+      28 
+81806165 
+
+
+Checking R1 length distribution for: 12c-k_S10_L001_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNTGCTTAGGCCTGCTAATGTTCGACTT
+[2]    28 TNTATGCGTGGGTCAATTTGTTCGAAAC
+[3]    28 GNTCATGAGGCTAACGATCTAAAAGTGA
+[4]    28 TNTCAGTAGTTCCATGCATGACTTCCCA
+
+       28 
+132139895 
+
+
+Checking R1 length distribution for: 12c-k_S10_L002_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANCTGTCAGTTGTCACTTATGTCTTCGA
+[2]    28 GNCAAGTGTTGGAGACGGAAAGGCCAAG
+[3]    28 ANCAACCTCAATCAGCCACTTCCTGCAG
+[4]    28 CNTATCGAGATAGCTACCTTGCCATGTG
+
+       28 
+130793997 
+
+
+Checking R1 length distribution for: 12c-k_S10_L003_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNAAGCGCAGACGGATTACCGGAGGTAA
+[2]    28 ANAGCCCAGGTGATCGATAATGCAGCCA
+[3]    28 GNGACCCTGATTAGACATTGAGCACCTA
+[4]    28 TNTTGGGAGTATAACGCATTTTGACTTC
+
+       28 
+131563769 
+
+
+Checking R1 length distribution for: 12c-k_S10_L004_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANCCTTTAGAACTTCCTCCCGCGCCTCA
+[2]    28 TNATTGCAGTCACGCCCGACCTCCCTCA
+[3]    28 ANATCCTGTTGCCTAAATCTCGCTATTT
+[4]    28 GNTGAACAGTTAGTGATCTTTTAGGACT
+
+       28 
+131146016 
+
+
+Checking R1 length distribution for: 13c-k_S11_L001_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNACAGTGTCATGCATTATGGGGCTCGT
+[2]    28 ANCAAACCATAGCACTTTACCGAGCGCC
+[3]    28 GNGTAGAAGGATTTAGCGTCTGCCTGTA
+[4]    28 TNATGCAAGGCACAACCTGCCAGACTAT
+
+       28 
+135627608 
+
+
+Checking R1 length distribution for: 13c-k_S11_L002_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 TNCGGTACAGGACATGATTGAGCAGCTC
+[2]    28 ANGCACGTCTACTTCACAAGCTTAAGGC
+[3]    28 GNAGCCCAGGGTAGCTTAACTGGCTCGG
+[4]    28 ANCGCCTCACCCTTGTCATCTTCCTAAT
+
+       28 
+134789806 
+
+
+Checking R1 length distribution for: 13c-k_S11_L003_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 GNTCGCTCAACCGTGCCATACTTTTCAA
+[2]    28 ANACTTCCATCATCTTCACTATTCAGAC
+[3]    28 GNCGTCATCTGTCTCGTTGATTCAGTAG
+[4]    28 CNGAACCCACAATCTGAGAAAGTAAATT
+
+       28 
+135561344 
+
+
+Checking R1 length distribution for: 13c-k_S11_L004_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNCGAAAAAGATCTTATTCAAGTTCATC
+[2]    28 TNTCATGTCTATCGTTGCTACATGAATC
+[3]    28 GNTGTTACAAGAATAATTCGCCGAAACG
+[4]    28 GNCAGCCTCATGAAAGACACTCTTAAAG
+
+       28 
+135310849 
+
+
+Checking R1 length distribution for: 14c-k_S12_L001_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 TNCTCCCGTGCAAGACCTAATTACCAGA
+[2]    28 TNTGCCATCACTAGCACCCAATATTCTG
+[3]    28 ANTGATGCATATGGCTGAATGGTGTAGG
+[4]    28 ANAAGTACAGCTACCGCACCATGAATAG
+
+       28 
+127904479 
+
+
+Checking R1 length distribution for: 14c-k_S12_L002_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANCCCAAAGATGACCGAGTCAACTGTTT
+[2]    28 ANGTTGTCATAGTCGTAGTTCGGGAACG
+[3]    28 CNCTAACTCTAGTGTGTATCTTACTGAT
+[4]    28 TNTATGCAGAAGCGAAGTACTACACTTT
+
+       28 
+128560478 
+
+
+Checking R1 length distribution for: 14c-k_S12_L003_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNGCCATAGGTTCCATAAACGGACGATG
+[2]    28 TNATTCTCAAGTCATCGCCCTGAAATTG
+[3]    28 CNACGATAGTAAGCATATATCGGATGAG
+[4]    28 GNTGAATGTGACACGATGCCTCAGAGGC
+
+       28 
+128821248 
+
+
+Checking R1 length distribution for: 14c-k_S12_L004_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANGCATCAGTCGCCCATTGATACGAATG
+[2]    28 ANTCATCTCCCTTGTGATATGACAATCC
+[3]    28 GNCTCACCATGTCGTAGTTTTGTAGGGA
+[4]    28 GNGGCCTCACCATATGATAATATCACCG
+
+       28 
+129097276 
+
+
+Checking R1 length distribution for: 15c-k_S13_L001_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 GNTGCAGAGCAATAACCCGTATGCCCCT
+[2]    28 GNCATGGCAACGAGGTCGCCGGTATGAT
+[3]    28 GNGCGTGGTTGCGAAGGTGATCTCTGGC
+[4]    28 ANAGACCTCCGCTGTTACTTATTATTTC
+
+       28 
+131500468 
+
+
+Checking R1 length distribution for: 15c-k_S13_L002_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNTCCCACAATTCGTGAAACAAACAGGC
+[2]    28 GNCATCCGTGTTCAGTGGTGGTGCATGG
+[3]    28 GNTCTATTCAACTTTCAGCTGCTTTTAC
+[4]    28 TNCTGAAGTGTGTCCGTTGTGCCCGTAG
+
+       28 
+131637780 
+
+
+Checking R1 length distribution for: 15c-k_S13_L003_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANCCAATGTCGGTAAGCTTAGCAACATT
+[2]    28 ANCGATGGTGAATATGATCTACGATAAG
+[3]    28 CNGGACAGTCTGTGGCCCCGGGAAGTTA
+[4]    28 CNCTCTCAGAGGCTGTATTGAAGGTACC
+
+       28 
+132208069 
+
+
+Checking R1 length distribution for: 15c-k_S13_L004_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANTCACGGTGCCTACGGTTGTTGCCCAT
+[2]    28 CNCTGATTCCAGTGTACTGTGTCCGATT
+[3]    28 GNGAAATCAGAGATTATCCATCAATACA
+[4]    28 ANACAGGCACGCGCATAGTCAGCTTTTT
+
+       28 
+132387075 
+
+
+Checking R1 length distribution for: 16c-k_S16_L001_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANAGGGAAGAATTCAGTGAACTTTTGTG
+[2]    28 CNGGTCACAAGCTACTGTTCAGCCCAAC
+[3]    28 ANCTGTCGTCGGTGAACTTTTAGGATCT
+[4]    28 CNTGAGACAGGTATGGAAGATTAAAATC
+
+      28 
+69687395 
+
+
+Checking R1 length distribution for: 16c-k_S16_L002_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANGACTCTCCACCCTACACTTGTTAACG
+[2]    28 ANCACAGCAACACACTAGTACCCAACAG
+[3]    28 ANTTATCTCTCTCTCAAAGAAAAAAAAA
+[4]    28 TNATATCTCATTCACTCACCGGACCGCT
+
+      28 
+69092462 
+
+
+Checking R1 length distribution for: 16c-k_S16_L003_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANCTTCTGTCAACACTCATCTCGGGCTC
+[2]    28 CNGAGCCGTTGACGGAGGGAGGGTTGCT
+[3]    28 ANTGACCAGTCTGCATGAGAAAGTTAGT
+[4]    28 CNGATCCTCCAACTAGTTAGGAATTCAC
+
+      28 
+69830724 
+
+
+Checking R1 length distribution for: 16c-k_S16_L004_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNGGACTTCTCTTAACAGAATAAGTACT
+[2]    28 ANCTCTATCTGTACAGCTACTAACGAGC
+[3]    28 CNAAGTTCAGGCAATGACCCTGTTTACC
+[4]    28 TNAGTCTGTGGCCTCAACTTATTGCTTA
+
+      28 
+69775792 
+
+
+Checking R1 length distribution for: 17c-k_S17_L001_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNATAGGCAATCTAGCAATAGACTACTT
+[2]    28 TNACGCGTCAGCAGAGAGACAAATTGTC
+[3]    28 GNCTCACGTCGTATTGCCATCAAAAAAG
+[4]    28 GNGTTTCCATGGGCAATACCCGTTTGTT
+
+       28 
+131697828 
+
+
+Checking R1 length distribution for: 17c-k_S17_L002_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 GNCTTGGGTTGGACTTACTATTTTTGCT
+[2]    28 CNGAACGTAGGCAACGATACAAGCTTTT
+[3]    28 GNCAGCCCAGCGTAGAACACTAGCCCAC
+[4]    28 GNCTATGAGCCGATTTAATCAGGATACA
+
+       28 
+129832846 
+
+
+Checking R1 length distribution for: 17c-k_S17_L003_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNGTGAAGTACCCACGACGGAACGCAGC
+[2]    28 ANAAAGATCAGACCTAAGGGAAATAATA
+[3]    28 CNGTATTCAAATGAGTTCATGCTGTGAC
+[4]    28 CNCTCAGCAATCGCCGTGCTACAAATAC
+
+       28 
+130869070 
+
+
+Checking R1 length distribution for: 17c-k_S17_L004_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNCCTCCTCACGGGCTTCCGGAAATGCG
+[2]    28 GNGATGTCACTGATTGCCCTCATGCTTC
+[3]    28 TNTTTGTCACTGCGACCTCCTCGTCAGC
+[4]    28 TNCTAATAGCGTTACTCACACTAGTCTG
+
+       28 
+130520100 
+
+
+Checking R1 length distribution for: 18c-k_S18_L001_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 ANGAAAGCAATCGCCGATGATGATATAC
+[2]    28 ANTCTCGAGGCCTTCGTCTGCAAAGACA
+[3]    28 GNTGTAGTCCATGATGTACGCTCTTTGA
+[4]    28 TNCTTCTTTTTCTGCCTTTCAAAGTTGT
+
+       28 
+106784212 
+
+
+Checking R1 length distribution for: 18c-k_S18_L002_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 GNCCTTCCAACGATTCAAGTTTTTTAAA
+[2]    28 CNGCAGCCACTGGCCAGGTTACTTAAGC
+[3]    28 ANCGCCTCACACCGCATTGCTATCGCTT
+[4]    28 TNGTTAGTCCAAGCATTGCCATTAATCT
+
+       28 
+106477699 
+
+
+Checking R1 length distribution for: 18c-k_S18_L003_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 CNTGTCTAGTGGCCTCAAAAGACGTGTC
+[2]    28 GNAGTTACAGAAACCGCTCTTAAATTGT
+[3]    28 GNGAGGACACACAGAGGAGAAAGCAGAT
+[4]    28 TNATATCTCACCTCACGAGTTCTAATCA
+
+       28 
+107277607 
+
+
+Checking R1 length distribution for: 18c-k_S18_L004_R1_001.fastq.gz
+DNAStringSet object of length 4:
+    width seq
+[1]    28 TNCTTTCAGCTGTACTACGCACTCAAGA
+[2]    28 CNCATGGTCAAATGAGCGGTTGATAACC
+[3]    28 GNCGCGACACCCAACGCGGCGTATCTGT
+[4]    28 GNATCACGTAGGATATTTTAGTTTATAA
+
+       28 
+107242551 
+
+
+> sessionInfo()
+R version 4.0.4 RC (2021-02-08 r79975)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: CentOS Linux 7 (Core)
+
+Matrix products: default
+BLAS:   /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.0.x/R/4.0.x/lib64/R/lib/libRblas.so
+LAPACK: /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.0.x/R/4.0.x/lib64/R/lib/libRlapack.so
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+[1] stats4    parallel  stats     graphics  grDevices utils     datasets 
+[8] methods   base     
+
+other attached packages:
+ [1] jaffelab_0.99.30            rafalib_1.0.0              
+ [3] ShortRead_1.48.0            GenomicAlignments_1.26.0   
+ [5] SummarizedExperiment_1.20.0 Biobase_2.50.0             
+ [7] MatrixGenerics_1.2.1        matrixStats_0.58.0         
+ [9] Rsamtools_2.6.0             GenomicRanges_1.42.0       
+[11] GenomeInfoDb_1.26.7         Biostrings_2.58.0          
+[13] XVector_0.30.0              IRanges_2.24.1             
+[15] S4Vectors_0.28.1            BiocParallel_1.24.1        
+[17] BiocGenerics_0.36.1        
+
+loaded via a namespace (and not attached):
+ [1] pillar_1.6.4           compiler_4.0.4         RColorBrewer_1.1-2    
+ [4] bitops_1.0-7           tools_4.0.4            zlibbioc_1.36.0       
+ [7] tibble_3.1.6           lifecycle_1.0.1        googledrive_2.0.0     
+[10] gargle_1.2.0           lattice_0.20-41        pkgconfig_2.0.3       
+[13] png_0.1-7              rlang_0.4.11           Matrix_1.3-4          
+[16] DBI_1.1.1              DelayedArray_0.16.3    GenomeInfoDbData_1.2.4
+[19] dplyr_1.0.7            hwriter_1.3.2          generics_0.1.1        
+[22] vctrs_0.3.8            fs_1.5.0               tidyselect_1.1.1      
+[25] segmented_1.3-4        grid_4.0.4             glue_1.5.0            
+[28] R6_2.5.1               jpeg_0.1-8.1           fansi_0.5.0           
+[31] limma_3.46.0           latticeExtra_0.6-29    purrr_0.3.4           
+[34] magrittr_2.0.1         ellipsis_0.3.2         splines_4.0.4         
+[37] assertthat_0.2.1       utf8_1.2.2             RCurl_1.98-1.3        
+[40] crayon_1.4.2          
+> 
+> proc.time()
+     user    system   elapsed 
+21555.160  2917.699 24624.594 
