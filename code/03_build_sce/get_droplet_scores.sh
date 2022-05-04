@@ -2,9 +2,11 @@
 #$ -cwd
 #$ -l bluejay,mem_free=50G,h_vmem=50G,h_fsize=100G
 #$ -N get_droplet_scores
-#$ -o logs/get_droplet_scores.txt
-#$ -e logs/get_droplet_scores.txt
+#$ -o logs/get_droplet_scores.$TASK_ID.txt
+#$ -e logs/get_droplet_scores.$TASK_ID.txt
 #$ -m e
+#$ -t 1-19
+#$ -tc 10
 
 echo "**** Job starts ****"
 date
@@ -23,7 +25,7 @@ module load conda_R
 module list
 
 ## Edit with your job command
-Rscript get_droplet_scores.R
+Rscript get_droplet_scores.R $TASK_ID
 
 echo "**** Job ends ****"
 date

@@ -3,39 +3,39 @@
 
 library("SingleCellExperiment")
 library("DropletUtils")
-library("BiocParallel")
+# library("BiocParallel")
 library("scuttle")
-library("jaffelab")
+# library("jaffelab")
 library("here")
 library("sessioninfo")
+
+## get sample #
+args = commandArgs(trailingOnly=TRUE)
+sample_i = as.integer(args[[1]])
 
 ## Load raw data
 load(here("processed-data", "sce", "sce_raw.Rdata"), verbose = TRUE)
 
-table(sce$Sample)
-# Br2720_mid Br2720_post  Br2743_ant  Br2743_mid  Br3942_ant  Br3942_mid  Br6423_ant Br6423_post  Br6432_ant  Br6471_ant 
-# 1152093      922885      655424     1495673     1692299     2209670     1521781     1786747      736110     1148322 
-# Br6471_mid  Br6522_mid Br6522_post  Br8325_ant  Br8325_mid  Br8492_mid Br8492_post  Br8667_ant  Br8667_mid 
-# 1653348      604278      681586     1855444     2192531     1302254      965917     1875106     2154338
+samples <- unique(sce$Sample)
+sample_run <- samples[[sample_i]]
+message("Running Sample: ", sample_run, " (", sample_i, "/", length(samples),")")
 
-sample_index <- splitit(sce$Sample)
+sce <- sce[, sce$Sample == sample_run]
+message("ncol:", ncol(sce))
 
-message("Get Droplett scores by sample")
-
+set.seed(100)
+message("Starting emptyDrops")
 Sys.time()
-e.out <- lapply(sample_index[c(1,2)], function(i){
-  sce_sample <- sce[, i]
-  e.sample <- DropletUtils::emptyDrops(
-    sce,
-    niters = 30000
-    # ,
-    # BPPARAM = BiocParallel::MulticoreParam(4)
-  )
-  return(e.sample)
-})
+e.out <- DropletUtils::emptyDrops(
+  sce,
+  niters = 30000
+  # ,
+  # BPPARAM = BiocParallel::MulticoreParam(4)
+)
+message("Done - saving data")
 Sys.time()
 
-save(e.out, file = here("processed-data", "03_build_sce", "droplet_scores.Rdata"))
+save(e.out, file = here("processed-data", "03_build_sce", "droplet_scores",paste0("droplet_scores_", sample_run,".Rdata")))
 
 # sgejobs::job_single('get_droplet_scores', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript get_droplet_scores.R")
 
