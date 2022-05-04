@@ -25,7 +25,7 @@ module load conda_R
 module list
 
 ## Edit with your job command
-Rscript get_droplet_scores.R $TASK_ID
+Rscript get_droplet_scores.R $SGE_TASK_ID
 
 echo "**** Job ends ****"
 date

@@ -13,6 +13,7 @@ library("sessioninfo")
 args = commandArgs(trailingOnly=TRUE)
 sample_i = as.integer(args[[1]])
 
+message("sample_i :", sample_i)
 ## Load raw data
 load(here("processed-data", "sce", "sce_raw.Rdata"), verbose = TRUE)
 

@@ -1,0 +1,179 @@
+Adding LIBD modules
+Loading git
+Loading LIBD module for git-status-size/github
+Loading LIBD module for git-lfs/2.8.0
+Loading LIBD module for rmate/1.5.9
+Loading LIBD module for ruby/2.6.4p104
+Loading conda_R/devel
+**** Job starts ****
+Wed May  4 12:24:10 EDT 2022
+**** JHPCE info ****
+User: lhuuki
+Job id: 9964365
+Job name: get_droplet_scores
+Hostname: compute-099.cm.cluster
+Task id: 7
+Unloading conda_R/devel
+Loading conda_R/4.1.x
+
+The following have been reloaded with a version change:
+  1) conda_R/devel => conda_R/4.1.x
+
+
+Currently Loaded Modules:
+  1) matlab/R2019a     6) COMMUNITY_CENTOS7_DEFAULT_ENV  11) ruby/2.6.4p104
+  2) stata/17          7) JHPCE_CENTOS7_DEFAULT_ENV      12) rmate/1.5.9
+  3) JHPCE_tools/1.0   8) git-status-size/github         13) conda/3-4.6.14
+  4) sge/8.1.9         9) git/2.28.0                     14) conda_R/4.1.x
+  5) gcc/4.4.7        10) git-lfs/2.8.0
+
+ 
+
+Loading required package: SummarizedExperiment
+Loading required package: MatrixGenerics
+Loading required package: matrixStats
+
+Attaching package: ‘MatrixGenerics’
+
+The following objects are masked from ‘package:matrixStats’:
+
+    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
+    colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+    colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
+    colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
+    colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+    colWeightedMeans, colWeightedMedians, colWeightedSds,
+    colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+    rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+    rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+    rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
+    rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+    rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
+    rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+    rowWeightedSds, rowWeightedVars
+
+Loading required package: GenomicRanges
+Loading required package: stats4
+Loading required package: BiocGenerics
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, append, as.data.frame, basename, cbind, colnames,
+    dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,
+    grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,
+    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
+    rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,
+    union, unique, unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+
+Attaching package: ‘S4Vectors’
+
+The following objects are masked from ‘package:base’:
+
+    expand.grid, I, unname
+
+Loading required package: IRanges
+Loading required package: GenomeInfoDb
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+
+Attaching package: ‘Biobase’
+
+The following object is masked from ‘package:MatrixGenerics’:
+
+    rowMedians
+
+The following objects are masked from ‘package:matrixStats’:
+
+    anyMissing, rowMedians
+
+here() starts at /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq
+sample_i :7
+Loading objects:
+  sce
+Running Sample: Br8492_post (7/19)
+ncol:965917
+Starting emptyDrops
+[1] "2022-05-04 12:35:43 EDT"
+Done - saving data
+[1] "2022-05-04 12:53:42 EDT"
+[1] "Reproducibility information:"
+[1] "2022-05-04 12:53:58 EDT"
+    user   system  elapsed 
+1723.041   42.815 1786.796 
+─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.1.2 Patched (2021-11-04 r81138)
+ os       CentOS Linux 7 (Core)
+ system   x86_64, linux-gnu
+ ui       X11
+ language (EN)
+ collate  en_US.UTF-8
+ ctype    en_US.UTF-8
+ tz       US/Eastern
+ date     2022-05-04
+ pandoc   2.13 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1.x/bin/pandoc
+
+─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+ package              * version  date (UTC) lib source
+ beachmat               2.10.0   2021-10-26 [2] Bioconductor
+ Biobase              * 2.54.0   2021-10-26 [2] Bioconductor
+ BiocGenerics         * 0.40.0   2021-10-26 [2] Bioconductor
+ BiocParallel           1.28.3   2021-12-09 [2] Bioconductor
+ bitops                 1.0-7    2021-04-24 [2] CRAN (R 4.1.0)
+ cli                    3.3.0    2022-04-25 [2] CRAN (R 4.1.2)
+ DelayedArray           0.20.0   2021-10-26 [2] Bioconductor
+ DelayedMatrixStats     1.16.0   2021-10-26 [2] Bioconductor
+ dqrng                  0.3.0    2021-05-01 [2] CRAN (R 4.1.2)
+ DropletUtils         * 1.14.2   2022-01-09 [2] Bioconductor
+ edgeR                  3.36.0   2021-10-26 [2] Bioconductor
+ GenomeInfoDb         * 1.30.1   2022-01-30 [2] Bioconductor
+ GenomeInfoDbData       1.2.7    2021-11-01 [2] Bioconductor
+ GenomicRanges        * 1.46.1   2021-11-18 [2] Bioconductor
+ HDF5Array              1.22.1   2021-11-14 [2] Bioconductor
+ here                 * 1.0.1    2020-12-13 [2] CRAN (R 4.1.2)
+ IRanges              * 2.28.0   2021-10-26 [2] Bioconductor
+ lattice                0.20-45  2021-09-22 [3] CRAN (R 4.1.2)
+ limma                  3.50.3   2022-04-07 [2] Bioconductor
+ locfit                 1.5-9.5  2022-03-03 [2] CRAN (R 4.1.2)
+ Matrix                 1.4-1    2022-03-23 [3] CRAN (R 4.1.2)
+ MatrixGenerics       * 1.6.0    2021-10-26 [2] Bioconductor
+ matrixStats          * 0.62.0   2022-04-19 [2] CRAN (R 4.1.2)
+ R.methodsS3            1.8.1    2020-08-26 [2] CRAN (R 4.1.0)
+ R.oo                   1.24.0   2020-08-26 [2] CRAN (R 4.1.0)
+ R.utils                2.11.0   2021-09-26 [2] CRAN (R 4.1.2)
+ Rcpp                   1.0.8.3  2022-03-17 [2] CRAN (R 4.1.2)
+ RCurl                  1.98-1.6 2022-02-08 [2] CRAN (R 4.1.2)
+ rhdf5                  2.38.1   2022-03-10 [2] Bioconductor
+ rhdf5filters           1.6.0    2021-10-26 [2] Bioconductor
+ Rhdf5lib               1.16.0   2021-10-26 [2] Bioconductor
+ rprojroot              2.0.3    2022-04-02 [2] CRAN (R 4.1.2)
+ S4Vectors            * 0.32.4   2022-03-24 [2] Bioconductor
+ scuttle              * 1.4.0    2021-10-26 [2] Bioconductor
+ sessioninfo          * 1.2.2    2021-12-06 [2] CRAN (R 4.1.2)
+ SingleCellExperiment * 1.16.0   2021-10-26 [2] Bioconductor
+ sparseMatrixStats      1.6.0    2021-10-26 [2] Bioconductor
+ SummarizedExperiment * 1.24.0   2021-10-26 [2] Bioconductor
+ XVector                0.34.0   2021-10-26 [2] Bioconductor
+ zlibbioc               1.40.0   2021-10-26 [2] Bioconductor
+
+ [1] /users/lhuuki/R/4.1.x
+ [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1.x/R/4.1.x/lib64/R/site-library
+ [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1.x/R/4.1.x/lib64/R/library
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+**** Job ends ****
+Wed May  4 12:54:00 EDT 2022
