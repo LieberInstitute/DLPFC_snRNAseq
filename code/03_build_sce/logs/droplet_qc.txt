@@ -1,0 +1,322 @@
+Adding LIBD modules
+Loading git
+Loading LIBD module for git-status-size/github
+Loading LIBD module for git-lfs/2.8.0
+Loading LIBD module for rmate/1.5.9
+Loading LIBD module for ruby/2.6.4p104
+Loading conda_R/devel
+**** Job starts ****
+Fri May  6 10:48:06 EDT 2022
+**** JHPCE info ****
+User: lhuuki
+Job id: 9968941
+Job name: droplet_qc
+Hostname: compute-095.cm.cluster
+Task id: undefined
+Unloading conda_R/devel
+Loading conda_R/4.1.x
+
+The following have been reloaded with a version change:
+  1) conda_R/devel => conda_R/4.1.x
+
+
+Currently Loaded Modules:
+  1) matlab/R2019a     6) COMMUNITY_CENTOS7_DEFAULT_ENV  11) ruby/2.6.4p104
+  2) stata/17          7) JHPCE_CENTOS7_DEFAULT_ENV      12) rmate/1.5.9
+  3) JHPCE_tools/1.0   8) git-status-size/github         13) conda/3-4.6.14
+  4) sge/8.1.9         9) git/2.28.0                     14) conda_R/4.1.x
+  5) gcc/4.4.7        10) git-lfs/2.8.0
+
+ 
+
+Loading required package: SummarizedExperiment
+Loading required package: MatrixGenerics
+Loading required package: matrixStats
+
+Attaching package: ‘MatrixGenerics’
+
+The following objects are masked from ‘package:matrixStats’:
+
+    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
+    colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+    colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
+    colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
+    colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+    colWeightedMeans, colWeightedMedians, colWeightedSds,
+    colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+    rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+    rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+    rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
+    rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+    rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
+    rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+    rowWeightedSds, rowWeightedVars
+
+Loading required package: GenomicRanges
+Loading required package: stats4
+Loading required package: BiocGenerics
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, append, as.data.frame, basename, cbind, colnames,
+    dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,
+    grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,
+    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
+    rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,
+    union, unique, unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+
+Attaching package: ‘S4Vectors’
+
+The following objects are masked from ‘package:base’:
+
+    expand.grid, I, unname
+
+Loading required package: IRanges
+Loading required package: GenomeInfoDb
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+
+Attaching package: ‘Biobase’
+
+The following object is masked from ‘package:MatrixGenerics’:
+
+    rowMedians
+
+The following objects are masked from ‘package:matrixStats’:
+
+    anyMissing, rowMedians
+
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.1 ──
+✔ ggplot2 3.3.6     ✔ purrr   0.3.4
+✔ tibble  3.1.7     ✔ dplyr   1.0.9
+✔ tidyr   1.2.0     ✔ stringr 1.4.0
+✔ readr   2.1.2     ✔ forcats 0.5.1
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::collapse()   masks IRanges::collapse()
+✖ dplyr::combine()    masks Biobase::combine(), BiocGenerics::combine()
+✖ dplyr::count()      masks matrixStats::count()
+✖ dplyr::desc()       masks IRanges::desc()
+✖ tidyr::expand()     masks S4Vectors::expand()
+✖ dplyr::filter()     masks stats::filter()
+✖ dplyr::first()      masks S4Vectors::first()
+✖ dplyr::lag()        masks stats::lag()
+✖ ggplot2::Position() masks BiocGenerics::Position(), base::Position()
+✖ purrr::reduce()     masks GenomicRanges::reduce(), IRanges::reduce()
+✖ dplyr::rename()     masks S4Vectors::rename()
+✖ dplyr::slice()      masks IRanges::slice()
+here() starts at /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq
+Loading objects:
+  sce
+[1] 19
+Joining, by = "ind"
+        Sample total_n non_empty
+1  Br8492_post  965917      2989
+2   Br2743_ant  655424      3198
+3   Br2743_mid 1495673      3426
+4   Br6432_ant  736110      3432
+5   Br6471_ant 1148322      3622
+6   Br2720_mid 1152093      3743
+7   Br6423_ant 1521781      3999
+8   Br6522_mid  604278      4035
+9  Br6423_post 1786747      4067
+10  Br8667_mid 2154338      4134
+11 Br6522_post  681586      4295
+12  Br3942_mid 2209670      4309
+13  Br8325_mid 2192531      4990
+14  Br8492_mid 1302254      5189
+15  Br6471_mid 1653348      5352
+16  Br8667_ant 1875106      5806
+17 Br2720_post  922885      5950
+18  Br8325_ant 1855444      5951
+19  Br3942_ant 1692299      6269
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   2989    3682    4134    4461    5270    6269 
+Joining, by = c("Sample", "total_n")
+        Sample total_n non_empty non_empty_default     d
+1   Br2743_ant  655424      3198              2975  -223
+2   Br6432_ant  736110      3432              3402   -30
+3   Br6471_ant 1148322      3622              3594   -28
+4  Br8492_post  965917      2989              3678   689
+5   Br2720_mid 1152093      3743              4435   692
+6   Br6522_mid  604278      4035              4897   862
+7   Br2743_mid 1495673      3426              4837  1411
+8  Br6522_post  681586      4295              6066  1771
+9   Br3942_ant 1692299      6269             52946 46677
+10  Br6471_mid 1653348      5352             56272 50920
+11  Br8492_mid 1302254      5189             56478 51289
+12 Br2720_post  922885      5950             57625 51675
+13  Br8325_ant 1855444      5951             58687 52736
+14  Br8667_ant 1875106      5806             70117 64311
+15  Br3942_mid 2209670      4309             74365 70056
+16  Br8325_mid 2192531      4990             77615 72625
+17  Br6423_ant 1521781      3999             88179 84180
+18  Br8667_mid 2154338      4134             88660 84526
+19 Br6423_post 1786747      4067             91276 87209
+Saving 9 x 7 in image
+$Br2720_mid
+       Limited
+Signif    FALSE    TRUE    <NA>     Sum
+  FALSE    3233       0       0    3233
+  TRUE      285    3458       0    3743
+  <NA>        0       0 1145117 1145117
+  Sum      3518    3458 1145117 1152093
+
+$Br2720_post
+       Limited
+Signif   FALSE   TRUE   <NA>    Sum
+  FALSE   9030      0      0   9030
+  TRUE     440   5510      0   5950
+  <NA>       0      0 907905 907905
+  Sum     9470   5510 907905 922885
+
+$Br2743_ant
+       Limited
+Signif   FALSE   TRUE   <NA>    Sum
+  FALSE   4932      0      0   4932
+  TRUE     215   2983      0   3198
+  <NA>       0      0 647294 647294
+  Sum     5147   2983 647294 655424
+
+$Br2743_mid
+       Limited
+Signif    FALSE    TRUE    <NA>     Sum
+  FALSE    2300       0       0    2300
+  TRUE      116    3310       0    3426
+  <NA>        0       0 1489947 1489947
+  Sum      2416    3310 1489947 1495673
+
+$Br3942_ant
+       Limited
+Signif    FALSE    TRUE    <NA>     Sum
+  FALSE   19951       0       0   19951
+  TRUE      274    5995       0    6269
+  <NA>        0       0 1666079 1666079
+  Sum     20225    5995 1666079 1692299
+
+$Br3942_mid
+       Limited
+Signif    FALSE    TRUE    <NA>     Sum
+  FALSE   41783       0       0   41783
+  TRUE      188    4121       0    4309
+  <NA>        0       0 2163578 2163578
+  Sum     41971    4121 2163578 2209670
+
+$Br6423_ant
+       Limited
+Signif    FALSE    TRUE    <NA>     Sum
+  FALSE   46086       0       0   46086
+  TRUE      371    3628       0    3999
+  <NA>        0       0 1471696 1471696
+  Sum     46457    3628 1471696 1521781
+
+$Br6423_post
+       Limited
+Signif    FALSE    TRUE    <NA>     Sum
+  FALSE   52719       0       0   52719
+  TRUE      171    3896       0    4067
+  <NA>        0       0 1729961 1729961
+  Sum     52890    3896 1729961 1786747
+
+$Br6432_ant
+       Limited
+Signif   FALSE   TRUE   <NA>    Sum
+  FALSE    729      0      0    729
+  TRUE      88   3344      0   3432
+  <NA>       0      0 731949 731949
+  Sum      817   3344 731949 736110
+
+$Br6471_ant
+       Limited
+Signif    FALSE    TRUE    <NA>     Sum
+  FALSE     276       0       0     276
+  TRUE       36    3586       0    3622
+  <NA>        0       0 1144424 1144424
+  Sum       312    3586 1144424 1148322
+
+$Br6471_mid
+       Limited
+Signif    FALSE    TRUE    <NA>     Sum
+  FALSE   25374       0       0   25374
+  TRUE      128    5224       0    5352
+  <NA>        0       0 1622622 1622622
+  Sum     25502    5224 1622622 1653348
+
+$Br6522_mid
+       Limited
+Signif   FALSE   TRUE   <NA>    Sum
+  FALSE     60      0      0     60
+  TRUE     181   3854      0   4035
+  <NA>       0      0 600183 600183
+  Sum      241   3854 600183 604278
+
+$Br6522_post
+       Limited
+Signif   FALSE   TRUE   <NA>    Sum
+  FALSE     23      0      0     23
+  TRUE      28   4267      0   4295
+  <NA>       0      0 677268 677268
+  Sum       51   4267 677268 681586
+
+$Br8325_ant
+       Limited
+Signif    FALSE    TRUE    <NA>     Sum
+  FALSE   41881       0       0   41881
+  TRUE       97    5854       0    5951
+  <NA>        0       0 1807612 1807612
+  Sum     41978    5854 1807612 1855444
+
+$Br8325_mid
+       Limited
+Signif    FALSE    TRUE    <NA>     Sum
+  FALSE   49242       0       0   49242
+  TRUE       35    4955       0    4990
+  <NA>        0       0 2138299 2138299
+  Sum     49277    4955 2138299 2192531
+
+$Br8492_mid
+       Limited
+Signif    FALSE    TRUE    <NA>     Sum
+  FALSE   19109       0       0   19109
+  TRUE      430    4759       0    5189
+  <NA>        0       0 1277956 1277956
+  Sum     19539    4759 1277956 1302254
+
+$Br8492_post
+       Limited
+Signif   FALSE   TRUE   <NA>    Sum
+  FALSE  10953      0      0  10953
+  TRUE     296   2693      0   2989
+  <NA>       0      0 951975 951975
+  Sum    11249   2693 951975 965917
+
+$Br8667_ant
+       Limited
+Signif    FALSE    TRUE    <NA>     Sum
+  FALSE   28072       0       0   28072
+  TRUE      272    5534       0    5806
+  <NA>        0       0 1841228 1841228
+  Sum     28344    5534 1841228 1875106
+
+$Br8667_mid
+       Limited
+Signif    FALSE    TRUE    <NA>     Sum
+  FALSE   47489       0       0   47489
+  TRUE      142    3992       0    4134
+  <NA>        0       0 2102715 2102715
+  Sum     47631    3992 2102715 2154338
+
+[1] 36601 84756
