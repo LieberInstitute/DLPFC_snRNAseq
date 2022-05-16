@@ -1,0 +1,1 @@
+The raw files (FASTQ) for this dataset were uploaded to synapse. This involves creating 3 metadata files and a "manifest", based on the most recent templates provided (from Synapse). Since templates change with time, the versions referenced for this project are kept in this directory.
