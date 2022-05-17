@@ -1,7 +1,6 @@
 library("SingleCellExperiment")
 library("scuttle")
 library("tidyverse")
-library("patchwork")
 library("here")
 library("sessioninfo")
 
