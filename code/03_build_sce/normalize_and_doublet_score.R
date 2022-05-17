@@ -97,7 +97,7 @@ round(100 * sweep(qc_t, 1, qc_t[, 3], "/"), 1)
 # Br2720_mid   82.8  17.2 100.0
 # Br2720_post  99.3   0.7 100.0
 # Br2743_ant   89.5  10.5 100.0
-# Br2743_mid   79.5  20.5 100.0
+# Br2743_mid   79.5  20.5 100.0 *
 # Br3942_ant   83.0  17.0 100.0
 # Br3942_mid   99.4   0.6 100.0
 # Br6423_ant   97.5   2.5 100.0
@@ -107,8 +107,8 @@ round(100 * sweep(qc_t, 1, qc_t[, 3], "/"), 1)
 # Br6471_mid   88.3  11.7 100.0
 # Br6522_mid   99.2   0.8 100.0
 # Br6522_post  99.5   0.5 100.0
-# Br8325_ant   79.1  20.9 100.0
-# Br8325_mid   80.6  19.4 100.0
+# Br8325_ant   79.1  20.9 100.0 *
+# Br8325_mid   80.6  19.4 100.0 *
 # Br8492_mid   96.3   3.7 100.0
 # Br8492_post  89.0  11.0 100.0
 # Br8667_ant   99.4   0.6 100.0
@@ -154,6 +154,27 @@ dev.off()
 ## To speed up, run on sample-level top-HVGs - just take top 1000 
 set.seed(506)
 
+colData(sce)$doubletScore <- NA
+
+for(i in splitit(sce$Sample)){
+  message(length(i))
+  
+  sce_temp <- sce[,i]
+  ## To speed up, run on sample-level top-HVGs - just take top 1000 
+  normd <- logNormCounts(sce_temp)
+  geneVar <- modelGeneVar(normd)
+  topHVGs <- getTopHVGs(geneVar, n=1000)
+  
+  dbl_dens <- computeDoubletDensity(normd, subset.row=topHVGs)
+  colData(sce)$doubletScore[i] <- dbl_dens
+  
+}
+
+summary(sce$doubletScore)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# 0.0000  0.1439  0.4391  0.8215  1.0823 31.4607 
+
+
 dbl_dens_sample <- map(splitit(sce$Sample), function(s){
   sce_temp <- sce[,s]
   ## To speed up, run on sample-level top-HVGs - just take top 1000 
@@ -162,24 +183,18 @@ dbl_dens_sample <- map(splitit(sce$Sample), function(s){
   topHVGs <- getTopHVGs(geneVar, n=1000)
   
   dbl_dens <- computeDoubletDensity(normd, subset.row=topHVGs)
+  colData(sce)$doubletScore[s] <- dbl_dens
   return(dbl_dens)
 })
 
-map_dbl(dbl_dens_sample, median)
-# Br2720_mid Br2720_post  Br2743_ant  Br2743_mid  Br3942_ant  Br3942_mid  Br6423_ant Br6423_post  Br6432_ant  Br6471_ant 
-# 0.314412    1.047200    0.377364    0.267228    0.376140    0.448136    0.351912    0.300958    0.480480    0.347712 
-# Br6471_mid  Br6522_mid Br6522_post  Br8325_ant  Br8325_mid  Br8492_mid Br8492_post  Br8667_ant  Br8667_mid 
-# 0.278304    1.654350    1.812490    0.297550    0.249500    0.456632    0.514108    0.429644    0.471276 
-
-map(dbl_dens_sample, ~round(quantile(.x, probs=seq(0,1,by=0.05)),1))
-
 ## Visualize doublet scores ##
 
-dbl_df <- stack(dbl_dens_sample) %>%
-  rename(dbl_score = values, Sample = ind)
+dbl_df <- colData(sce) %>%
+  as.data.frame() %>%
+  select(Sample, doubletScore)
 
 dbl_box_plot <- dbl_df %>%
-  ggplot(aes(x = reorder(Sample, dbl_score, FUN = median), y = dbl_score)) +
+  ggplot(aes(x = reorder(Sample, doubletScore, FUN = median), y = doubletScore)) +
   geom_boxplot() +
   labs(x = "Sample") +
   geom_hline(yintercept = 5, color = "red", linetype = "dashed") +
@@ -189,7 +204,7 @@ dbl_box_plot <- dbl_df %>%
 ggsave(dbl_box_plot, filename = here("plots","03_build_sce","doublet_scores_boxplot.png"))
 
 dbl_density_plot <- dbl_df %>%
-  ggplot(aes(x  = dbl_score)) +
+  ggplot(aes(x  = doubletScore)) +
   geom_density() +
   labs(x = "doublet score") +
   facet_grid(Sample ~ .) +
@@ -197,27 +212,51 @@ dbl_density_plot <- dbl_df %>%
 
 ggsave(dbl_density_plot, filename = here("plots","03_build_sce","doublet_scores_desnity.png"), height = 17)
 
+dbl_df %>%
+  group_by(Sample) %>%
+  summarize(median = median(doubletScore),
+            q95 = quantile(doubletScore, .95),
+            drop = sum(doubletScore >= 5),
+            drop_precent = 100*drop/n())
 
-# Percent that would be dropped at density score >= 5
-map_int(dbl_dens_sample,  ~sum(.x >= 5))
-# Br2720_mid Br2720_post  Br2743_ant  Br2743_mid  Br3942_ant  Br3942_mid  Br6423_ant Br6423_post  Br6432_ant  Br6471_ant 
-# 45          97          21          11          52           5          30          23          32          37 
-# Br6471_mid  Br6522_mid Br6522_post  Br8325_ant  Br8325_mid  Br8492_mid Br8492_post  Br8667_ant  Br8667_mid 
-# 49         135         366          60          31          10           4          39          12 
-map_dbl(dbl_dens_sample,  ~round(100*sum(.x >= 5)/length(.x), 1))
-# Br2720_mid Br2720_post  Br2743_ant  Br2743_mid  Br3942_ant  Br3942_mid  Br6423_ant Br6423_post  Br6432_ant  Br6471_ant 
-# 1.2         1.6         0.7         0.3         0.8         0.1         0.8         0.6         0.9         1.0 
-# Br6471_mid  Br6522_mid Br6522_post  Br8325_ant  Br8325_mid  Br8492_mid Br8492_post  Br8667_ant  Br8667_mid 
-# 0.9         3.3         8.5         1.0         0.6         0.2         0.1         0.7         0.3 
+# Sample      median   q95  drop drop_precent
+# <chr>        <dbl> <dbl> <int>        <dbl>
+# 1 Br2720_mid   0.299  1.81    44       1.18  
+# 2 Br2720_post  1.01   3.72    89       1.50  
+# 3 Br2743_ant   0.400  1.79    23       0.719 
+# 4 Br2743_mid   0.281  1.19    12       0.350 
+# 5 Br3942_ant   0.376  1.42    51       0.814 
+# 6 Br3942_mid   0.448  1.66     6       0.139 
+# 7 Br6423_ant   0.376  1.98    30       0.750 
+# 8 Br6423_post  0.301  1.82    23       0.566 
+# 9 Br6432_ant   0.474  2.45    33       0.962 
+# 10 Br6471_ant   0.355  1.62    35       0.966 
+# 11 Br6471_mid   0.278  1.48    46       0.859 
+# 12 Br6522_mid   1.62   4.71   145       3.59  
+# 13 Br6522_post  1.85   5.72   352       8.20  
+# 14 Br8325_ant   0.321  1.51    60       1.01  
+# 15 Br8325_mid   0.250  1.19    34       0.681 
+# 16 Br8492_mid   0.477  2.18    10       0.193 
+# 17 Br8492_post  0.496  1.80     1       0.0335
+# 18 Br8667_ant   0.453  2.23    33       0.568 
+# 19 Br8667_mid   0.451  2.44    14       0.339 
 
 
-cn_test <- map(splitit(sce$Sample), function(s){
-  sce_temp <- sce[,s]
-  return(colnames(sce_temp))})
+table(sce$discard_auto, sce$doubletScore >= 5)
+#       FALSE  TRUE
+# FALSE 76581  1023
+# TRUE   7134    18
 
-cn_test2 <- unlist(cn_test)[unlist(splitit(sce$Sample))]
 
-table(cn_test2 == colnames(sce))
-table(head(unlist(cn_test)) == head(colnames(sce)))
-all(unlist(cn_test) == colnames(sce))
 
+## Save data
+save(sce, file = here::here("processed-data", "sce", "sce_DLPFC.Rdata"))
+
+# sgejobs::job_single('normalize_and_doublet_score', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript normalize_and_doublet_score.R")
+
+## Reproducibility information
+print('Reproducibility information:')
+Sys.time()
+proc.time()
+options(width = 120)
+session_info()
