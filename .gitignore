@@ -3,3 +3,4 @@
 .RData
 .Ruserdata
 raw-data/FASTQ/
+raw-data/FASTQ_renamed/*.fastq.gz

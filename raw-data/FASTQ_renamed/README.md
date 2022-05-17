@@ -1,0 +1,1 @@
+This directory was created because the `FASTQ` directory had filenames with an inconsistent naming convention. Symbolic links were created here so that FASTQs uploaded to Synapse have a consistent naming convention that always contains sample ID.
