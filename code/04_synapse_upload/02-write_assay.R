@@ -4,26 +4,21 @@
 library('sessioninfo')
 library('here')
 library('readxl')
-library('SingleCellExperiment')
 
-sce_path = here("processed-data", "sce", "sce_raw.Rdata")
 write_path = here('processed-data', '04_synapse_upload', 'assay.csv')
+pd_path = here('processed-data', '04_synapse_upload', 'pd.csv')
 template_path = here(
     'raw-data', 'synapse_templates', 'template_assay_rnaSeq.xlsx'
 )
-
-dir.create(dirname(write_path), showWarnings = FALSE)
-
-load(sce_path, verbose = TRUE)
-
-pd = colData(sce)
 
 ###############################################################################
 #  Populate assay data frame
 ###############################################################################
 
+pd = read.csv(pd_path)
+
 meta_df = data.frame(
-    'specimenID' = ids,
+    'specimenID' = pd$Sample,
     'libraryID' = NA,
     'assay' = 'scrnaSeq',
     'platform' = stop(),
@@ -37,11 +32,11 @@ meta_df = data.frame(
     'libraryPreparationMethod' = NA,
     'libraryVersion' = stop(),
     'libraryType' = stop(),
-    'isStranded' = FALSE,
+    'isStranded' = stop(),
     'readStrandOrigin' = NA,
-    'readLength' = 150,
+    'readLength' = stop(),
     'runType' = 'pairedEnd',
-    'totalReads' = total_reads,
+    'totalReads' = stop(),
     'validBarcodeReads' = stop(),
     'numberCells' = stop(),
     'medianGenes' = stop(),
