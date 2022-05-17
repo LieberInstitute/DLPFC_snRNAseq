@@ -59,6 +59,11 @@ fastq_new = lapply(
             '.fastq.gz'
         )
         
+        #   Verify our assumption that mates line up
+        stopifnot(all(
+            grep('_R1_', new_names) == grep('_R1_', basename(fastq_old[[i]]))
+        ))
+        
         return(file.path(dest_dir, new_names))
     }
 )
