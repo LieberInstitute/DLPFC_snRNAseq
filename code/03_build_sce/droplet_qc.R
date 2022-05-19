@@ -310,8 +310,32 @@ table(sce$discard_auto, sce$doubletScore >= 5)
 # TRUE   7134    18
 
 
-## Save for later
+## Save
 save(sce, file = here::here("processed-data", "sce", "sce_no_empty_droplets.Rdata"))
+
+## Save out sample info for easy access
+pd <- colData(sce) %>% as.data.frame()
+
+sample_info <- pd %>% 
+  group_by(Sample, file_id, region, subject, round) %>%
+  summarize(n = n(),
+            n_high_mito = sum(high_mito),
+            n_low_sum = sum(low_sum),
+            n_low_detect = sum(low_detected),
+            n_discard_auto = sum(discard_auto)
+            )
+
+write_csv(sample_info, file = here("processed-data", "03_build_sce","sample_info.csv"))
+
+n_boxplot <- sample_info %>%
+  ggplot(aes(x= round, y = n, color = round)) + 
+  geom_boxplot(outlier.shape = NA) + 
+  geom_point() +
+  ggrepel::geom_text_repel(aes(label = Sample), color = "black") +
+  my_theme +
+  theme(legend.position = "None")
+
+ggsave(n_boxplot , filename = here("plots","03_build_sce", "droplet_qc" ,"n_nuclei_boxplot.png"))
 
 # sgejobs::job_single('droplet_qc', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript droplet_qc.R")
 
