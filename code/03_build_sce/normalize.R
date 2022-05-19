@@ -1,8 +1,6 @@
 library("SingleCellExperiment")
 library("scran")
 library("scater")
-# # library("jaffelab")
-# library("tidyverse")
 library("batchelor")
 library("here")
 library("sessioninfo")
@@ -25,14 +23,15 @@ sum(chosen.hvgs)
 # [1] 13254
 
 #### How does the un-normalized data look? ####
-uncorrected <- runPCA(sce, subset_row=chosen.hvgs,
-                      BSPARAM=BiocSingular::RandomParam())
-
-uncorrected <- runTSNE(uncorrected, dimred="PCA")
-
-save(uncorrected, file = here("processed-data", "03_build_sce","uncorrected_TSNE.Rdata"))
-
-plotTSNE(uncorrected, colour_by="batch")
+## move to test
+# uncorrected <- runPCA(sce, subset_row=chosen.hvgs,
+#                       BSPARAM=BiocSingular::RandomParam())
+# 
+# uncorrected <- runTSNE(uncorrected, dimred="PCA")
+# 
+# save(uncorrected, file = here("processed-data", "03_build_sce","uncorrected_TSNE.Rdata"))
+# 
+# plotTSNE(uncorrected, colour_by="batch")
 
 #### Preform Batch Correction with MNN ####
 
@@ -57,10 +56,6 @@ metadata(sce) <- metadata(mnn.hold)
 ## t-SNE
 set.seed(109)
 sce <- runTSNE(sce, dimred="PCA_corrected")
-
-
-## UMAP
-set.seed(109)
 sce <- runUMAP(sce, dimred="PCA_corrected")
 
 
@@ -77,12 +72,11 @@ plotReducedDim(sce, dimred="UMAP", colour_by="subject")
 plotReducedDim(sce, dimred="UMAP", colour_by="Sample")
 dev.off()
 
-plotReducedDim(sce, dimred="UMAP", colour_by="sampleID")
 
 ## Save data
 save(sce, file = here("processed-data", "sce", "sce_DLPFC.Rdata"))
 
-# sgejobs::job_single('normalize_and_doublet_score', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript normalize_and_doublet_score.R")
+# sgejobs::job_single('normalize', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript normalize.R")
 
 ## Reproducibility information
 print('Reproducibility information:')
