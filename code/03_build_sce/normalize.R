@@ -1,8 +1,8 @@
 library("SingleCellExperiment")
 library("scran")
 library("scater")
-# library("jaffelab")
-library("tidyverse")
+# # library("jaffelab")
+# library("tidyverse")
 library("batchelor")
 library("here")
 library("sessioninfo")
@@ -14,10 +14,11 @@ my_theme <- theme_bw() +
 ## Load empty-free sce data
 load(here("processed-data", "sce", "sce_no_empty_droplets.Rdata"), verbose = TRUE)
 
+#### Rescale ####
 # Use `multiBatchNorm()` to compute log-normalized counts
 sce <- multiBatchNorm(sce, batch=sce$round)
 
-# Use the simple `modelGeneVar`
+# Find HVGs
 geneVar <- modelGeneVar(sce)
 chosen.hvgs <- geneVar$bio > 0
 sum(chosen.hvgs)
@@ -34,8 +35,9 @@ save(uncorrected, file = here("processed-data", "03_build_sce","uncorrected_TSNE
 plotTSNE(uncorrected, colour_by="batch")
 
 #### Preform Batch Correction with MNN ####
-## 19 samples over 5 batches aka "rounds"
-## should we use "Sample", "Round", or "subject" for correction?
+
+## should we use "Sample" (19), "Round" (5), or "subject" (?) for correction?
+
 table(sce$round)
 # round0 round1 round2 round3 round4 round5 
 # 3426  10797  16671  20606  16509  16747 
@@ -47,13 +49,11 @@ mnn.hold <-  fastMNN(sce, batch=sce$round,
                      correct.all=TRUE, get.variance=TRUE,
                      BSPARAM=BiocSingular::IrlbaParam())
 
-# save(mnn.hold, file = here("processed-data", "03_build_sce","mnn.Rdata"))
-
 # Add them to the SCE, as well as the metadata
 reducedDim(sce, "PCA_corrected") <- reducedDim(mnn.hold, "corrected") # 100 components
 metadata(sce) <- metadata(mnn.hold)
 
-## Find optimal PC space?
+## Should we find optimal PC space? - use all 100 for now
 ## t-SNE
 set.seed(109)
 sce <- runTSNE(sce, dimred="PCA_corrected")
@@ -61,11 +61,22 @@ sce <- runTSNE(sce, dimred="PCA_corrected")
 
 ## UMAP
 set.seed(109)
-sce <- runUMAP(sce, dimred="PCA_opt")
+sce <- runUMAP(sce, dimred="PCA_corrected")
 
 
 # How do these look?
-plotReducedDim(sce, dimred="TSNE", colour_by="sampleID")
+pdf(file = here("plots","03_build_sce","MNN_TSNE.pdf"))
+plotReducedDim(sce, dimred="TSNE", colour_by="round")
+plotReducedDim(sce, dimred="TSNE", colour_by="subject")
+plotReducedDim(sce, dimred="TSNE", colour_by="Sample")
+dev.off()
+
+pdf(file = here("plots","03_build_sce","MNN_UMAP.pdf"))
+plotReducedDim(sce, dimred="UMAP", colour_by="round")
+plotReducedDim(sce, dimred="UMAP", colour_by="subject")
+plotReducedDim(sce, dimred="UMAP", colour_by="Sample")
+dev.off()
+
 plotReducedDim(sce, dimred="UMAP", colour_by="sampleID")
 
 ## Save data
