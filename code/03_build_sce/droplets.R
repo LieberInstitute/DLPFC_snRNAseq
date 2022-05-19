@@ -34,7 +34,7 @@ addmargins(table(Signif = e.out$FDR <= 0.001, Limited = e.out$Limited, useNA = "
 #   TRUE     33021   136704        0   169725
 #   <NA>         0        0 25160671 25160671
 #   Sum    1308431   136704 25160671 26605806
-  
+
 ## Eliminate empty droplets
 sce <- sce[, which(e.out$FDR <= 0.001)]
 
@@ -49,7 +49,7 @@ sce <- addPerCellQC(
 save(sce, file = here::here("processed-data", "sce", "sce_no_empty_droplets.Rdata"))
 
 ## Reproducibility information
-print('Reproducibility information:')
+print("Reproducibility information:")
 Sys.time()
 proc.time()
 options(width = 120)

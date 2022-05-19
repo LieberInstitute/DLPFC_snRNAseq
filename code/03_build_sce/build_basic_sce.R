@@ -43,10 +43,10 @@ rm(m, spe)
 ## Build basic SCE
 Sys.time()
 sce <- read10xCounts(
-  sample_info$sample_path,
-  sample_info$Sample,
-  type = "sparse",
-  col.names = TRUE
+    sample_info$sample_path,
+    sample_info$Sample,
+    type = "sparse",
+    col.names = TRUE
 )
 Sys.time()
 # [1] "2021-11-30 10:25:04 EST"
@@ -66,9 +66,9 @@ colData(sce) <- new_col
 ## Use code from https://github.com/LieberInstitute/Visium_IF_AD/commit/08df3f7e4a3178563d6b4b1861b664b21466b395#diff-10cb35de98e2a3e5f4235cd88f6dabce5469eead2b2db1fd7121126849fcf585L100
 ## Read in the gene information from the annotation GTF file
 gtf <-
-  rtracklayer::import(
-    "/dcs04/lieber/lcolladotor/annotationFiles_LIBD001/10x/refdata-gex-GRCh38-2020-A/genes/genes.gtf"
-  )
+    rtracklayer::import(
+        "/dcs04/lieber/lcolladotor/annotationFiles_LIBD001/10x/refdata-gex-GRCh38-2020-A/genes/genes.gtf"
+    )
 gtf <- gtf[gtf$type == "gene"]
 names(gtf) <- gtf$gene_id
 
@@ -108,7 +108,7 @@ lobstr::obj_size(sce) / 1024^3
 # 15.52167
 
 ## Reproducibility information
-print('Reproducibility information:')
+print("Reproducibility information:")
 Sys.time()
 proc.time()
 options(width = 120)
@@ -226,4 +226,3 @@ session_info()
 #  [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1.x/R/4.1.x/lib64/R/library
 #
 # ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-

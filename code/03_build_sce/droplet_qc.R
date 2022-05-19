@@ -12,17 +12,18 @@ library("sessioninfo")
 
 ## plot set up
 my_theme <- theme_bw() +
-  theme(text = element_text(size=15))
+    theme(text = element_text(size = 15))
 
 
 ## Load raw data
 load(here("processed-data", "sce", "sce_raw.Rdata"), verbose = TRUE)
 length(table(sce$Sample))
 
-droplet_score_fn <- list.files(here("processed-data", "03_build_sce","droplet_scores"),
-                               full.names = TRUE)
+droplet_score_fn <- list.files(here("processed-data", "03_build_sce", "droplet_scores"),
+    full.names = TRUE
+)
 
-names(droplet_score_fn)  <- gsub("droplet_scores_|.Rdata","",basename(droplet_score_fn))
+names(droplet_score_fn) <- gsub("droplet_scores_|.Rdata", "", basename(droplet_score_fn))
 
 e.out <- lapply(droplet_score_fn, function(x) get(load(x)))
 
@@ -30,27 +31,27 @@ e.out <- lapply(droplet_score_fn, function(x) get(load(x)))
 FDR_cutoff <- 0.001
 
 drop_summary <- stack(map_int(e.out, nrow)) %>%
-  rename(total_n = values) %>% 
-  left_join(stack(map_int(e.out, ~sum(.x$FDR < FDR_cutoff, na.rm = TRUE))) %>%
-              rename(non_empty = values)) %>%
-  select(Sample = ind, total_n, non_empty)
+    rename(total_n = values) %>%
+    left_join(stack(map_int(e.out, ~ sum(.x$FDR < FDR_cutoff, na.rm = TRUE))) %>%
+        rename(non_empty = values)) %>%
+    select(Sample = ind, total_n, non_empty)
 
-write_csv(drop_summary, file = here("processed-data", "03_build_sce","drop_summary.csv"))
+write_csv(drop_summary, file = here("processed-data", "03_build_sce", "drop_summary.csv"))
 
 drop_summary %>%
-  arrange(non_empty)
+    arrange(non_empty)
 
 summary(drop_summary$non_empty)
-# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-# 2989    3682    4134    4461    5270    6269 
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 2989    3682    4134    4461    5270    6269
 
 ## compare to default drop empty
-drop_summary_defualt <- read.csv(here("processed-data", "03_build_sce","drop_summary_default.csv"))
+drop_summary_defualt <- read.csv(here("processed-data", "03_build_sce", "drop_summary_default.csv"))
 
-drop_summary %>% 
-  left_join(drop_summary_defualt) %>% 
-  mutate(d = non_empty_default - non_empty) %>%
-  arrange(d)
+drop_summary %>%
+    left_join(drop_summary_defualt) %>%
+    mutate(d = non_empty_default - non_empty) %>%
+    arrange(d)
 
 #         Sample total_n non_empty non_empty_default     d
 # 1   Br2743_ant  655424      3198              2975  -223
@@ -74,22 +75,22 @@ drop_summary %>%
 # 19 Br6423_post 1786747      4067             91276 87209
 
 drop_barplot <- drop_summary %>%
-  mutate(empty = total_n - non_empty) %>%
-  select(-total_n) %>%
-  pivot_longer(!Sample, names_to = "drop_type", values_to = "n_drop") %>%
-  ggplot(aes(x = Sample, y = n_drop, fill = drop_type))+
-  geom_col() +
-  scale_y_continuous(trans='log10') +
-  my_theme +
-  theme(axis.text.x=element_text(angle=45, hjust = 1))
+    mutate(empty = total_n - non_empty) %>%
+    select(-total_n) %>%
+    pivot_longer(!Sample, names_to = "drop_type", values_to = "n_drop") %>%
+    ggplot(aes(x = Sample, y = n_drop, fill = drop_type)) +
+    geom_col() +
+    scale_y_continuous(trans = "log10") +
+    my_theme +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-ggsave(drop_barplot, filename = here("plots","03_build_sce", "drop_barplot.png"), width = 9)
+ggsave(drop_barplot, filename = here("plots", "03_build_sce", "drop_barplot.png"), width = 9)
 
 ## Check empty droplet results
-map(e.out, ~addmargins(table(Signif = .x$FDR <= FDR_cutoff, Limited = .x$Limited, useNA = "ifany")))
+map(e.out, ~ addmargins(table(Signif = .x$FDR <= FDR_cutoff, Limited = .x$Limited, useNA = "ifany")))
 
 #### Eliminate empty droplets ####
-e.out.all <- do.call("rbind", e.out)[colnames(sce),]
+e.out.all <- do.call("rbind", e.out)[colnames(sce), ]
 sce <- sce[, which(e.out.all$FDR <= 0.001)]
 
 dim(sce)
@@ -97,35 +98,35 @@ dim(sce)
 
 #### Compute QC metrics ####
 sce <- scuttle::addPerCellQC(
-  sce,
-  subsets = list(Mito = which(seqnames(sce) == "chrM")),
-  BPPARAM = BiocParallel::MulticoreParam(4)
+    sce,
+    subsets = list(Mito = which(seqnames(sce) == "chrM")),
+    BPPARAM = BiocParallel::MulticoreParam(4)
 )
 
 
 #### Check for low quality nuc ####
 ## High mito
 # sce$high.mito.sample ## standard name?
-sce$high_mito <- isOutlier(sce$subsets_Mito_percent, nmads=3, type="higher", batch = sce$Sample)
+sce$high_mito <- isOutlier(sce$subsets_Mito_percent, nmads = 3, type = "higher", batch = sce$Sample)
 table(sce$high_mito)
-# FALSE  TRUE 
-# 78197  6559 
+# FALSE  TRUE
+# 78197  6559
 table(sce$high_mito, sce$Sample)
 
 
 ## low library size
 # sce$qc.lib ## standard name?
-sce$low_sum <- isOutlier(sce$sum, log=TRUE, type="lower", batch = sce$Sample)
+sce$low_sum <- isOutlier(sce$sum, log = TRUE, type = "lower", batch = sce$Sample)
 table(sce$low_sum)
-# FALSE  TRUE 
+# FALSE  TRUE
 # 84294   462
 
 
 ## low detected features
 # sce$qc.detected
-sce$low_detected <- isOutlier(sce$detected, log=TRUE, type="lower", batch = sce$Sample)
+sce$low_detected <- isOutlier(sce$detected, log = TRUE, type = "lower", batch = sce$Sample)
 table(sce$low_detected)
-# FALSE  TRUE 
+# FALSE  TRUE
 # 83513  1243
 
 ## All low sum are also low detected
@@ -138,11 +139,11 @@ table(sce$low_sum, sce$low_detected)
 sce$discard_auto <- sce$high_mito | sce$low_sum | sce$low_detected
 
 table(sce$discard_auto)
-# FALSE  TRUE 
+# FALSE  TRUE
 # 77604  7152
 
 ## discard 8% of nuc
-100*sum(sce$discard_auto)/ncol(sce)
+100 * sum(sce$discard_auto) / ncol(sce)
 # [1] 8.438341
 
 (qc_t <- addmargins(table(sce$Sample, sce$discard_auto)))
@@ -192,116 +193,120 @@ round(100 * sweep(qc_t, 1, qc_t[, 3], "/"), 1)
 # Sum          91.6   8.4 100.0
 
 #### QC plots ####
-pdf(here("plots","03_build_sce","QC_outliers.pdf"), width = 21)
+pdf(here("plots", "03_build_sce", "QC_outliers.pdf"), width = 21)
 ## Mito rate
-plotColData(sce, x = "Sample", y="subsets_Mito_percent", colour_by="high_mito") +
-  ggtitle("Mito Precent")+
-  facet_wrap(~sce$round, scales = "free_x", nrow = 1)
+plotColData(sce, x = "Sample", y = "subsets_Mito_percent", colour_by = "high_mito") +
+    ggtitle("Mito Precent") +
+    facet_wrap(~ sce$round, scales = "free_x", nrow = 1)
 
 # ## low sum
-plotColData(sce, x = "Sample", y="sum", colour_by="low_sum") +
-  scale_y_log10() +
-  ggtitle("Total count") +
-  facet_wrap(~sce$round, scales = "free_x", nrow = 1)
+plotColData(sce, x = "Sample", y = "sum", colour_by = "low_sum") +
+    scale_y_log10() +
+    ggtitle("Total count") +
+    facet_wrap(~ sce$round, scales = "free_x", nrow = 1)
 # +
 #   geom_hline(yintercept = 1000) ## hline doesn't work w/ facet_wrap?
 
 # ## low detected
-plotColData(sce, x = "Sample", y="detected", colour_by="low_detected") +
-  scale_y_log10() +
-  ggtitle("Detected features") +
-  # geom_hline(yintercept = 500)+
-  facet_wrap(~sce$round, scales = "free_x", nrow = 1)
+plotColData(sce, x = "Sample", y = "detected", colour_by = "low_detected") +
+    scale_y_log10() +
+    ggtitle("Detected features") +
+    # geom_hline(yintercept = 500)+
+    facet_wrap(~ sce$round, scales = "free_x", nrow = 1)
 
 # Mito rate vs n detected features
 
-plotColData(sce, x="detected", y="subsets_Mito_percent",
-            colour_by="discard_auto", point_size=2.5, point_alpha=0.5) 
+plotColData(sce,
+    x = "detected", y = "subsets_Mito_percent",
+    colour_by = "discard_auto", point_size = 2.5, point_alpha = 0.5
+)
 
 # Detected features vs total count
 
-plotColData(sce, x="sum", y="detected",
-            colour_by="discard_auto", point_size=2.5, point_alpha=0.5) 
+plotColData(sce,
+    x = "sum", y = "detected",
+    colour_by = "discard_auto", point_size = 2.5, point_alpha = 0.5
+)
 
 dev.off()
 
 
 #### Doublet detection ####
-## To speed up, run on sample-level top-HVGs - just take top 1000 
+## To speed up, run on sample-level top-HVGs - just take top 1000
 set.seed(506)
 
 colData(sce)$doubletScore <- NA
 
-for(i in splitit(sce$Sample)){
+for (i in splitit(sce$Sample)) {
+    sce_temp <- sce[, i]
+    ## To speed up, run on sample-level top-HVGs - just take top 1000
+    normd <- logNormCounts(sce_temp)
+    geneVar <- modelGeneVar(normd)
+    topHVGs <- getTopHVGs(geneVar, n = 1000)
 
-  sce_temp <- sce[,i]
-  ## To speed up, run on sample-level top-HVGs - just take top 1000 
-  normd <- logNormCounts(sce_temp)
-  geneVar <- modelGeneVar(normd)
-  topHVGs <- getTopHVGs(geneVar, n=1000)
-  
-  dbl_dens <- computeDoubletDensity(normd, subset.row=topHVGs)
-  colData(sce)$doubletScore[i] <- dbl_dens
-  
+    dbl_dens <- computeDoubletDensity(normd, subset.row = topHVGs)
+    colData(sce)$doubletScore[i] <- dbl_dens
 }
 
 summary(sce$doubletScore)
-# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-# 0.0000  0.1439  0.4391  0.8215  1.0823 31.4607 
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
+# 0.0000  0.1439  0.4391  0.8215  1.0823 31.4607
 
 ## Visualize doublet scores ##
 
 dbl_df <- colData(sce) %>%
-  as.data.frame() %>%
-  select(Sample, doubletScore)
+    as.data.frame() %>%
+    select(Sample, doubletScore)
 
 dbl_box_plot <- dbl_df %>%
-  ggplot(aes(x = reorder(Sample, doubletScore, FUN = median), y = doubletScore)) +
-  geom_boxplot() +
-  labs(x = "Sample") +
-  geom_hline(yintercept = 5, color = "red", linetype = "dashed") +
-  coord_flip() +
-  my_theme
+    ggplot(aes(x = reorder(Sample, doubletScore, FUN = median), y = doubletScore)) +
+    geom_boxplot() +
+    labs(x = "Sample") +
+    geom_hline(yintercept = 5, color = "red", linetype = "dashed") +
+    coord_flip() +
+    my_theme
 
-ggsave(dbl_box_plot, filename = here("plots","03_build_sce","doublet_scores_boxplot.png"))
+ggsave(dbl_box_plot, filename = here("plots", "03_build_sce", "doublet_scores_boxplot.png"))
 
 dbl_density_plot <- dbl_df %>%
-  ggplot(aes(x  = doubletScore)) +
-  geom_density() +
-  labs(x = "doublet score") +
-  facet_grid(Sample ~ .) +
-  theme_bw()
+    ggplot(aes(x = doubletScore)) +
+    geom_density() +
+    labs(x = "doublet score") +
+    facet_grid(Sample ~ .) +
+    theme_bw()
 
-ggsave(dbl_density_plot, filename = here("plots","03_build_sce","doublet_scores_desnity.png"), height = 17)
+ggsave(dbl_density_plot, filename = here("plots", "03_build_sce", "doublet_scores_desnity.png"), height = 17)
 
 dbl_df %>%
-  group_by(Sample) %>%
-  summarize(median = median(doubletScore),
-            q95 = quantile(doubletScore, .95),
-            drop = sum(doubletScore >= 5),
-            drop_precent = 100*drop/n())
+    group_by(Sample) %>%
+    summarize(
+        median = median(doubletScore),
+        q95 = quantile(doubletScore, .95),
+        drop = sum(doubletScore >= 5),
+        drop_precent = 100 * drop / n()
+    )
 
 # Sample      median   q95  drop drop_precent
 # <chr>        <dbl> <dbl> <int>        <dbl>
-# 1 Br2720_mid   0.299  1.81    44       1.18  
-# 2 Br2720_post  1.01   3.72    89       1.50  
-# 3 Br2743_ant   0.400  1.79    23       0.719 
-# 4 Br2743_mid   0.281  1.19    12       0.350 
-# 5 Br3942_ant   0.376  1.42    51       0.814 
-# 6 Br3942_mid   0.448  1.66     6       0.139 
-# 7 Br6423_ant   0.376  1.98    30       0.750 
-# 8 Br6423_post  0.301  1.82    23       0.566 
-# 9 Br6432_ant   0.474  2.45    33       0.962 
-# 10 Br6471_ant   0.355  1.62    35       0.966 
-# 11 Br6471_mid   0.278  1.48    46       0.859 
-# 12 Br6522_mid   1.62   4.71   145       3.59  
-# 13 Br6522_post  1.85   5.72   352       8.20  
-# 14 Br8325_ant   0.321  1.51    60       1.01  
-# 15 Br8325_mid   0.250  1.19    34       0.681 
-# 16 Br8492_mid   0.477  2.18    10       0.193 
+# 1 Br2720_mid   0.299  1.81    44       1.18
+# 2 Br2720_post  1.01   3.72    89       1.50
+# 3 Br2743_ant   0.400  1.79    23       0.719
+# 4 Br2743_mid   0.281  1.19    12       0.350
+# 5 Br3942_ant   0.376  1.42    51       0.814
+# 6 Br3942_mid   0.448  1.66     6       0.139
+# 7 Br6423_ant   0.376  1.98    30       0.750
+# 8 Br6423_post  0.301  1.82    23       0.566
+# 9 Br6432_ant   0.474  2.45    33       0.962
+# 10 Br6471_ant   0.355  1.62    35       0.966
+# 11 Br6471_mid   0.278  1.48    46       0.859
+# 12 Br6522_mid   1.62   4.71   145       3.59
+# 13 Br6522_post  1.85   5.72   352       8.20
+# 14 Br8325_ant   0.321  1.51    60       1.01
+# 15 Br8325_mid   0.250  1.19    34       0.681
+# 16 Br8492_mid   0.477  2.18    10       0.193
 # 17 Br8492_post  0.496  1.80     1       0.0335
-# 18 Br8667_ant   0.453  2.23    33       0.568 
-# 19 Br8667_mid   0.451  2.44    14       0.339 
+# 18 Br8667_ant   0.453  2.23    33       0.568
+# 19 Br8667_mid   0.451  2.44    14       0.339
 
 
 table(sce$discard_auto, sce$doubletScore >= 5)
@@ -316,31 +321,32 @@ save(sce, file = here::here("processed-data", "sce", "sce_no_empty_droplets.Rdat
 ## Save out sample info for easy access
 pd <- colData(sce) %>% as.data.frame()
 
-sample_info <- pd %>% 
-  group_by(Sample, file_id, region, subject, round) %>%
-  summarize(n = n(),
-            n_high_mito = sum(high_mito),
-            n_low_sum = sum(low_sum),
-            n_low_detect = sum(low_detected),
-            n_discard_auto = sum(discard_auto)
-            )
+sample_info <- pd %>%
+    group_by(Sample, file_id, region, subject, round) %>%
+    summarize(
+        n = n(),
+        n_high_mito = sum(high_mito),
+        n_low_sum = sum(low_sum),
+        n_low_detect = sum(low_detected),
+        n_discard_auto = sum(discard_auto)
+    )
 
-write_csv(sample_info, file = here("processed-data", "03_build_sce","sample_info.csv"))
+write_csv(sample_info, file = here("processed-data", "03_build_sce", "sample_info.csv"))
 
 n_boxplot <- sample_info %>%
-  ggplot(aes(x= round, y = n, color = round)) + 
-  geom_boxplot(outlier.shape = NA) + 
-  geom_point() +
-  ggrepel::geom_text_repel(aes(label = Sample), color = "black") +
-  my_theme +
-  theme(legend.position = "None")
+    ggplot(aes(x = round, y = n, color = round)) +
+    geom_boxplot(outlier.shape = NA) +
+    geom_point() +
+    ggrepel::geom_text_repel(aes(label = Sample), color = "black") +
+    my_theme +
+    theme(legend.position = "None")
 
-ggsave(n_boxplot , filename = here("plots","03_build_sce", "droplet_qc" ,"n_nuclei_boxplot.png"))
+ggsave(n_boxplot, filename = here("plots", "03_build_sce", "droplet_qc", "n_nuclei_boxplot.png"))
 
 # sgejobs::job_single('droplet_qc', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript droplet_qc.R")
 
 ## Reproducibility information
-print('Reproducibility information:')
+print("Reproducibility information:")
 Sys.time()
 proc.time()
 options(width = 120)
@@ -358,7 +364,7 @@ session_info()
 # tz       US/Eastern
 # date     2022-05-06
 # pandoc   2.11.0.4 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-devel/bin/pandoc
-# 
+#
 # ─ Packages ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 # package              * version  date (UTC) lib source
 # assertthat             0.2.1    2019-03-21 [2] CRAN (R 4.1.0)
@@ -439,9 +445,9 @@ session_info()
 # xml2                   1.3.3    2021-11-30 [2] CRAN (R 4.2.0)
 # XVector                0.36.0   2022-04-26 [2] Bioconductor
 # zlibbioc               1.42.0   2022-04-26 [2] Bioconductor
-# 
+#
 # [1] /users/lhuuki/R/devel
 # [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-devel/R/devel/lib64/R/site-library
 # [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-devel/R/devel/lib64/R/library
-# 
+#
 # ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
