@@ -46,14 +46,14 @@ table(sce$round)
 set.seed(519)
 
 ## what about merge order? maybe use auto.merge=TRUE
-message("running fast MNN", Sys.time())
+message("running fast MNN  ", Sys.time())
 mnn.hold <-  fastMNN(sce, batch=sce$round,
                      auto.merge=TRUE,
                      subset.row=chosen.hvgs, d=100,
                      correct.all=TRUE, get.variance=TRUE,
                      BSPARAM=BiocSingular::IrlbaParam())
 
-message("Done MNN", Sys.time())
+message("Done MNN  ", Sys.time())
 
 ## Check out lost variance (looking for < 10%)
 metadata(mnn.hold)$merge.info$lost.var
@@ -70,13 +70,13 @@ metadata(sce) <- metadata(mnn.hold)
 
 ## Should we find optimal PC space? - use all 100 for now
 ## t-SNE
-message("running TSNE + UMAP", Sys.time())
+message("running TSNE + UMAP  ", Sys.time())
 
 set.seed(109)
 sce <- runTSNE(sce, dimred="PCA_corrected")
 sce <- runUMAP(sce, dimred="PCA_corrected")
 
-message("Done TSNE + UMAP", Sys.time())
+message("Done TSNE + UMAP  ", Sys.time())
 
 # How do these look?
 pdf(file = here("plots","03_build_sce","normalize","MNN_TSNE.pdf"))
