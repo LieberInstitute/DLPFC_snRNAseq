@@ -31,7 +31,7 @@ bcRanks <- barcodeRanks(sce, fit.bounds = c(10, 1e3))
 knee_lower <- metadata(bcRanks)$knee + 100
 message(
     "'Second knee point' = ", metadata(bcRanks)$knee, "\n",
-    "knee_lower = ", knee_lower,
+    "knee_lower = ", knee_lower, "\n",
     "user defined lower = ", user_lower
 )
 

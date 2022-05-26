@@ -23,8 +23,8 @@ module load conda_R
 module list
 
 ## Edit with your job command
-Rscript get_droplet_scores_troubleshoot.R Br6522_mid 300
-Rscript get_droplet_scores_troubleshoot.R Br6522_post 300
+Rscript get_droplet_scores_troubleshoot.R Br6522_mid 200
+Rscript get_droplet_scores_troubleshoot.R Br6522_post 200
 
 echo "**** Job ends ****"
 date
