@@ -19,6 +19,10 @@ my_theme <- theme_bw() +
 load(here("processed-data", "sce", "sce_raw.Rdata"), verbose = TRUE)
 length(table(sce$Sample))
 
+pd <- colData(sce) %>% as.data.frame()
+
+round_info <- pd %>% group_by(Sample, round) %>% count()
+
 droplet_score_fn <- list.files(here("processed-data", "03_build_sce", "droplet_scores"),
     full.names = TRUE
 )
@@ -27,14 +31,24 @@ names(droplet_score_fn) <- gsub("droplet_scores_|.Rdata", "", basename(droplet_s
 
 e.out <- lapply(droplet_score_fn, function(x) get(load(x)))
 
+#### Compile drop empty info ####
+## What were the cutoffs? 
+log_fn <- list.files(here("code", "03_build_sce", "logs"), pattern = "get_droplet_scores*", full.names = TRUE)
+logs <- map(log_fn, readLines)
+
+knee_lower <- map_dbl(logs, ~parse_number(.x[grepl("knee_lower =", .x)]))
+names(knee_lower) <- map_chr(logs, ~ss(.x[grepl("Running Sample: ", .x)]," ",3))
+
 ## check out n empty with boxplot
+
 FDR_cutoff <- 0.001
 
 drop_summary <- stack(map_int(e.out, nrow)) %>%
     rename(total_n = values) %>%
     left_join(stack(map_int(e.out, ~ sum(.x$FDR < FDR_cutoff, na.rm = TRUE))) %>%
         rename(non_empty = values)) %>%
-    select(Sample = ind, total_n, non_empty)
+    select(Sample = ind, total_n, non_empty) %>%
+    left_join(stack(knee_lower) %>% rename(Sample = ind, lower_cutoff = values))
 
 write_csv(drop_summary, file = here("processed-data", "03_build_sce", "drop_summary.csv"))
 
@@ -85,6 +99,15 @@ drop_barplot <- drop_summary %>%
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ggsave(drop_barplot, filename = here("plots", "03_build_sce", "drop_barplot.png"), width = 9)
+
+
+drop_v_cutoff <- drop_summary %>%
+    left_join(round_info) %>%
+    ggplot(aes(x = lower_cutoff, y = non_empty, color = round)) +
+    geom_point() +
+    my_theme
+
+ggsave(drop_v_cutoff, filename = here("plots", "03_build_sce", "droplet_qc", "drop_v_cutoff.png"))
 
 ## Check empty droplet results
 map(e.out, ~ addmargins(table(Signif = .x$FDR <= FDR_cutoff, Limited = .x$Limited, useNA = "ifany")))
@@ -319,8 +342,6 @@ table(sce$discard_auto, sce$doubletScore >= 5)
 save(sce, file = here::here("processed-data", "sce", "sce_no_empty_droplets.Rdata"))
 
 ## Save out sample info for easy access
-pd <- colData(sce) %>% as.data.frame()
-
 sample_info <- pd %>%
     group_by(Sample, file_id, region, subject, round) %>%
     summarize(
