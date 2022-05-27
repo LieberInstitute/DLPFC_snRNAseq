@@ -6,10 +6,10 @@ Loading LIBD module for rmate/1.5.9
 Loading LIBD module for ruby/2.6.4p104
 Loading conda_R/devel
 **** Job starts ****
-Thu May 19 15:56:10 EDT 2022
+Fri May 27 14:32:54 EDT 2022
 **** JHPCE info ****
 User: lhuuki
-Job id: 214985
+Job id: 235271
 Job name: normalize_test
 Hostname: compute-098.cm.cluster
 Task id: undefined
@@ -105,10 +105,10 @@ Loading required package: ggplot2
 here() starts at /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq
 Loading objects:
   sce
-[1] 13201
+[1] 13288
 Error in retrieveCellInfo(se, colour_by, exprs_values = by_exprs_values,  : 
   cannot find 'batch'
 Calls: plotTSNE ... plotReducedDim -> .incorporate_common_vis_col -> retrieveCellInfo
 Execution halted
 **** Job ends ****
-Thu May 19 17:01:09 EDT 2022
+Fri May 27 15:26:41 EDT 2022

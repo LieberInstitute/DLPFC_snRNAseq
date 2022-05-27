@@ -12,6 +12,7 @@ load(here("processed-data", "sce", "sce_no_empty_droplets.Rdata"), verbose = TRU
 #### Rescale ####
 # Use `multiBatchNorm()` to compute log-normalized counts
 sce <- multiBatchNorm(sce, batch=sce$round)
+sce <- sce[,!sce$discard_auto]
 
 # Find HVGs
 geneVar <- modelGeneVar(sce)
@@ -27,14 +28,12 @@ uncorrected <- runTSNE(uncorrected, dimred="PCA")
 
 save(uncorrected, file = here("processed-data", "03_build_sce","uncorrected_TSNE.Rdata"))
 
-plotTSNE(uncorrected, colour_by="batch")
-
 # How do these look?
-pdf(file = here("plots","03_build_sce","normalize","uncorrected_TSNE.pdf"))
-plotTSNE(uncorrected, colour_by="round")
-plotTSNE(uncorrected, colour_by="subject")
-plotTSNE(uncorrected, colour_by="Sample")
-dev.off()
+# pdf(file = here("plots","03_build_sce","normalize","uncorrected_TSNE.pdf"))
+# plotTSNE(uncorrected, colour_by="round")
+# plotTSNE(uncorrected, colour_by="subject")
+# plotTSNE(uncorrected, colour_by="Sample")
+# dev.off()
 
 tsne_test <- ggcells(uncorrected, mapping=aes(x=TSNE.1, y=TSNE.2, colour=round)) +
   geom_point(size = 0.2, alpha = 0.3) +
