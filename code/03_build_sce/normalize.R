@@ -87,13 +87,13 @@ plot_dir = here("plots","03_build_sce","normalize")
 
 for(pca in c("PCA_round", "PCA_subject")){
   
-  message("running", pca, "TSNE + UMAP  ", Sys.time())
+  message("running ", pca, " TSNE + UMAP - ", Sys.time())
   
   set.seed(109)
-  sce <- runTSNE(sce, dimred="PCA_corrected")
-  sce <- runUMAP(sce, dimred="PCA_corrected")
+  sce <- runTSNE(sce, dimred = pca)
+  sce <- runUMAP(sce, dimred = pca)
   
-  message("Done TSNE + UMAP  ", Sys.time())
+  message("Done TSNE + UMAP - ", Sys.time())
   
   # # How do these look?
   # pdf(file = here(plot_dir,"MNN_TSNE.pdf"))
@@ -110,7 +110,7 @@ for(pca in c("PCA_round", "PCA_subject")){
   
   #### Plot TSNE ####
   
-  plot_name = paste0("MNN_TSNE_", qsub("PCA_","",pca))
+  plot_name = paste0("MNN_TSNE_", gsub("PCA_","",pca))
   
   ## ggplots 
   tsne_round <- ggcells(sce, mapping=aes(x=TSNE.1, y=TSNE.2, colour=round)) +
