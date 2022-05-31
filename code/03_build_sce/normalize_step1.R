@@ -31,11 +31,14 @@ sum(chosen.hvgs)
 rowData(sce)$hvgs <- chosen.hvgs
 
 #### How does the un-normalized data look? ####
+message("running PCA - ", Sys.time())
 sce_uncorrected <- runPCA(sce, subset_row=chosen.hvgs,
                       BSPARAM=BiocSingular::RandomParam())
 
-sce_uncorrected <- runTSNE(uncorrected, dimred="PCA")
+message("running TSNE - ", Sys.time())
+sce_uncorrected <- runTSNE(sce_uncorrected, dimred="PCA")
 
+message("Saving Data - ", Sys.time())
 save(sce_uncorrected, file = here("processed-data", "03_build_sce","sce_uncorrected.Rdata"))
 
 # sgejobs::job_single('normalize_step1', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript normalize_step1.R")
