@@ -42,17 +42,17 @@ reducedDim(sce, "PCA") <- reducedDim(mnn, "corrected") # 100 components
 metadata(sce) <- metadata(mnn)
 
 ## Check out lost variance (looking for < 10%)
-100 * metadata(mnn)$merge.info$lost.var
+round(100 * metadata(mnn)$merge.info$lost.var,2)
 
 ## Should we find optimal PC space? - use all 100 for now
 
 set.seed(109)
 
 message("running TSNE - ", Sys.time())
-sce <- runTSNE(sce, dimred = pca)
+sce <- runTSNE(sce, dimred = "PCA")
 
 message("running UMAP - ", Sys.time())
-sce <- runUMAP(sce, dimred = pca)
+sce <- runUMAP(sce, dimred = "PCA")
 
 message("Done TSNE + UMAP - Saving data...", Sys.time())
   
