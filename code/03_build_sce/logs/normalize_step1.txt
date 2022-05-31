@@ -6,12 +6,12 @@ Loading LIBD module for rmate/1.5.9
 Loading LIBD module for ruby/2.6.4p104
 Loading conda_R/devel
 **** Job starts ****
-Fri May 27 15:33:44 EDT 2022
+Tue May 31 11:58:17 EDT 2022
 **** JHPCE info ****
 User: lhuuki
-Job id: 235327
-Job name: normalize
-Hostname: compute-095.cm.cluster
+Job id: 240424
+Job name: normalize_step1
+Hostname: compute-093.cm.cluster
 Task id: undefined
 Unloading conda_R/devel
 Loading conda_R/4.1.x
@@ -105,35 +105,18 @@ Loading required package: ggplot2
 here() starts at /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq
 Loading objects:
   sce
-[1] 36601 84756
 
 FALSE  TRUE 
 77604  7152 
 [1] 36601 77604
 [1] 12610
-
-round0 round1 round2 round3 round4 round5 
-  2723   9372  15664  18974  16370  14501 
-running fast MNN round - 2022-05-27 15:36:10
-Done MNN  2022-05-27 16:10:13
-         round0     round1      round2      round3      round4      round5
-[1,] 0.00000000 0.00000000 0.015346312 0.011851589 0.000000000 0.000000000
-[2,] 0.00000000 0.00000000 0.024009461 0.031145313 0.037101317 0.000000000
-[3,] 0.00000000 0.00000000 0.001112213 0.001355206 0.001509225 0.025435417
-[4,] 0.01610564 0.00000000 0.002339190 0.002593867 0.002859080 0.001556994
-[5,] 0.00198929 0.01648958 0.001781277 0.002191060 0.001972251 0.001363422
-running fast MNN subject - 2022-05-27 16:10:13
-Done MNN  2022-05-27 16:55:50
-running PCA_round TSNE + UMAP - 2022-05-27 16:55:55
-Done TSNE + UMAP - 2022-05-27 17:19:38
-Saving 10 x 7 in image
-running PCA_subject TSNE + UMAP - 2022-05-27 17:20:19
-Done TSNE + UMAP - 2022-05-27 17:43:59
-Saving 10 x 7 in image
+running PCA - 2022-05-31 12:00:10
+running TSNE - 2022-05-31 12:23:39
+Saving Data - 2022-05-31 12:35:34
 [1] "Reproducibility information:"
-[1] "2022-05-27 17:55:07 EDT"
+[1] "2022-05-31 12:43:16 EDT"
     user   system  elapsed 
-8189.856  288.299 8482.227 
+2402.040  293.385 2696.959 
 ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
  setting  value
  version  R version 4.1.2 Patched (2021-11-04 r81138)
@@ -144,7 +127,7 @@ Saving 10 x 7 in image
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       US/Eastern
- date     2022-05-27
+ date     2022-05-31
  pandoc   2.13 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1.x/bin/pandoc
 
 ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -162,19 +145,16 @@ Saving 10 x 7 in image
  bluster                1.4.0    2021-10-26 [2] Bioconductor
  cli                    3.3.0    2022-04-25 [2] CRAN (R 4.1.2)
  cluster                2.1.3    2022-03-28 [3] CRAN (R 4.1.2)
- codetools              0.2-18   2020-11-04 [3] CRAN (R 4.1.2)
  colorspace             2.0-3    2022-02-21 [2] CRAN (R 4.1.2)
  crayon                 1.5.1    2022-03-26 [2] CRAN (R 4.1.2)
  DBI                    1.1.2    2021-12-20 [2] CRAN (R 4.1.2)
  DelayedArray           0.20.0   2021-10-26 [2] Bioconductor
  DelayedMatrixStats     1.16.0   2021-10-26 [2] Bioconductor
- digest                 0.6.29   2021-12-01 [2] CRAN (R 4.1.2)
  dplyr                  1.0.9    2022-04-28 [2] CRAN (R 4.1.2)
  dqrng                  0.3.0    2021-05-01 [2] CRAN (R 4.1.2)
  edgeR                  3.36.0   2021-10-26 [2] Bioconductor
  ellipsis               0.3.2    2021-04-29 [2] CRAN (R 4.1.0)
  fansi                  1.0.3    2022-03-24 [2] CRAN (R 4.1.2)
- farver                 2.1.0    2021-02-28 [2] CRAN (R 4.1.0)
  generics               0.1.2    2022-01-31 [2] CRAN (R 4.1.2)
  GenomeInfoDb         * 1.30.1   2022-01-30 [2] Bioconductor
  GenomeInfoDbData       1.2.7    2021-11-01 [2] Bioconductor
@@ -189,7 +169,6 @@ Saving 10 x 7 in image
  igraph                 1.3.1    2022-04-20 [2] CRAN (R 4.1.2)
  IRanges              * 2.28.0   2021-10-26 [2] Bioconductor
  irlba                  2.3.5    2021-12-06 [1] CRAN (R 4.1.2)
- labeling               0.4.2    2020-10-20 [2] CRAN (R 4.1.0)
  lattice                0.20-45  2021-09-22 [3] CRAN (R 4.1.2)
  lifecycle              1.0.1    2021-09-24 [1] CRAN (R 4.1.1)
  limma                  3.50.3   2022-04-07 [2] Bioconductor
@@ -205,14 +184,11 @@ Saving 10 x 7 in image
  pkgconfig              2.0.3    2019-09-22 [2] CRAN (R 4.1.0)
  purrr                  0.3.4    2020-04-17 [2] CRAN (R 4.1.0)
  R6                     2.5.1    2021-08-19 [1] CRAN (R 4.1.1)
- ragg                   1.2.2    2022-02-21 [2] CRAN (R 4.1.2)
  Rcpp                   1.0.8.3  2022-03-17 [2] CRAN (R 4.1.2)
- RcppAnnoy              0.0.19   2021-07-30 [2] CRAN (R 4.1.2)
  RCurl                  1.98-1.6 2022-02-08 [2] CRAN (R 4.1.2)
  ResidualMatrix         1.4.0    2021-10-26 [1] Bioconductor
  rlang                  1.0.2    2022-03-04 [2] CRAN (R 4.1.2)
  rprojroot              2.0.3    2022-04-02 [2] CRAN (R 4.1.2)
- RSpectra               0.16-1   2022-04-24 [2] CRAN (R 4.1.2)
  rsvd                   1.0.5    2021-04-16 [2] CRAN (R 4.1.2)
  Rtsne                  0.16     2022-04-17 [2] CRAN (R 4.1.2)
  S4Vectors            * 0.32.4   2022-03-24 [2] Bioconductor
@@ -226,12 +202,9 @@ Saving 10 x 7 in image
  sparseMatrixStats      1.6.0    2021-10-26 [2] Bioconductor
  statmod                1.4.36   2021-05-10 [2] CRAN (R 4.1.0)
  SummarizedExperiment * 1.24.0   2021-10-26 [2] Bioconductor
- systemfonts            1.0.4    2022-02-11 [2] CRAN (R 4.1.2)
- textshaping            0.3.6    2021-10-13 [2] CRAN (R 4.1.2)
  tibble                 3.1.7    2022-05-03 [2] CRAN (R 4.1.2)
  tidyselect             1.1.2    2022-02-21 [2] CRAN (R 4.1.2)
  utf8                   1.2.2    2021-07-24 [2] CRAN (R 4.1.0)
- uwot                   0.1.11   2021-12-02 [2] CRAN (R 4.1.2)
  vctrs                  0.4.1    2022-04-13 [2] CRAN (R 4.1.2)
  vipor                  0.4.5    2017-03-22 [2] CRAN (R 4.1.2)
  viridis                0.6.2    2021-10-13 [2] CRAN (R 4.1.2)
@@ -246,4 +219,4 @@ Saving 10 x 7 in image
 
 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Fri May 27 17:55:12 EDT 2022
+Tue May 31 12:43:18 EDT 2022
