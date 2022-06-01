@@ -2,8 +2,6 @@ library("SingleCellExperiment")
 library("jaffelab")
 library("scater")
 library("scran") 
-library("dendextend")
-library("dynamicTreeCut")
 library("here")
 library("sessioninfo")
 
@@ -18,7 +16,7 @@ clusters <- igraph::cluster_walktrap(snn.gr)$membership
 
 table(clusters)
 message("saving data - ", Sys.time())
-save(clusters, here("processed-data", "03_build_sce", "clusters.Rdata"), verbose = TRUE)
+save(clusters, file = here("processed-data", "03_build_sce", "clusters.Rdata"), verbose = TRUE)
 
 ## Save final sce w/ annotations
 # save(sce, file = here("processed-data", "sce", "sce_DLPFC.Rdata"))
