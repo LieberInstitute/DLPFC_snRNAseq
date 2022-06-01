@@ -25,9 +25,19 @@ dim(cellranger_metrics)
 cellranger_metrics <- metrics_to_numbers(cellranger_metrics)
 
 ## Add information about the samples
-cellranger_metrics$metrics_csv <- metrics_files
-cellranger_metrics$set <- ifelse(grepl("1c-k|2c-k|3c-k", cellranger_metrics$metrics_csv), "round1", NA)
+tmp <- read.table(here("raw-data", "sample_libs_round0-5.tsv"), header = FALSE, row.names = 1)
 
+sample_info <- data.frame(
+  row.names = rownames(tmp),
+  region_short = tolower(gsub("DLPFC_", "", tmp$V2)),
+  subject = tmp$V3,
+  round = tmp$V5
+)
+## match tables
+sample_info <- sample_info[rownames(cellranger_metrics),]
+
+cellranger_metrics$metrics_csv <- metrics_files
+cellranger_metrics$set <- sample_info$round
 
 ## Save for later
 dir.create(here("processed-data", "02_cellranger_metrics"),
@@ -49,6 +59,8 @@ write.csv(
         "cellranger_metrics.csv"
     )
 )
+
+# sgejobs::job_single('cellranger_metrics', create_shell = TRUE, queue= 'bluejay', memory = '5G', command = "Rscript 02_cellranger_metrics.R")
 
 ## Reproducibility information
 print("Reproducibility information:")
