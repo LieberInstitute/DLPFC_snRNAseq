@@ -6,7 +6,7 @@ library("here")
 library("sessioninfo")
 
 ## Best normalization result
-load(here("processed-data", "03_build_sce","sce_MNN_subject.Rdata"))
+load(here("processed-data", "03_build_sce","sce_MNN_round.Rdata"))
 
 message("running buildSNNGraph - ", Sys.time())
 snn.gr <- buildSNNGraph(sce, k=10, use.dimred="PCA")
@@ -16,7 +16,7 @@ clusters <- igraph::cluster_walktrap(snn.gr)$membership
 
 table(clusters)
 message("saving data - ", Sys.time())
-save(clusters, file = here("processed-data", "03_build_sce", "clusters.Rdata"), verbose = TRUE)
+save(clusters, file = here("processed-data", "03_build_sce", "clusters.Rdata"))
 
 ## Save final sce w/ annotations
 # save(sce, file = here("processed-data", "sce", "sce_DLPFC.Rdata"))

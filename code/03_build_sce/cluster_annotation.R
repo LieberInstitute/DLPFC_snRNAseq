@@ -1,75 +1,99 @@
 library("SingleCellExperiment")
-# library(EnsDb.Hsapiens.v86)
 library("scater")
-# library(scran)
-# library(batchelor)
-# library(DropletUtils)
 library("jaffelab")
 library("dendextend")
 library("dynamicTreeCut")
 library("here")
 library("sessioninfo")
+library("dplyr")
+
+# Plotting set up 
+my_theme <- theme_bw() +
+  theme(text = element_text(size=15))
+
+plot_dir = here("plots","03_build_sce","cluster")
+
+if(!dir.exists(plot_dir)) dir.create(plot_dir)
 
 ## Load sce object
-load(here("processed-data", "03_build_sce","sce_MNN_subject.Rdata"), verbose = TRUE)
+load(here("processed-data", "03_build_sce","sce_MNN_round.Rdata"), verbose = TRUE)
 load(here("processed-data", "03_build_sce", "clusters.Rdata"), verbose = TRUE)
 
-
 # Assign as 'prelimCluster'
-sce.dlpfc$prelimCluster <- factor(clusters.k20)
-plotReducedDim(sce.dlpfc, dimred="TSNE", colour_by="prelimCluster")
+sce$prelimCluster <- factor(clusters)
+plotReducedDim(sce, dimred="TSNE", colour_by="prelimCluster")
+
+table(sce$prelimCluster)
+
+## Many small clusters, some very large clusters
+summary(as.numeric(table(sce$prelimCluster)))
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# 7.0    53.0   105.0   261.3   221.0 11945.0 
 
 # Is sample driving this 'high-res' clustering at this level?
-(sample_prelimClusters <- table(sce.dlpfc$prelimCluster, sce.dlpfc$sampleID))  # (a little bit, but is typical)
-sample_prelimClusters[which(rowSums(sample_prelimClusters == 0) == 2),]
-# 39 - only 4 samples all from Br5207
+round_prelimClusters <-table(sce$prelimCluster, sce$round)
+round_prelimClusters[which(rowSums(round_prelimClusters != 0) == 1),]
+## 270 clusters from round1
+length(round_prelimClusters[which(rowSums(round_prelimClusters != 0) == 1),])
 
-# rbind the ref.sampleInfo[.rev]
-ref.sampleInfo <- rbind(ref.sampleInfo, ref.sampleInfo.rev)
+sample_prelimClusters <- table(sce$prelimCluster, sce$Sample)
+sample_prelimClusters[which(rowSums(sample_prelimClusters != 0) == 1),]
+# Br6432_ant 2 exclusive, Br6471_ant 7 exclusive
 
-## check doublet score for each prelim clust
-clusIndexes = splitit(sce.dlpfc$prelimCluster)
+# # rbind the ref.sampleInfo[.rev]
+# ref.sampleInfo <- rbind(ref.sampleInfo, ref.sampleInfo.rev)
+
+#### check doublet score for each prelim clust ####
+clusIndexes = splitit(sce$prelimCluster)
 prelimCluster.medianDoublet <- sapply(clusIndexes, function(ii){
-  median(sce.dlpfc$doubletScore[ii])
+  median(sce$doubletScore[ii])
 }
 )
 
 summary(prelimCluster.medianDoublet)
-# Min.  1st Qu.   Median     Mean  3rd Qu.     Max.
-# 0.01059  0.07083  0.14823  0.53264  0.30064 14.79144
+# Min.  1st Qu.   Median     Mean  3rd Qu.     Max. 
+# 0.02322  0.29750  0.52881  0.86885  0.86777 22.70270 
 
-hist(prelimCluster.medianDoublet)
+clust_medianDoublet_df <- stack(prelimCluster.medianDoublet) %>%
+  rename(medianDoublet = values, prelimCluster = ind)
+
+medianDoublet_histo <- ggplot(clust_medianDoublet_df, aes(x = medianDoublet)) +
+  geom_histogram() +
+  geom_vline(xintercept = 5, color = "red", linetype = "dashed") +
+  my_theme
+
+ggsave(medianDoublet_histo, filename = here(plot_dir, "medianDoublet_histogram.png"))
 
 ## watch in clustering
-prelimCluster.medianDoublet[prelimCluster.medianDoublet > 5]
-# 19       32       73
-# 14.79144  7.98099 10.20462
+(doublet_clust <- prelimCluster.medianDoublet[prelimCluster.medianDoublet > 5])
+# 30       167       233       257       272 
+# 22.702696 14.723280  6.450884  5.065352 13.055584 
 
-table(sce.dlpfc$prelimCluster)[c(19, 32, 73)]
-# 19 32 73
-# 27 32  8
-
-# Save for now
-save(sce.dlpfc, chosen.hvgs.dlpfc, pc.choice.dlpfc, ref.sampleInfo,
-     file="/dcl01/lieber/ajaffe/Matt/MNT_thesis/snRNAseq/10x_pilot_FINAL/rdas/revision/regionSpecific_DLPFC-n3_cleaned-combined_SCE_LAH2021.rda")
+table(sce$prelimCluster)[names(doublet_clust)]
+# 30 167 233 257 272 
+# 39  19  17  32  22 
 
 
-### Step 2: Hierarchical clustering of pseudo-bulked ("PB'd") counts with most robust normalization
+#### Step 2: Hierarchical clustering of pseudo-bulked ("PB'd") counts with most robust normalization ####
 #         (as determined in: 'side-Rscript_testingStep2_HC-normalizn-approaches_wAmygData_MNTJan2020.R')
 #           ** That is, to pseudo-bulk (aka 'cluster-bulk') on raw counts, on all [non-zero] genes,
 #              normalize with `librarySizeFactors()`, log2-transform, then perform HC'ing
 
 # Preliminary cluster index for pseudo-bulking
-clusIndexes = splitit(sce.dlpfc$prelimCluster)
 prelimCluster.PBcounts <- sapply(clusIndexes, function(ii){
-  rowSums(assays(sce.dlpfc)$counts[ ,ii])
+  rowSums(assays(sce)$counts[ ,ii])
 }
 )
 
+dim(prelimCluster.PBcounts)
+# [1] 36601   297
+
+corner(prelimCluster.PBcounts)
+
 # And btw...
 table(rowSums(prelimCluster.PBcounts)==0)
-# FALSE  TRUE
-# 29310  4228
+# FALSE  TRUE 
+# 34987  1614 
 
 # Compute LSFs at this level
 sizeFactors.PB.all  <- librarySizeFactors(prelimCluster.PBcounts)
@@ -83,6 +107,14 @@ tree.clusCollapsed <- hclust(dist.clusCollapsed, "ward.D2")
 
 dend <- as.dendrogram(tree.clusCollapsed, hang=0.2)
 
+# Print for future reference
+pdf(here(plot_dir, "dend.pdf"), height = 12)
+    par(cex=0.6, font=2)
+    plot(dend, main="test dend", horiz = TRUE)
+    abline(v = 525, lty = 2)
+dev.off()
+    
+
 # labels(dend)[grep(c("19|32|73"),labels(dend))] <- paste0(labels(dend)[grep(c("19|32|73"),labels(dend))], "*")
 
 # Just for observation
@@ -92,10 +124,10 @@ myplclust(tree.clusCollapsed, cex.main=2, cex.lab=1.5, cex=1.8)
 dend %>%
   set("labels_cex", 0.8) %>%
   plot(horiz = TRUE)
-abline(v = 325, lty = 2)
+abline(v = 525, lty = 2)
 
 clust.treeCut <- cutreeDynamic(tree.clusCollapsed, distM=as.matrix(dist.clusCollapsed),
-                               minClusterSize=2, deepSplit=1, cutHeight=325)
+                               minClusterSize=2, deepSplit=1, cutHeight=525)
 
 table(clust.treeCut)
 unname(clust.treeCut[order.dendrogram(dend)])
@@ -126,7 +158,7 @@ names(cluster_colors) <- unique(clust.treeCut[order.dendrogram(dend)])
 labels_colors(dend) <- cluster_colors[clust.treeCut[order.dendrogram(dend)]]
 
 # Print for future reference
-pdf("pdfs/revision/regionSpecific_DLPFC-n3_HC-prelimCluster-relationships_LAH2021.pdf", height = 9)
+pdf(here(".pdf", height = 9)
 par(cex=0.6, font=2)
 plot(dend, main="3x DLPFC prelim-kNN-cluster relationships with collapsed assignments", horiz = TRUE)
 abline(v = 325, lty = 2)
@@ -139,19 +171,19 @@ clusterRefTab.dlpfc <- data.frame(origClust=order.dendrogram(dend),
 
 
 # Assign as 'collapsedCluster'
-sce.dlpfc$collapsedCluster <- factor(clusterRefTab.dlpfc$merged[match(sce.dlpfc$prelimCluster, clusterRefTab.dlpfc$origClust)])
-n_clusters <- length(levels(sce.dlpfc$collapsedCluster))
+sce$collapsedCluster <- factor(clusterRefTab.dlpfc$merged[match(sce$prelimCluster, clusterRefTab.dlpfc$origClust)])
+n_clusters <- length(levels(sce$collapsedCluster))
 # Print some visualizations:
 pdf("pdfs/revision/regionSpecific_DLPFC-n3_reducedDims-with-collapsedClusters_LAH2021.pdf")
-plotReducedDim(sce.dlpfc, dimred="PCA_corrected", ncomponents=5, colour_by="collapsedCluster", point_alpha=0.5)
-plotTSNE(sce.dlpfc, colour_by="sampleID", point_alpha=0.5)
-plotTSNE(sce.dlpfc, colour_by="protocol", point_alpha=0.5)
-plotTSNE(sce.dlpfc, colour_by="collapsedCluster", point_alpha=0.5)
-plotTSNE(sce.dlpfc, colour_by="sum", point_alpha=0.5)
-plotTSNE(sce.dlpfc, colour_by="doubletScore", point_alpha=0.5)
+plotReducedDim(sce, dimred="PCA_corrected", ncomponents=5, colour_by="collapsedCluster", point_alpha=0.5)
+plotTSNE(sce, colour_by="sampleID", point_alpha=0.5)
+plotTSNE(sce, colour_by="protocol", point_alpha=0.5)
+plotTSNE(sce, colour_by="collapsedCluster", point_alpha=0.5)
+plotTSNE(sce, colour_by="sum", point_alpha=0.5)
+plotTSNE(sce, colour_by="doubletScore", point_alpha=0.5)
 # And some more informative UMAPs
-plotUMAP(sce.dlpfc, colour_by="sampleID", point_alpha=0.5)
-plotUMAP(sce.dlpfc, colour_by="collapsedCluster", point_alpha=0.5)
+plotUMAP(sce, colour_by="sampleID", point_alpha=0.5)
+plotUMAP(sce, colour_by="collapsedCluster", point_alpha=0.5)
 dev.off()
 
-tail(table(sce.dlpfc$prelimCluster, sce.dlpfc$collapsedCluster),20)
+tail(table(sce$prelimCluster, sce$collapsedCluster),20)
