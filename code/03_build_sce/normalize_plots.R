@@ -23,14 +23,8 @@ if(!dir.exists(plot_dir)) dir.create(plot_dir)
 
 names(norm_fn) <- gsub(".Rdata", "", gsub("sce_","",basename(norm_fn)))
 
-# load(norm_fn[[1]], verbose = TRUE)
-test_plot <- plot_reducedDim_qc(sce, title = "MNN + round")
-ggsave(test_plot, filename = here(plot_dir,"TSNE_test.png"),
-       width = 10, height = 10)
-# 
 
-
-walk2(norm_fn[3], names(norm_fn)[3], function(sce_fn, name){
+walk2(norm_fn, names(norm_fn), function(sce_fn, name){
   annotation <- gsub("_", " + ", name)
   message(annotation)
   ## Load 
@@ -42,16 +36,16 @@ walk2(norm_fn[3], names(norm_fn)[3], function(sce_fn, name){
   for(t in c("TSNE","UMAP")){
 
     ## Catagorical plots
-    for(cat in c("round","subject")){
+    for(cat in c("round","subject","Sample")){
 
       fn = paste0(t,"_",name,"-color_",cat,".png")
-      message(fn)
-
-      cat_plot <- plot_reducedDim_facet(sce, type = t, facet_by = cat, title = annotation)
-      ggsave(cat_plot, filename = here(plot_dir,fn), width = 20, height = 10)
-
+      
+      if(!file.exists(here(plot_dir,fn))){
+        message("plotting... ", fn)
+        cat_plot <- plot_reducedDim_facet(sce, type = t, facet_by = cat, title = annotation)
+        ggsave(cat_plot, filename = here(plot_dir,fn), width = 20, height = 10)
+      }
     }
-
   }
   
   # ## only TSNE for QC metrics plots
@@ -65,7 +59,7 @@ walk2(norm_fn[3], names(norm_fn)[3], function(sce_fn, name){
   
 })
 
-# sgejobs::job_single('normalize', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript normalize.R")
+# sgejobs::job_single('normalize_plots', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript normalize_plots.R")
 
 ## Reproducibility information
 print('Reproducibility information:')

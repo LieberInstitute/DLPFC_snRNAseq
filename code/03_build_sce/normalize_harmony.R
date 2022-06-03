@@ -1,5 +1,6 @@
 library("SingleCellExperiment")
 library("harmony")
+library("scater")
 library("here")
 library("sessioninfo")
 
@@ -8,15 +9,15 @@ library("sessioninfo")
 args = commandArgs(trailingOnly=TRUE)
 correction = args[1]
 
-stopifnot(correction %in% colnames(colData(sce)))
-
 ## Load empty-free sce data
 load(here("processed-data", "03_build_sce","sce_uncorrected.Rdata"), verbose = TRUE)
+stopifnot(correction %in% colnames(colData(sce_uncorrected)))
 
+## Run harmony
 message("running Harmony - ", Sys.time())
-sce <- RunHarmony(sce_uncorrected, correction, lambda = .1, verbose = TRUE)
+sce <- RunHarmony(sce_uncorrected, correction, verbose = TRUE)
 
-set.seed(109)
+set.seed(602)
 
 message("running TSNE - ", Sys.time())
 sce <- runTSNE(sce, dimred = 'HARMONY')
@@ -31,6 +32,7 @@ save(sce, file = here("processed-data", "03_build_sce",paste0("sce_harmony_",cor
 
 # sgejobs::job_single('normalize_harmony_round', create_shell = TRUE, queue= 'bluejay', memory = '25G', command = "Rscript normalize_harmony.R round")
 # sgejobs::job_single('normalize_harmony_subject', create_shell = TRUE, queue= 'bluejay', memory = '25G', command = "Rscript normalize_harmony.R subject")
+# sgejobs::job_single('normalize_harmony_Sample', create_shell = TRUE, queue= 'bluejay', memory = '25G', command = "Rscript normalize_harmony.R Sample")
 
 ## Reproducibility information
 print('Reproducibility information:')

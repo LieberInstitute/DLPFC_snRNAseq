@@ -60,6 +60,7 @@ save(sce, file = here("processed-data", "03_build_sce",paste0("sce_MNN_",correct
 
 # sgejobs::job_single('normalize_MNN_round', create_shell = TRUE, queue= 'bluejay', memory = '25G', command = "Rscript normalize_MNN.R round")
 # sgejobs::job_single('normalize_MNN_subject', create_shell = TRUE, queue= 'bluejay', memory = '25G', command = "Rscript normalize_MNN.R subject")
+# sgejobs::job_single('normalize_MNN_Sample', create_shell = TRUE, queue= 'bluejay', memory = '25G', command = "Rscript normalize_MNN.R Sample")
 
 ## Reproducibility information
 print('Reproducibility information:')

@@ -1,0 +1,309 @@
+Adding LIBD modules
+Loading git
+Loading LIBD module for git-status-size/github
+Loading LIBD module for git-lfs/2.8.0
+Loading LIBD module for rmate/1.5.9
+Loading LIBD module for ruby/2.6.4p104
+Loading conda_R/devel
+**** Job starts ****
+Thu Jun  2 14:29:57 EDT 2022
+**** JHPCE info ****
+User: lhuuki
+Job id: 249946
+Job name: normalize_MNN_Sample
+Hostname: compute-100.cm.cluster
+Task id: undefined
+Unloading conda_R/devel
+Loading conda_R/4.1.x
+
+The following have been reloaded with a version change:
+  1) conda_R/devel => conda_R/4.1.x
+
+
+Currently Loaded Modules:
+  1) matlab/R2019a     6) COMMUNITY_CENTOS7_DEFAULT_ENV  11) ruby/2.6.4p104
+  2) stata/17          7) JHPCE_CENTOS7_DEFAULT_ENV      12) rmate/1.5.9
+  3) JHPCE_tools/1.0   8) git-status-size/github         13) conda/3-4.6.14
+  4) sge/8.1.9         9) git/2.28.0                     14) conda_R/4.1.x
+  5) gcc/4.4.7        10) git-lfs/2.8.0
+
+ 
+
+Loading required package: SummarizedExperiment
+Loading required package: MatrixGenerics
+Loading required package: matrixStats
+
+Attaching package: ‘MatrixGenerics’
+
+The following objects are masked from ‘package:matrixStats’:
+
+    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
+    colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+    colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
+    colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
+    colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+    colWeightedMeans, colWeightedMedians, colWeightedSds,
+    colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+    rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+    rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+    rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
+    rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+    rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
+    rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+    rowWeightedSds, rowWeightedVars
+
+Loading required package: GenomicRanges
+Loading required package: stats4
+Loading required package: BiocGenerics
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, append, as.data.frame, basename, cbind, colnames,
+    dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,
+    grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,
+    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
+    rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,
+    union, unique, unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+
+Attaching package: ‘S4Vectors’
+
+The following objects are masked from ‘package:base’:
+
+    expand.grid, I, unname
+
+Loading required package: IRanges
+Loading required package: GenomeInfoDb
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+
+Attaching package: ‘Biobase’
+
+The following object is masked from ‘package:MatrixGenerics’:
+
+    rowMedians
+
+The following objects are masked from ‘package:matrixStats’:
+
+    anyMissing, rowMedians
+
+Loading required package: scuttle
+Loading required package: ggplot2
+here() starts at /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq
+Loading objects:
+  sce_uncorrected
+[1] 36601 77604
+
+ Br2720_mid Br2720_post  Br2743_ant  Br2743_mid  Br3942_ant  Br3942_mid 
+       3101        5911        2861        2723        5205        4282 
+ Br6423_ant Br6423_post  Br6432_ant  Br6471_ant  Br6471_mid  Br6522_mid 
+       3898        4067        3059        3212        4724        4004 
+Br6522_post  Br8325_ant  Br8325_mid  Br8492_mid Br8492_post  Br8667_ant 
+       4275        4707        4020        4997        2661        5774 
+ Br8667_mid 
+       4123 
+running fast MNN - 2022-06-02 14:31:12
+Done MNN  2022-06-02 16:00:26
+      Br2720_mid Br2720_post Br2743_ant Br2743_mid Br3942_ant Br3942_mid
+ [1,]       0.00        0.00       0.00       0.00       0.43       0.00
+ [2,]       0.00        0.00       0.00       0.00       0.18       0.00
+ [3,]       0.00        0.00       0.00       0.00       7.39       0.00
+ [4,]       0.00        0.00       0.00       0.00       0.37       0.00
+ [5,]       0.00        0.00       0.00       0.00       0.18      14.30
+ [6,]       0.00        0.00       0.00       0.00       0.21       0.21
+ [7,]       0.00        0.00       0.00       4.12       0.73       0.78
+ [8,]       0.00        0.00       0.00       0.10       0.22       0.26
+ [9,]       0.00        0.00       0.00       0.05       0.08       0.08
+[10,]       0.00        0.00       0.00       0.19       0.35       0.28
+[11,]       0.00        0.00       0.00       0.11       0.30       0.58
+[12,]       0.00       14.48       0.00       0.05       0.08       0.08
+[13,]       0.00        0.61      10.42       0.38       0.42       0.38
+[14,]       0.00        0.11       0.09       0.08       0.07       0.07
+[15,]       0.00        0.09       0.16       0.18       0.11       0.09
+[16,]       2.18        0.00       0.00       0.00       0.00       0.00
+[17,]       0.42        0.00       0.00       0.00       0.00       0.00
+[18,]       5.58        2.82       2.05       1.32       1.67       1.91
+      Br6423_ant Br6423_post Br6432_ant Br6471_ant Br6471_mid Br6522_mid
+ [1,]       0.00        0.00       0.00       0.00       0.00       0.00
+ [2,]       0.00        0.00       0.00       0.00       0.72       0.00
+ [3,]       0.00        0.00       0.00       0.00       6.44       0.00
+ [4,]       0.00        0.00       0.00       0.00       0.35       0.00
+ [5,]       0.00        0.00       0.00       0.00       0.22       0.00
+ [6,]       0.00        0.00       0.00       0.00       0.23       0.00
+ [7,]       0.00        0.00       0.00       0.00       0.58       0.00
+ [8,]       0.00       10.95       0.00       0.00       0.17       0.00
+ [9,]       0.00        0.10       0.00       0.00       0.06       0.00
+[10,]      10.93        0.31       0.00       0.00       0.29       0.00
+[11,]       0.75        0.56       0.00       0.00       0.23       0.00
+[12,]       0.12        0.11       0.00       0.00       0.06       0.00
+[13,]       0.41        0.41       0.00       0.00       0.47       0.00
+[14,]       0.11        0.09       0.00       0.00       0.09       0.00
+[15,]       0.12        0.12       0.00       0.00       0.21      10.43
+[16,]       0.00        0.00       1.10       0.00       0.00       0.00
+[17,]       0.00        0.00       0.63       0.84       0.00       0.00
+[18,]       1.59        1.47       7.19       3.32       1.58       1.86
+      Br6522_post Br8325_ant Br8325_mid Br8492_mid Br8492_post Br8667_ant
+ [1,]        0.00       0.44       0.00       0.00        0.00       0.00
+ [2,]        0.00       0.18       0.00       0.00        0.00       0.00
+ [3,]        0.00       5.84       6.63       0.00        0.00       0.00
+ [4,]        0.00       0.32       0.30      15.53        0.00       0.00
+ [5,]        0.00       0.17       0.17       0.24        0.00       0.00
+ [6,]        0.00       0.20       0.15       0.21        0.00      13.44
+ [7,]        0.00       0.58       0.41       0.83        0.00       0.81
+ [8,]        0.00       0.18       0.15       0.23        0.00       0.22
+ [9,]        0.00       0.07       0.06       0.08        0.00       0.08
+[10,]        0.00       0.30       0.28       0.26        0.00       0.30
+[11,]        0.00       0.20       0.14       0.54       13.74       0.43
+[12,]        0.00       0.08       0.05       0.07        0.08       0.08
+[13,]        0.00       0.37       0.39       0.50        0.60       0.44
+[14,]       10.71       0.07       0.09       0.08        0.09       0.07
+[15,]        0.10       0.14       0.19       0.11        0.13       0.18
+[16,]        0.00       0.00       0.00       0.00        0.00       0.00
+[17,]        0.00       0.00       0.00       0.00        0.00       0.00
+[18,]        2.00       1.52       1.20       2.22        2.56       1.87
+      Br8667_mid
+ [1,]       0.00
+ [2,]       0.00
+ [3,]       0.00
+ [4,]       0.00
+ [5,]       0.00
+ [6,]       0.00
+ [7,]       0.00
+ [8,]       0.00
+ [9,]      15.21
+[10,]       0.27
+[11,]       0.68
+[12,]       0.10
+[13,]       0.36
+[14,]       0.09
+[15,]       0.10
+[16,]       0.00
+[17,]       0.00
+[18,]       1.90
+running TSNE - 2022-06-02 16:00:29
+running UMAP - 2022-06-02 16:23:01
+Done TSNE + UMAP - Saving data...2022-06-02 16:27:07
+[1] "Reproducibility information:"
+[1] "2022-06-02 16:37:37 EDT"
+    user   system  elapsed 
+7438.739  216.365 7658.899 
+─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.1.2 Patched (2021-11-04 r81138)
+ os       CentOS Linux 7 (Core)
+ system   x86_64, linux-gnu
+ ui       X11
+ language (EN)
+ collate  en_US.UTF-8
+ ctype    en_US.UTF-8
+ tz       US/Eastern
+ date     2022-06-02
+ pandoc   2.13 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1.x/bin/pandoc
+
+─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+ package              * version  date (UTC) lib source
+ assertthat             0.2.1    2019-03-21 [2] CRAN (R 4.1.0)
+ batchelor            * 1.10.0   2021-10-26 [1] Bioconductor
+ beachmat               2.10.0   2021-10-26 [2] Bioconductor
+ beeswarm               0.4.0    2021-06-01 [2] CRAN (R 4.1.2)
+ Biobase              * 2.54.0   2021-10-26 [2] Bioconductor
+ BiocGenerics         * 0.40.0   2021-10-26 [2] Bioconductor
+ BiocNeighbors          1.12.0   2021-10-26 [2] Bioconductor
+ BiocParallel           1.28.3   2021-12-09 [2] Bioconductor
+ BiocSingular           1.10.0   2021-10-26 [2] Bioconductor
+ bitops                 1.0-7    2021-04-24 [2] CRAN (R 4.1.0)
+ bluster                1.4.0    2021-10-26 [2] Bioconductor
+ cli                    3.3.0    2022-04-25 [2] CRAN (R 4.1.2)
+ cluster                2.1.3    2022-03-28 [3] CRAN (R 4.1.2)
+ codetools              0.2-18   2020-11-04 [3] CRAN (R 4.1.2)
+ colorspace             2.0-3    2022-02-21 [2] CRAN (R 4.1.2)
+ crayon                 1.5.1    2022-03-26 [2] CRAN (R 4.1.2)
+ DBI                    1.1.2    2021-12-20 [2] CRAN (R 4.1.2)
+ DelayedArray           0.20.0   2021-10-26 [2] Bioconductor
+ DelayedMatrixStats     1.16.0   2021-10-26 [2] Bioconductor
+ dplyr                  1.0.9    2022-04-28 [2] CRAN (R 4.1.2)
+ dqrng                  0.3.0    2021-05-01 [2] CRAN (R 4.1.2)
+ edgeR                  3.36.0   2021-10-26 [2] Bioconductor
+ ellipsis               0.3.2    2021-04-29 [2] CRAN (R 4.1.0)
+ fansi                  1.0.3    2022-03-24 [2] CRAN (R 4.1.2)
+ generics               0.1.2    2022-01-31 [2] CRAN (R 4.1.2)
+ GenomeInfoDb         * 1.30.1   2022-01-30 [2] Bioconductor
+ GenomeInfoDbData       1.2.7    2021-11-01 [2] Bioconductor
+ GenomicRanges        * 1.46.1   2021-11-18 [2] Bioconductor
+ ggbeeswarm             0.6.0    2017-08-07 [2] CRAN (R 4.1.2)
+ ggplot2              * 3.3.6    2022-05-03 [2] CRAN (R 4.1.2)
+ ggrepel                0.9.1    2021-01-15 [2] CRAN (R 4.1.0)
+ glue                   1.6.2    2022-02-24 [2] CRAN (R 4.1.2)
+ gridExtra              2.3      2017-09-09 [2] CRAN (R 4.1.0)
+ gtable                 0.3.0    2019-03-25 [2] CRAN (R 4.1.0)
+ here                 * 1.0.1    2020-12-13 [2] CRAN (R 4.1.2)
+ igraph                 1.3.1    2022-04-20 [2] CRAN (R 4.1.2)
+ IRanges              * 2.28.0   2021-10-26 [2] Bioconductor
+ irlba                  2.3.5    2021-12-06 [1] CRAN (R 4.1.2)
+ lattice                0.20-45  2021-09-22 [3] CRAN (R 4.1.2)
+ lifecycle              1.0.1    2021-09-24 [1] CRAN (R 4.1.1)
+ limma                  3.50.3   2022-04-07 [2] Bioconductor
+ locfit                 1.5-9.5  2022-03-03 [2] CRAN (R 4.1.2)
+ magrittr               2.0.3    2022-03-30 [2] CRAN (R 4.1.2)
+ Matrix                 1.4-1    2022-03-23 [3] CRAN (R 4.1.2)
+ MatrixGenerics       * 1.6.0    2021-10-26 [2] Bioconductor
+ matrixStats          * 0.62.0   2022-04-19 [2] CRAN (R 4.1.2)
+ metapod                1.2.0    2021-10-26 [2] Bioconductor
+ munsell                0.5.0    2018-06-12 [2] CRAN (R 4.1.0)
+ patchwork            * 1.1.1    2020-12-17 [2] CRAN (R 4.1.2)
+ pillar                 1.7.0    2022-02-01 [1] CRAN (R 4.1.2)
+ pkgconfig              2.0.3    2019-09-22 [2] CRAN (R 4.1.0)
+ purrr                  0.3.4    2020-04-17 [2] CRAN (R 4.1.0)
+ R6                     2.5.1    2021-08-19 [1] CRAN (R 4.1.1)
+ Rcpp                   1.0.8.3  2022-03-17 [2] CRAN (R 4.1.2)
+ RcppAnnoy              0.0.19   2021-07-30 [2] CRAN (R 4.1.2)
+ RCurl                  1.98-1.6 2022-02-08 [2] CRAN (R 4.1.2)
+ ResidualMatrix         1.4.0    2021-10-26 [1] Bioconductor
+ rlang                  1.0.2    2022-03-04 [2] CRAN (R 4.1.2)
+ rprojroot              2.0.3    2022-04-02 [2] CRAN (R 4.1.2)
+ RSpectra               0.16-1   2022-04-24 [2] CRAN (R 4.1.2)
+ rsvd                   1.0.5    2021-04-16 [2] CRAN (R 4.1.2)
+ Rtsne                  0.16     2022-04-17 [2] CRAN (R 4.1.2)
+ S4Vectors            * 0.32.4   2022-03-24 [2] Bioconductor
+ ScaledMatrix           1.2.0    2021-10-26 [2] Bioconductor
+ scales                 1.2.0    2022-04-13 [2] CRAN (R 4.1.2)
+ scater               * 1.22.0   2021-10-26 [2] Bioconductor
+ scran                * 1.22.1   2021-11-14 [2] Bioconductor
+ scuttle              * 1.4.0    2021-10-26 [2] Bioconductor
+ sessioninfo          * 1.2.2    2021-12-06 [2] CRAN (R 4.1.2)
+ SingleCellExperiment * 1.16.0   2021-10-26 [2] Bioconductor
+ sparseMatrixStats      1.6.0    2021-10-26 [2] Bioconductor
+ statmod                1.4.36   2021-05-10 [2] CRAN (R 4.1.0)
+ SummarizedExperiment * 1.24.0   2021-10-26 [2] Bioconductor
+ tibble                 3.1.7    2022-05-03 [2] CRAN (R 4.1.2)
+ tidyselect             1.1.2    2022-02-21 [2] CRAN (R 4.1.2)
+ utf8                   1.2.2    2021-07-24 [2] CRAN (R 4.1.0)
+ uwot                   0.1.11   2021-12-02 [2] CRAN (R 4.1.2)
+ vctrs                  0.4.1    2022-04-13 [2] CRAN (R 4.1.2)
+ vipor                  0.4.5    2017-03-22 [2] CRAN (R 4.1.2)
+ viridis                0.6.2    2021-10-13 [2] CRAN (R 4.1.2)
+ viridisLite            0.4.0    2021-04-13 [2] CRAN (R 4.1.0)
+ withr                  2.5.0    2022-03-03 [2] CRAN (R 4.1.2)
+ XVector                0.34.0   2021-10-26 [2] Bioconductor
+ zlibbioc               1.40.0   2021-10-26 [2] Bioconductor
+
+ [1] /users/lhuuki/R/4.1.x
+ [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1.x/R/4.1.x/lib64/R/site-library
+ [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1.x/R/4.1.x/lib64/R/library
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+**** Job ends ****
+Thu Jun  2 16:37:41 EDT 2022
