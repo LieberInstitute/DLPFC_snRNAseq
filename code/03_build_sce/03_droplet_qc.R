@@ -8,6 +8,7 @@ library("batchelor")
 library("tidyverse")
 library("here")
 library("sessioninfo")
+library("HDF5Array")
 
 
 ## plot set up
@@ -363,6 +364,18 @@ n_boxplot <- sample_info %>%
     theme(legend.position = "None")
 
 ggsave(n_boxplot, filename = here("plots", "03_build_sce", "droplet_qc", "n_nuclei_boxplot.png"))
+
+#### Save clean data as HDF5 file  ####
+load(here("processed-data", "sce", "sce_no_empty_droplets.Rdata"))
+
+sce <- sce[,!sce$discard_auto]
+dim(sce)
+# [1] 36601 77604
+
+##save HDF5
+saveHDF5SummarizedExperiment(x, dir=here("processed-data", "03_build_sce", "h5_se"), prefix="", replace=FALSE,
+                             chunkdim=NULL, level=NULL, as.sparse=NA,
+                             verbose=NA)
 
 # sgejobs::job_single('droplet_qc', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript droplet_qc.R")
 
