@@ -1,6 +1,6 @@
 #!/bin/bash
 #$ -cwd
-#$ -l bluejay,mem_free=75G,h_vmem=75G,h_fsize=100G
+#$ -l caracol,mem_free=200G,h_vmem=200G,h_fsize=100G
 #$ -N normalize_step1_glm
 #$ -o logs/normalize_step1_glm.txt
 #$ -e logs/normalize_step1_glm.txt
@@ -21,6 +21,20 @@ module load conda_R
 
 ## List current modules for reproducibility
 module list
+
+## Use GPU
+USAGE_CUTOFF=10
+NUM_GPUS=1
+
+avail_gpus=$(nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader | cut -d " " -f 1 | awk -v usage="$USAGE_CUTOFF" '$1 < usage {print NR - 1}')
+
+#  Simply exit with an error if there are no GPUs left
+if [[ -z $avail_gpus ]]; then
+    echo "No GPUs are available."
+    exit 1
+fi
+
+export CUDA_VISIBLE_DEVICES=$(echo "$avail_gpus" | head -n $NUM_GPUS | paste -sd ",")
 
 ## Edit with your job command
 Rscript normalize_step1_glm.R
