@@ -32,12 +32,12 @@ sce <- devianceFeatureSelection(sce,
 pdf(here("plots","03_build_sce","normalize1", "binomial_deviance.pdf"))
 plot(sort(rowData(sce)$binomial_deviance, decreasing=T),
      type="l", xlab="ranked genes",
-     ylab="binomial deviance", main="Feature Selection with Deviance: LC")
+     ylab="binomial deviance", main="Feature Selection with Deviance")
 abline(v=2000, lty=2, col="red")
 dev.off()
 
 message("running nullResiduals - ", Sys.time())
-sce <- nullResiduals(sce, assay="counts", fam="binomial",  # default params
+sce <- nullResiduals(sce, assay="counts", fam="poisson",  # default params
                             type="deviance")
 
 
@@ -61,7 +61,7 @@ message("running UMAP - ", Sys.time())
 sce_uncorrected <- runUMAP(sce_uncorrected, dimred="PCA")
 
 message("Saving Data - ", Sys.time())
-save(sce_uncorrected, file = here("processed-data", "03_build_sce","sce_uncorrected.Rdata"))
+save(sce_uncorrected, file = here("processed-data", "03_build_sce","sce_uncorrected_glm.Rdata"))
 
 # sgejobs::job_single('normalize_step1_glm', create_shell = TRUE, queue= 'bluejay', memory = '75G', command = "Rscript normalize_step1_glm.R")
 
