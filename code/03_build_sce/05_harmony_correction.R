@@ -12,18 +12,20 @@ correction = args[1]
 ## Load empty-free sce data
 load(here("processed-data", "03_build_sce","sce_uncorrected_glm.Rdata"), verbose = TRUE)
 stopifnot(correction %in% colnames(colData(sce_uncorrected)))
+message("Correcting by: ", correction)
 
 ## Run harmony
-## needs PCA & GLMPCA? not sure which it acctauly uses? 
+## needs PCA
 reducedDim(sce_uncorrected, "PCA") <- reducedDim(sce_uncorrected, "GLMPCA_approx")
-# Error in RunHarmony.SingleCellExperiment(sce_uncorrected, reduction = "GLMPCA_approx",  : 
-#                                            PCA must be computed before running Harmony.
 
 message("running Harmony - ", Sys.time())
-sce <- RunHarmony(sce_uncorrected, reduction="GLMPCA_approx", group.by.vars = correction, verbose = TRUE)
+sce <- RunHarmony(sce_uncorrected, group.by.vars = correction, verbose = TRUE)
 
+## Remove redundant PCA
+reducedDim(sce, "PCA") <- NULL
+
+#### TSNE & UMAP ####
 set.seed(602)
-
 message("running TSNE - ", Sys.time())
 sce <- runTSNE(sce, dimred = 'HARMONY')
 
