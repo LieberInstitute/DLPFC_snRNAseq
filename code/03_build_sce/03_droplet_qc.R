@@ -373,9 +373,9 @@ dim(sce)
 # [1] 36601 77604
 
 ##save HDF5
-saveHDF5SummarizedExperiment(x, dir=here("processed-data", "03_build_sce", "h5_se"), prefix="", replace=FALSE,
-                             chunkdim=NULL, level=NULL, as.sparse=NA,
-                             verbose=NA)
+saveHDF5SummarizedExperiment(sce, dir=here("processed-data", "03_build_sce", "hdf5_sce"), prefix="", replace=FALSE,
+                             chunkdim=NULL, level=NULL, as.sparse=TRUE,
+                             verbose=TRUE)
 
 # sgejobs::job_single('droplet_qc', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript droplet_qc.R")
 
