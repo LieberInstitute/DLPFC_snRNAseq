@@ -6,7 +6,7 @@ library("here")
 library("sessioninfo")
 
 ## Best normalization result
-load(here("processed-data", "03_build_sce","sce_MNN_round.Rdata"))
+load(here("processed-data", "03_build_sce","sce_harmony_Sample.Rdata"), verbose = TRUE)
 
 message("running buildSNNGraph - ", Sys.time())
 snn.gr <- buildSNNGraph(sce, k=20, use.dimred="HARMONY")
