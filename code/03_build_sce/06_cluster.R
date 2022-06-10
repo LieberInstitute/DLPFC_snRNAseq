@@ -9,7 +9,7 @@ library("sessioninfo")
 load(here("processed-data", "03_build_sce","sce_MNN_round.Rdata"))
 
 message("running buildSNNGraph - ", Sys.time())
-snn.gr <- buildSNNGraph(sce, k=10, use.dimred="PCA")
+snn.gr <- buildSNNGraph(sce, k=20, use.dimred="HARMONY")
 
 message("running walktrap - ", Sys.time())
 clusters <- igraph::cluster_walktrap(snn.gr)$membership
@@ -21,7 +21,7 @@ save(clusters, file = here("processed-data", "03_build_sce", "clusters.Rdata"))
 ## Save final sce w/ annotations
 # save(sce, file = here("processed-data", "sce", "sce_DLPFC.Rdata"))
 
-# sgejobs::job_single('cluster', create_shell = TRUE, queue= 'bluejay', memory = '100G', command = "Rscript cluster.R subject")
+# sgejobs::job_single('06_cluster', create_shell = TRUE, queue= 'bluejay', memory = '100G', command = "Rscript 06_cluster.R subject")
 
 ## Reproducibility information
 print('Reproducibility information:')
