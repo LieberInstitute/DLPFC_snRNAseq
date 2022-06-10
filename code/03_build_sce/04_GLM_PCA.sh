@@ -1,9 +1,9 @@
 #!/bin/bash
 #$ -cwd
 #$ -l caracol,mem_free=50G,h_vmem=50G,h_fsize=100G
-#$ -N normalize_step1_glm
-#$ -o logs/normalize_step1_glm.txt
-#$ -e logs/normalize_step1_glm.txt
+#$ -N GLM_PCA
+#$ -o logs/04_GLM_PCA.txt
+#$ -e logs/04_GLM_PCA.txt
 #$ -m e
 
 echo "**** Job starts ****"
@@ -37,7 +37,7 @@ fi
 export CUDA_VISIBLE_DEVICES=$(echo "$avail_gpus" | head -n $NUM_GPUS | paste -sd ",")
 
 ## Edit with your job command
-Rscript normalize_step1_glm.R
+Rscript 04_GLM_PCA.R
 
 echo "**** Job ends ****"
 date
