@@ -2,24 +2,15 @@ library("SingleCellExperiment")
 library("scran")
 library("scater")
 library("scry")
-# library("batchelor")
+library("HDF5Array")
 library("here")
 library("sessioninfo")
-library("patchwork")
 
-## Load empty-free sce data
-load(here("processed-data", "sce", "sce_no_empty_droplets.Rdata"), verbose = TRUE)
-
-## Drop auto-drop nuclei
-table(sce$discard_auto)
-# FALSE  TRUE 
-# 77604  7152
-
-sce <- sce[,!sce$discard_auto]
+## Load HD5F
+sce <- loadHDF5SummarizedExperiment(dir=here("processed-data", "03_build_sce", "hdf5_sce"), prefix="")
 dim(sce)
-# [1] 36601 77604
 
-#### Rescale ####
+#### DEviance Feat Selection ####
 set.seed(606)
 
 message("running Deviance Feat. Selection - ", Sys.time())
@@ -37,8 +28,8 @@ abline(v=2000, lty=2, col="red")
 dev.off()
 
 message("running nullResiduals - ", Sys.time())
-sce <- nullResiduals(sce, assay="counts", fam="poisson",  # default params
-                            type="deviance")
+sce <- nullResiduals(sce, assay="counts", fam="binomial",  # default params
+                     type="deviance")
 
 
 hdgs.hb <- rownames(sce)[order(rowData(sce)$binomial_deviance, decreasing=T)][1:2000]
@@ -55,10 +46,10 @@ sce_uncorrected <- runPCA(sce, exprs_values="binomial_deviance_residuals",
 #### Reduce Dims####
 
 message("running TSNE - ", Sys.time())
-sce_uncorrected <- runTSNE(sce_uncorrected, dimred="PCA")
+sce_uncorrected <- runTSNE(sce_uncorrected, dimred="GLMPCA_approx")
 
 message("running UMAP - ", Sys.time())
-sce_uncorrected <- runUMAP(sce_uncorrected, dimred="PCA")
+sce_uncorrected <- runUMAP(sce_uncorrected, dimred="GLMPCA_approx")
 
 message("Saving Data - ", Sys.time())
 save(sce_uncorrected, file = here("processed-data", "03_build_sce","sce_uncorrected_glm.Rdata"))

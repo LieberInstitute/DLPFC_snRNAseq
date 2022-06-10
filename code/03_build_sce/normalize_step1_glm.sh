@@ -1,6 +1,6 @@
 #!/bin/bash
 #$ -cwd
-#$ -l caracol,mem_free=350G,h_vmem=350G,h_fsize=100G
+#$ -l caracol,mem_free=50G,h_vmem=50G,h_fsize=100G
 #$ -N normalize_step1_glm
 #$ -o logs/normalize_step1_glm.txt
 #$ -e logs/normalize_step1_glm.txt
