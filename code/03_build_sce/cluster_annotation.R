@@ -16,19 +16,19 @@ plot_dir = here("plots","03_build_sce","cluster")
 if(!dir.exists(plot_dir)) dir.create(plot_dir)
 
 ## Load sce object
-load(here("processed-data", "03_build_sce","sce_MNN_round.Rdata"), verbose = TRUE)
+load(here("processed-data", "03_build_sce","sce_harmony_Sample.Rdata"), verbose = TRUE)
 load(here("processed-data", "03_build_sce", "clusters.Rdata"), verbose = TRUE)
 
 # Assign as 'prelimCluster'
 sce$prelimCluster <- factor(clusters)
-plotReducedDim(sce, dimred="TSNE", colour_by="prelimCluster")
-
+length(levels(sce$prelimCluster))
+# [1] 296
 table(sce$prelimCluster)
 
 ## Many small clusters, some very large clusters
 summary(as.numeric(table(sce$prelimCluster)))
 # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-# 7.0    53.0   105.0   261.3   221.0 11945.0 
+# 3.0    54.0   109.0   262.2   222.2  8757.0
 
 # Is sample driving this 'high-res' clustering at this level?
 round_prelimClusters <-table(sce$prelimCluster, sce$round)
@@ -66,12 +66,16 @@ ggsave(medianDoublet_histo, filename = here(plot_dir, "medianDoublet_histogram.p
 
 ## watch in clustering
 (doublet_clust <- prelimCluster.medianDoublet[prelimCluster.medianDoublet > 5])
-# 30       167       233       257       272 
-# 22.702696 14.723280  6.450884  5.065352 13.055584 
+# 156 
+# 8.395549 
+
+summary(sce$doubletScore[sce$prelimCluster == 156])
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# 0.3844  1.6301  8.3955  7.9715 13.7577 18.0338 
 
 table(sce$prelimCluster)[names(doublet_clust)]
-# 30 167 233 257 272 
-# 39  19  17  32  22 
+# 156 
+# 68 
 
 
 #### Step 2: Hierarchical clustering of pseudo-bulked ("PB'd") counts with most robust normalization ####
@@ -158,7 +162,7 @@ names(cluster_colors) <- unique(clust.treeCut[order.dendrogram(dend)])
 labels_colors(dend) <- cluster_colors[clust.treeCut[order.dendrogram(dend)]]
 
 # Print for future reference
-pdf(here(".pdf", height = 9)
+pdf(here(".pdf", height = 9))
 par(cex=0.6, font=2)
 plot(dend, main="3x DLPFC prelim-kNN-cluster relationships with collapsed assignments", horiz = TRUE)
 abline(v = 325, lty = 2)
