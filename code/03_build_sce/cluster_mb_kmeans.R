@@ -7,7 +7,9 @@ library("fasthplus")
 library("here")
 library("sessioninfo")
 library("numform")
+library("jaffelab")
 
+source("utils.R")
 ## load data
 load(here("processed-data", "03_build_sce","sce_harmony_Sample.Rdata"), verbose = TRUE)
 
@@ -15,6 +17,7 @@ load(here("processed-data", "03_build_sce","sce_harmony_Sample.Rdata"), verbose 
 set.seed(610)
 k_list <- seq(5, 50)
 
+message("Apply mbkmeans from 5:50 - ", Sys.time())
 km_res <- lapply(k_list, function(k) {
   message("k=",k)
   mbkmeans(sce, clusters = k, 
@@ -25,6 +28,7 @@ km_res <- lapply(k_list, function(k) {
 
 names(km_res[[1]])
 
+save(km_res, file = here("processed-data", "03_build_sce","km_res.Rdata"))
 ## Use fasthplus to refine k
 # hpb estimate. t = pre-bootstrap sample size, D = reduced dimensions matrix, L = cluster labels, r = number of bootstrap iterations
 
@@ -40,7 +44,8 @@ find_t <- function(L, proportion = 0.05) {
   ifelse(smallest_cluster_size > (initial_t / n_labels), initial_t, smallest_cluster_size * n_labels)
 }
 
-fasthplus <- lapply(l, function(li) {
+message("Find fasthplus for clusters - ", Sys.time())
+fasthplus <- lapply(l[20:46], function(li) {
   message(Sys.time())
   initial_t <- find_t(L=li,proportion = 0.01)
   h <- hpb(D=reducedDims(sce)$HARMONY,
@@ -49,54 +54,114 @@ fasthplus <- lapply(l, function(li) {
            r=30)
 })
 
+fasthplus <- unlist(fasthplus)
+
 wcss <- sapply(km_res, function(x) sum(x$WCSS_per_cluster))
+r <- read.csv(here("processed-data","03_build_sce","mb_kmeans_metrics.csv"))
+colnames(r)[4:49]
+
 results <- data.frame (k=k_list, wcss = wcss, fasthplus = fasthplus)
-write.table(results,file = here::here("processed-data","rdata","spe","06_fasthplus","fasthplus_results_no_WM.csv"), append = TRUE)
+write.csv(results,file = here("processed-data","03_build_sce","mb_kmeans_metrics.csv"))
 
 pdf(here("plots","03_build_sce","cluster", "mb_kmeans_wcss.pdf"))
 plot(k_list, wcss, type = "b")
-abline(v=26, lty=2, col="red")
+abline(v=29, lty=2, col="red")
 dev.off()
 
-sce$kmeans_26 <- paste0("mbk", f_pad_zero(km_res[[which(k_list==26)]]$Clusters))
-table(sce$kmeans_26)
-# mbk01 mbk02 mbk03 mbk04 mbk05 mbk06 mbk07 mbk08 mbk09 mbk10 mbk11 mbk12 mbk13 mbk14 mbk15 mbk16 mbk17 mbk18 mbk19 mbk20 
-# 1690  2127  3777  3800  1686     3  1280 20016   533    14  2144  4399  1516  2859   304  2759  1081  3829   608 13377 
-# mbk21 mbk22 mbk23 mbk24 mbk25 mbk26 
-# 1294  4729     2   432  1968  1377 
 
-sce$kmeans_30 <- paste0("mbk", f_pad_zero(km_res[[which(k_list==30)]]$Clusters))
-table(sce$kmeans_30)
+pdf(here("plots","03_build_sce","cluster", "mb_kmeans_fasthplus.pdf"))
+plot(k_list, fasthplus, type = "b")
+abline(v=29, lty=2, col="red")
+dev.off()
 
+sce$kmeans<- as.factor(paste0("mbk", f_pad_zero(km_res[[which(k_list==29)]]$Clusters)))
+
+(cluster_tab <- table(sce$kmeans))
 # mbk01 mbk02 mbk03 mbk04 mbk05 mbk06 mbk07 mbk08 mbk09 mbk10 mbk11 mbk12 mbk13 mbk14 mbk15 mbk16 mbk17 mbk18 mbk19 mbk20 
-# 366  5740  2571  4707    26  2895   963   381  1738  2466  1589    17  2895   289   217     2   404   881 23842 12300 
-# mbk21 mbk22 mbk23 mbk24 mbk25 mbk26 mbk27 mbk28 mbk29 mbk30 
-# 1243  1408  5030   705    29  1018  1239  1098   490  1055 
+# 4233   264  1420 28963    35     2  2791   733  1235  1146  1192    16  4659   174  1587  3542   466  1645  1518   127 
+# mbk21 mbk22 mbk23 mbk24 mbk25 mbk26 mbk27 mbk28 mbk29 
+# 536  2718  1427  1615  5900   113  1193  2235  6119
+
+summary(table(sce$kmeans))
+
+table(sce$kmeans, sce$round)
+
+#### check doublet score for each prelim clust ####
+clusIndexes = splitit(sce$kmeans)
+prelimCluster.medianDoublet <- sapply(clusIndexes, function(ii){
+  median(sce$doubletScore[ii])
+}
+)
+
+summary(prelimCluster.medianDoublet)
+# Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+# 0.1370  0.4148  0.6658  0.6797  0.8024  1.5806 
 
 
 ## Plotting 
 
 # Plotting set up 
+cluster_colors <- DeconvoBuddies::create_cell_colors(cell_types = levels(sce$kmeans), pallet = "gg")
+
 my_theme <- theme_bw() +
   theme(text = element_text(size=15))
 
 plot_dir = here("plots","03_build_sce","cluster")
 
-
-clusters_k26 <- ggcells(sce, mapping=aes(x=TSNE.1, y=TSNE.2, colour=kmeans_26)) +
+## Plot clusters in TSNE
+TSNE_clusters <- ggcells(sce, mapping=aes(x=TSNE.1, y=TSNE.2, colour=kmeans_29)) +
   geom_point(size = 0.2, alpha = 0.3) +
   coord_equal() +
-  my_theme + 
+  scale_color_manual(values = cluster_colors) +
+  my_theme +
   guides(colour = guide_legend(override.aes = list(size=2)))
 
-ggsave(clusters_k26, filename = here(plot_dir, "clusters_mbkm-26.png"), width = 10)
+ggsave(TSNE_clusters, filename = here(plot_dir, "clusters_mbkm-29.png"), width = 10)
+
+#### Marker Genes ####
+# Just for logcounts
+sce <- batchelor::multiBatchNorm(sce, batch=sce$Sample)
+
+# load Mathy's markers
+load("/dcl01/lieber/ajaffe/Matt/MNT_thesis/snRNAseq/10x_pilot_FINAL/rdas/revision/markers.rda", verbose = TRUE)
+# markers.mathys.custom
+all(unlist(markers.mathys.custom) %in% rowData(sce)$gene_name)
+
+rownames(sce) <- rowData(sce)$gene_name
+
+pdf(here("plots","03_build_sce","cluster", "mb_kmeans_29_mathys_markers.pdf"), height=6, width=8)
+for(i in 1:length(markers.mathys.custom)){
+  message(names(markers.mathys.custom)[[i]])
+  print(
+    plotExpressionCustom(sce = sce,
+                         features = markers.mathys.custom[[i]],
+                         features_name = names(markers.mathys.custom)[[i]],
+                         anno_name = "kmeans")+
+      scale_color_manual(values = cluster_colors)
+  )
+}
+dev.off()
 
 
-clusters_k30 <- ggcells(sce, mapping=aes(x=TSNE.1, y=TSNE.2, colour=kmeans_30)) +
-  geom_point(size = 0.2, alpha = 0.3) +
-  coord_equal() +
-  my_theme + 
-  guides(colour = guide_legend(override.aes = list(size=2)))
+#### Find Markers ####
+small_clusters <- cluster_tab[cluster_tab < 20]
 
-ggsave(clusters_k30, filename = here(plot_dir, "clusters_mbkm-30.png"), width = 10)
-  
+sce <- sce[,!(sce$kmeans %in% names(small_clusters))]
+dim(sce)
+# [1] 36601 77581
+
+colLabels(sce) <- sce$kmeans
+markers <- scran::findMarkers(sce, pval.type="all", direction="up")
+
+save(markers, file = here("processed-data", "03_build_sce","kmeans_29_markers.Rdata"))
+## maybe Oligo
+markers$mbk02[:10,1:3]
+## Maybe Endo
+markers$mbk08[1:10,1:3]
+# sgejobs::job_single('cluster_mb_kmeans', create_shell = TRUE, queue= 'bluejay', memory = '25G', command = "Rscript cluster_mb_kmeans.R")
+## Reproducibility information
+print('Reproducibility information:')
+Sys.time()
+proc.time()
+options(width = 120)
+session_info()
