@@ -65,6 +65,9 @@ medianDoublet_histo <- ggplot(clust_medianDoublet_df, aes(x = medianDoublet)) +
 ggsave(medianDoublet_histo, filename = here(plot_dir, "medianDoublet_histogram.png"))
 
 ## watch in clustering
+(doublet_clust <- prelimCluster.medianDoublet[prelimCluster.medianDoublet > 25])
+# 25      156      166      199      247      258      264 
+# 3.024884 8.395549 2.338546 2.330919 2.034900 2.159430 2.094400 
 (doublet_clust <- prelimCluster.medianDoublet[prelimCluster.medianDoublet > 5])
 # 156 
 # 8.395549 
@@ -83,27 +86,20 @@ table(sce$prelimCluster)[names(doublet_clust)]
 #           ** That is, to pseudo-bulk (aka 'cluster-bulk') on raw counts, on all [non-zero] genes,
 #              normalize with `librarySizeFactors()`, log2-transform, then perform HC'ing
 
-# Preliminary cluster index for pseudo-bulking
-prelimCluster.PBcounts <- sapply(clusIndexes, function(ii){
-  rowSums(assays(sce)$counts[ ,ii])
-}
-)
 
-dim(prelimCluster.PBcounts)
-# [1] 36601   297
+prelimCluster.PBcounts <- aggregateAcrossCells(sce,  DataFrame(
+  prelimCluster = sce$prelimCluster
+))
 
-corner(prelimCluster.PBcounts)
-
-# And btw...
-table(rowSums(prelimCluster.PBcounts)==0)
-# FALSE  TRUE 
-# 34987  1614 
-
-# Compute LSFs at this level
-sizeFactors.PB.all  <- librarySizeFactors(prelimCluster.PBcounts)
-
-# Normalize with these LSFs
-geneExprs.temp <- t(apply(prelimCluster.PBcounts, 1, function(x) {log2(x/sizeFactors.PB.all + 1)}))
+table(rowSums(assays(prelimCluster.PBcounts)$counts) == 0)
+# # FALSE  TRUE 
+# # 34987  1614 
+# 
+# # Compute LSFs at this level
+sizeFactors.PB.all  <- librarySizeFactors(assays(prelimCluster.PBcounts)$counts)
+# 
+# # Normalize with these LSFs
+geneExprs.temp <- t(apply(assays(prelimCluster.PBcounts)$counts, 1, function(x) {log2(x/sizeFactors.PB.all + 1)}))
 
 ## Perform hierarchical clustering
 dist.clusCollapsed <- dist(t(geneExprs.temp))
@@ -111,27 +107,56 @@ tree.clusCollapsed <- hclust(dist.clusCollapsed, "ward.D2")
 
 dend <- as.dendrogram(tree.clusCollapsed, hang=0.2)
 
+load(here("processed-data", "03_build_sce", "HC_dend.Rdata"))
+
+clus = cutree(dend, 29)
+cluster_colors <- DeconvoBuddies::create_cell_colors(cell_types = paste0("c",1:29), pallet = "gg")
+
+cluster_colors[clus]
+
+library(ape)
+
 # Print for future reference
-pdf(here(plot_dir, "dend.pdf"), height = 12)
-    par(cex=0.6, font=2)
-    plot(dend, main="test dend", horiz = TRUE)
+pdf(here(plot_dir, "dend_aac.pdf"), height = 14)
+    par(cex=0.3)
+    plot(dend,main = "DLPFC prelim clusters", horiz = TRUE)
     abline(v = 525, lty = 2)
 dev.off()
     
 
+pdf(here(plot_dir, "dend_test.pdf"), height = 14)
+par(cex=0.5)
+plot(as.phylo(dend),main = "DLPFC prelim clusters", tip.color = cluster_colors[clus])
+abline(v = 525, lty = 2)
+dev.off()
+
+
 # labels(dend)[grep(c("19|32|73"),labels(dend))] <- paste0(labels(dend)[grep(c("19|32|73"),labels(dend))], "*")
 
-# Just for observation
-par(cex=.6)
-myplclust(tree.clusCollapsed, cex.main=2, cex.lab=1.5, cex=1.8)
+## Try different cut heights
 
-dend %>%
-  set("labels_cex", 0.8) %>%
-  plot(horiz = TRUE)
-abline(v = 525, lty = 2)
+h_list <- seq(100, 2000, 25)
+
+h_n_clust <- sapply(h_list, function(h) {
+  clust.treeCut <- cutreeDynamic(tree.clusCollapsed, distM=as.matrix(dist.clusCollapsed),
+                                 minClusterSize=2, deepSplit=1, cutHeight=h)
+  return(length(table(clust.treeCut)))
+})
+
+ch_df <- data.frame(cut_height = h_list, n_clust = h_n_clust)
+
+cut_height_scatter <- ggplot(ch_df, aes(x = cut_height, y = n_clust)) +
+  geom_point() +
+  my_theme +
+  scale_x_reverse() +
+  geom_vline(xintercept = 525, linetype = "dashed", color = "red")
+
+ggsave(cut_height_scatter, filename = here(plot_dir, "cut_height_scatter.png"))
+
 
 clust.treeCut <- cutreeDynamic(tree.clusCollapsed, distM=as.matrix(dist.clusCollapsed),
                                minClusterSize=2, deepSplit=1, cutHeight=525)
+
 
 table(clust.treeCut)
 unname(clust.treeCut[order.dendrogram(dend)])
@@ -164,7 +189,7 @@ labels_colors(dend) <- cluster_colors[clust.treeCut[order.dendrogram(dend)]]
 # Print for future reference
 pdf(here(".pdf", height = 9))
 par(cex=0.6, font=2)
-plot(dend, main="3x DLPFC prelim-kNN-cluster relationships with collapsed assignments", horiz = TRUE)
+plot(dend, main="DLPFC prelim-kNN-cluster relationships with collapsed assignments", horiz = TRUE)
 abline(v = 325, lty = 2)
 dev.off()
 
