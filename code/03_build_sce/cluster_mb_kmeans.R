@@ -184,26 +184,76 @@ for(i in 1:length(dlpfc_markers_list)){
 }
 dev.off()
 
+#### Mean Ratio Top Markers####
 
-save(sce, file = here("processed-data","sce","sce-DLPFC.Rdata"))
+load("dcl01/lieber/ajaffe/lab/deconvolution_bsp2/data/marker_stats_pan.v2.Rdata", verbose = TRUE)
 
-#### Find Markers ####
+# dlpfc_markers <- read.csv("/dcl01/lieber/ajaffe/Matt/MNT_thesis/snRNAseq/10x_pilot_FINAL/tables/revision/top40genesLists_DLPFC-n3_cellType_SN-LEVEL-tests_LAH2020.csv")
+# dlpfc_markers_list <- as.list(dlpfc_markers[,grepl("_1vAll", colnames(dlpfc_markers))])
+
+pdf(here("plots","03_build_sce","cluster", "mb_kmeans_29_Tran_markers.pdf"), height=6, width=8)
+for(i in 1:length(dlpfc_markers_list)){
+  message(names(dlpfc_markers_list)[[i]])
+  f <- dlpfc_markers_list[[i]]
+  f_good <- f[f %in% rownames(sce)]
+  if(f != f_good) message("Missing...",paste(f[!f %in% f_good], collapse = ", "))
+  print(
+    plotExpressionCustom(sce = sce,
+                         features = f_good,
+                         features_name = names(dlpfc_markers_list)[[i]],
+                         anno_name = "kmeans")+
+      scale_color_manual(values = cluster_colors)
+  )
+}
+dev.off()
+
+#### Test Plots ####
+
+test_plot <- ggcells(sce, mapping=aes(x=kmeans, y=SLC17A7, fill = kmeans)) + 
+  geom_violin(scale = "width") +
+  theme(legend.position = "None") +
+  theme_bw()
+
+ggsave(test_plot, filename = here("plots","03_build_sce","cluster", "test_ggcells_exprs.png"), width = 15)
+
+
+## note small clusters
 (small_clusters <- cluster_tab[cluster_tab < 20])
 # mbk05 mbk18 mbk24 mbk29 
 # 11     3     2     7
 
-sce <- sce[,!(sce$kmeans %in% names(small_clusters))]
-dim(sce)
-# [1] 36601 77581
+#### Annotate with marker cell types ####
+anno <- read.csv(here("processed-data", "03_build_sce", "DLPFC_k29_anno.csv"))
+table(anno$broad)
 
-colLabels(sce) <- sce$kmeans
-markers <- scran::findMarkers(sce, pval.type="all", direction="up")
+sce$cellType.broad <- factor(anno$broad[match(sce$kmeans, anno$cluster)])
+table(sce$cellType.broad)
+# Astro Excit Inhib Micro Nural Oligo   OPC small 
+# 3557 18035 11380  2242  1330 39257  1791    12 
 
-save(markers, file = here("processed-data", "03_build_sce","kmeans_29_markers.Rdata"))
-## maybe Oligo
-markers$mbk02[:10,1:3]
-## Maybe Endo
-markers$mbk08[1:10,1:3]
+## Precentage cell composition
+100*round(table(sce$cellType.broad)/ncol(sce),3)
+# Astro Excit Inhib Micro Nural Oligo   OPC small 
+# 4.6  23.2  14.7   2.9   1.7  50.6   2.3   0.0
+
+load("/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/TREG_paper/processed-data/00_data_prep/cell_colors.Rdata", verbose = TRUE)
+
+
+pdf(here("plots","03_build_sce","cluster", "mb_broad_mathys_markers.pdf"), height=6, width=8)
+for(i in 1:length(markers.mathys.custom)){
+  message(names(markers.mathys.custom)[[i]])
+  print(
+    plotExpressionCustom(sce = sce,
+                         features = markers.mathys.custom[[i]],
+                         features_name = names(markers.mathys.custom)[[i]],
+                         anno_name = "cellType.broad")+
+      scale_color_manual(values = cell_colors)
+  )
+}
+dev.off()
+
+
+
 # sgejobs::job_single('cluster_mb_kmeans', create_shell = TRUE, queue= 'bluejay', memory = '25G', command = "Rscript cluster_mb_kmeans.R")
 ## Reproducibility information
 print('Reproducibility information:')
