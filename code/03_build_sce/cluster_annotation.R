@@ -173,7 +173,7 @@ table(sce$cellType.broad)
 # Astro Excit Inhib Micro Nural Oligo   OPC small 
 # 4.6  23.2  14.7   2.9   1.7  50.6   2.3   0.0
 
-## plot borad
+## plot broad
 load("/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/TREG_paper/processed-data/00_data_prep/cell_colors.Rdata", verbose = TRUE)
 
 pdf(here("plots","03_build_sce","cluster", "mb_broad_mathys_markers.pdf"), height=6, width=8)
@@ -201,3 +201,6 @@ t <- table(ss(as.character(sce.dlpfc$cellType),"_"))
 # 7.0       21.3       14.1        0.1        3.5        0.2       48.7        5.1        0.1 
 
 data.frame(prop)
+
+message("Saving Data - ", Sys.time())
+saveHDF5SummarizedExperiment(sce, dir = here("processed-data", "sce","sce_DLPFC"))
