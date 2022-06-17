@@ -8,6 +8,7 @@ library("numform")
 library("jaffelab")
 
 source("utils.R")
+source("my_plotExpression.R")
 ## load data
 ## TODO USE HDF5
 load(here("processed-data", "03_build_sce","sce_harmony_Sample.Rdata"), verbose = TRUE)
@@ -50,7 +51,9 @@ summary(prelimCluster.medianDoublet)
 #### Plot TSNE ####
 # Plotting set up 
 load(here("processed-data", "03_build_sce","color_palletes.Rdata"), verbose = TRUE)
-cluster_colors <- DeconvoBuddies::create_cell_colors(cell_types = levels(sce$kmeans), pallet = "gg")
+names(iWantHue_k29) <- levels(sce$kmeans)
+cluster_colors <- iWantHue_k29
+# cluster_colors <- DeconvoBuddies::create_cell_colors(cell_types = levels(sce$kmeans), pallet = "gg")
 
 my_theme <- theme_bw() +
   theme(text = element_text(size=15))
@@ -60,8 +63,7 @@ plot_dir = here("plots","03_build_sce","cluster")
 ## Plot clusters in TSNE
 TSNE_clusters <- ggcells(sce, mapping=aes(x=TSNE.1, y=TSNE.2, colour=kmeans)) +
   geom_point(size = 0.2, alpha = 0.3) +
-  # scale_color_manual(values = cluster_colors) +
-  scale_color_manual(values = iWantHue_k29) +
+  scale_color_manual(values = cluster_colors) +
   my_theme +
   coord_equal()
 
@@ -85,22 +87,33 @@ all(unlist(markers.mathys.custom) %in% rowData(sce)$gene_name)
 
 rownames(sce) <- rowData(sce)$gene_name
 
+source("my_plotExpression.R")
+
+test <- my_plotExpression(sce,
+                          genes = markers.mathys.custom[[2]], 
+                          title = names(markers.mathys.custom)[[2]],
+                          cat = "kmeans",
+                          fill_colors = cluster_colors)
+
+ggsave(test, filename = here("plots","03_build_sce","cluster", "my_plotExpression_test.png"))
+
+
 pdf(here("plots","03_build_sce","cluster", "mb_kmeans_29_mathys_markers.pdf"), height=6, width=8)
 for(i in 1:length(markers.mathys.custom)){
   message(names(markers.mathys.custom)[[i]])
   print(
-    plotExpressionCustom(sce = sce,
-                         features = markers.mathys.custom[[i]],
-                         features_name = names(markers.mathys.custom)[[i]],
-                         anno_name = "kmeans")+
-      scale_color_manual(values = cluster_colors)
+    my_plotExpression(sce,
+                      genes = markers.mathys.custom[[i]], 
+                      title = names(markers.mathys.custom)[[i]],
+                      cat = "kmeans",
+                      fill_colors = cluster_colors)
   )
 }
 dev.off()
 
 #### Tran Maynard Top Markers####
 dlpfc_markers <- read.csv("/dcl01/lieber/ajaffe/Matt/MNT_thesis/snRNAseq/10x_pilot_FINAL/tables/revision/top40genesLists_DLPFC-n3_cellType_SN-LEVEL-tests_LAH2020.csv")
-dlpfc_markers_list <- as.list(dlpfc_markers[,grepl("_1vAll", colnames(dlpfc_markers))])
+dlpfc_markers_list <- as.list(dlpfc_markers[1:4,grepl("_1vAll", colnames(dlpfc_markers))])
 
 pdf(here("plots","03_build_sce","cluster", "mb_kmeans_29_Tran_markers.pdf"), height=6, width=8)
 for(i in 1:length(dlpfc_markers_list)){
@@ -109,55 +122,42 @@ for(i in 1:length(dlpfc_markers_list)){
   f_good <- f[f %in% rownames(sce)]
   if(f != f_good) message("Missing...",paste(f[!f %in% f_good], collapse = ", "))
   print(
-    plotExpressionCustom(sce = sce,
-                         features = f_good,
-                         features_name = names(dlpfc_markers_list)[[i]],
-                         anno_name = "kmeans")+
-      scale_color_manual(values = cluster_colors)
+    my_plotExpression(sce,
+                      genes = f_good, 
+                      title = names(dlpfc_markers_list)[[i]],
+                      cat = "kmeans",
+                      fill_colors = cluster_colors)
   )
 }
 dev.off()
 
 #### Mean Ratio Top Markers####
+load("/dcl01/lieber/ajaffe/lab/deconvolution_bsp2/data/marker_stats_pan.v2.Rdata", verbose = TRUE)
 
-load("dcl01/lieber/ajaffe/lab/deconvolution_bsp2/data/marker_stats_pan.v2.Rdata", verbose = TRUE)
+mr_list <- marker_stats %>% 
+  ungroup() %>%
+  arrange(cellType.target) %>%
+  filter(rank_ratio < 5) %>%
+  select(rank_ratio, cellType.target, Symbol) %>%
+  tidyr::pivot_wider(names_from = 'cellType.target', values_from = 'Symbol') %>%
+  select(-rank_ratio) %>%
+  as.list()
 
-# dlpfc_markers <- read.csv("/dcl01/lieber/ajaffe/Matt/MNT_thesis/snRNAseq/10x_pilot_FINAL/tables/revision/top40genesLists_DLPFC-n3_cellType_SN-LEVEL-tests_LAH2020.csv")
-# dlpfc_markers_list <- as.list(dlpfc_markers[,grepl("_1vAll", colnames(dlpfc_markers))])
-
-pdf(here("plots","03_build_sce","cluster", "mb_kmeans_29_Tran_markers.pdf"), height=6, width=8)
-for(i in 1:length(dlpfc_markers_list)){
-  message(names(dlpfc_markers_list)[[i]])
-  f <- dlpfc_markers_list[[i]]
+pdf(here("plots","03_build_sce","cluster", "mb_kmeans_29_MeanRatio_markers.pdf"), height=6, width=8)
+for(i in 1:length(mr_list)){
+  message(names(mr_list)[[i]])
+  f <- mr_list[[i]]
   f_good <- f[f %in% rownames(sce)]
   if(f != f_good) message("Missing...",paste(f[!f %in% f_good], collapse = ", "))
-  print(
-    plotExpressionCustom(sce = sce,
-                         features = f_good,
-                         features_name = names(dlpfc_markers_list)[[i]],
-                         anno_name = "kmeans")+
-      scale_color_manual(values = cluster_colors)
-  )
+    print(
+      my_plotExpression(sce,
+                        genes = f_good, 
+                        title = names(mr_list)[[i]],
+                        cat = "kmeans",
+                        fill_colors = cluster_colors)
+    )
 }
 dev.off()
-
-#### Test Plots ####
-
-test_plot <- ggcells(sce, mapping=aes(x=kmeans, y=SLC17A7, fill = kmeans)) + 
-  geom_violin(scale = "width") +
-  theme(legend.position = "None") +
-  theme_bw()
-
-ggsave(test_plot, filename = here("plots","03_build_sce","cluster", "test_ggcells_exprs.png"), width = 15)
-
-## Hmmmm?
-highest_express <- plotHighestExprs(sce, exprs_values = "counts")
-ggsave(highest_express, filename = here("plots","03_build_sce","cluster", "test_highest_express.png"), width = 15)
-
-## note small clusters
-(small_clusters <- cluster_tab[cluster_tab < 20])
-# mbk05 mbk18 mbk24 mbk29 
-# 11     3     2     7
 
 #### Annotate with marker cell types ####
 anno <- read.csv(here("processed-data", "03_build_sce", "DLPFC_k29_anno.csv"))
