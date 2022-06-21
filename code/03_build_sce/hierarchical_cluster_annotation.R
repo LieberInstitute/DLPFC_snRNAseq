@@ -65,7 +65,7 @@ medianDoublet_histo <- ggplot(clust_medianDoublet_df, aes(x = medianDoublet)) +
 ggsave(medianDoublet_histo, filename = here(plot_dir, "medianDoublet_histogram.png"))
 
 ## watch in clustering
-(doublet_clust <- prelimCluster.medianDoublet[prelimCluster.medianDoublet > 25])
+(doublet_clust <- prelimCluster.medianDoublet[prelimCluster.medianDoublet > 2])
 # 25      156      166      199      247      258      264 
 # 3.024884 8.395549 2.338546 2.330919 2.034900 2.159430 2.094400 
 (doublet_clust <- prelimCluster.medianDoublet[prelimCluster.medianDoublet > 5])
@@ -92,12 +92,12 @@ prelimCluster.PBcounts <- aggregateAcrossCells(sce,  DataFrame(
 ))
 
 table(rowSums(assays(prelimCluster.PBcounts)$counts) == 0)
-# # FALSE  TRUE 
-# # 34987  1614 
-# 
+# # FALSE  TRUE
+# # 34987  1614
+#
 # # Compute LSFs at this level
 sizeFactors.PB.all  <- librarySizeFactors(assays(prelimCluster.PBcounts)$counts)
-# 
+#
 # # Normalize with these LSFs
 geneExprs.temp <- t(apply(assays(prelimCluster.PBcounts)$counts, 1, function(x) {log2(x/sizeFactors.PB.all + 1)}))
 
@@ -107,12 +107,15 @@ tree.clusCollapsed <- hclust(dist.clusCollapsed, "ward.D2")
 
 dend <- as.dendrogram(tree.clusCollapsed, hang=0.2)
 
-load(here("processed-data", "03_build_sce", "HC_dend.Rdata"))
+## save HC data
+save(dend, tree.clusCollapsed, dist.clusCollapsed, file = here("processed-data", "03_build_sce", "HC_dend.Rdata"))
+# load(here("processed-data", "03_build_sce", "HC_dend.Rdata"), verbose = TRUE)
 
-clus = cutree(dend, 29)
-cluster_colors <- DeconvoBuddies::create_cell_colors(cell_types = paste0("c",1:29), pallet = "gg")
+clus = cutree(dend, 19)
+cluster_colors <- c(c0 = "black", c(DeconvoBuddies::create_cell_colors(cell_types = paste0("c",1:19), pallet = "gg")))
+clus[156] <- 0
 
-cluster_colors[clus]
+cluster_colors[clus + 1]
 
 library(ape)
 
@@ -126,8 +129,8 @@ dev.off()
 
 pdf(here(plot_dir, "dend_test.pdf"), height = 14)
 par(cex=0.5)
-plot(as.phylo(dend),main = "DLPFC prelim clusters", tip.color = cluster_colors[clus])
-abline(v = 525, lty = 2)
+plot(as.phylo(dend),main = "DLPFC prelim clusters", tip.color = cluster_colors[clus +1])
+abline(v = 500, lty = 2)
 dev.off()
 
 
@@ -153,66 +156,138 @@ cut_height_scatter <- ggplot(ch_df, aes(x = cut_height, y = n_clust)) +
 
 ggsave(cut_height_scatter, filename = here(plot_dir, "cut_height_scatter.png"))
 
+## Cut tree at chosen height
+
+chosen_cut_height <- 800
 
 clust.treeCut <- cutreeDynamic(tree.clusCollapsed, distM=as.matrix(dist.clusCollapsed),
-                               minClusterSize=2, deepSplit=1, cutHeight=525)
+                               minClusterSize=2, deepSplit=1, cutHeight=chosen_cut_height)
 
 
 table(clust.treeCut)
 unname(clust.treeCut[order.dendrogram(dend)])
-## Cutting at 250 looks good for the main neuronal branch, but a lot of glial
-#    prelim clusters are dropped off (0's)
+unname(clust.treeCut[order.dendrogram(dend)]) == 0
 
-# # Cut at 400 for broad glia branch (will manually merge remaining dropped off)
-# glia.treeCut <- cutreeDynamic(tree.clusCollapsed, distM=as.matrix(dist.clusCollapsed),
-#                               minClusterSize=2, deepSplit=1, cutHeight=400)
-# unname(glia.treeCut[order.dendrogram(dend)])
-
-# Take those and re-assign to the first assignments
-
-# clust <- clust.treeCut[order.dendrogram(dend)]
-# clust2 <- name_zeros(clust, list(c(1,2), c(106,107)))
-# unname(clust2)
 
 # Add new labels to those prelimClusters cut off
-clust.treeCut[order.dendrogram(dend)][which(clust.treeCut[order.dendrogram(dend)]==0)] <- max(clust.treeCut)+c(1, 6, 2, 3, 4, 5, 5)
-
-# 'Re-write', since there are missing numbers
-# clust.treeCut[order.dendrogram(dend)] <- as.numeric(as.factor(clust2))
-clust.treeCut[order.dendrogram(dend)] <- as.numeric(as.factor(clust.treeCut[order.dendrogram(dend)]))
+## just define as a max cluster for now
+if(any(clust.treeCut[order.dendrogram(dend)] == 0)){
+  max_clust <- max(clust.treeCut) 
+  clust.treeCut[order.dendrogram(dend)][which(clust.treeCut[order.dendrogram(dend)]==0)] <- max_clust + 1
+  
+  # 'Re-write', since there are missing numbers
+  clust.treeCut[order.dendrogram(dend)] <- as.numeric(as.factor(clust.treeCut[order.dendrogram(dend)]))
+  cluster_colors[as.character(max_clust + 1)] <- "black"
+  
+}
 
 ## Define color pallet
-cluster_colors <- unique(tableau20[clust.treeCut[order.dendrogram(dend)]])
-names(cluster_colors) <- unique(clust.treeCut[order.dendrogram(dend)])
+# cluster_colors <- unique(tableau20[clust.treeCut[order.dendrogram(dend)]])
+# names(cluster_colors) <- unique(clust.treeCut[order.dendrogram(dend)])
+
+## too many groups for tableau (>20)
+names(clust.treeCut) <- paste0("HC", numform::f_pad_zero(names(clust.treeCut)))
+cluster_colors <- DeconvoBuddies::create_cell_colors(cell_types = sort(unique(names(clust.treeCut))), pallet = "gg")
+
+
 labels_colors(dend) <- cluster_colors[clust.treeCut[order.dendrogram(dend)]]
 
 # Print for future reference
-pdf(here(".pdf", height = 9))
+pdf(here(plot_dir, "dend_cut525.pdf"), height = 9)
 par(cex=0.6, font=2)
 plot(dend, main="DLPFC prelim-kNN-cluster relationships with collapsed assignments", horiz = TRUE)
-abline(v = 325, lty = 2)
+abline(v = chosen_cut_height, lty = 2)
 dev.off()
 
 
 # Make reference for new cluster assignment
 clusterRefTab.dlpfc <- data.frame(origClust=order.dendrogram(dend),
-                                  merged=clust.treeCut[order.dendrogram(dend)])
-
+                                  merged=names(clust.treeCut)[order.dendrogram(dend)])
+head(clusterRefTab.dlpfc)
 
 # Assign as 'collapsedCluster'
 sce$collapsedCluster <- factor(clusterRefTab.dlpfc$merged[match(sce$prelimCluster, clusterRefTab.dlpfc$origClust)])
+
+table(sce$collapsedCluster)
+
 n_clusters <- length(levels(sce$collapsedCluster))
 # Print some visualizations:
-pdf("pdfs/revision/regionSpecific_DLPFC-n3_reducedDims-with-collapsedClusters_LAH2021.pdf")
-plotReducedDim(sce, dimred="PCA_corrected", ncomponents=5, colour_by="collapsedCluster", point_alpha=0.5)
-plotTSNE(sce, colour_by="sampleID", point_alpha=0.5)
-plotTSNE(sce, colour_by="protocol", point_alpha=0.5)
-plotTSNE(sce, colour_by="collapsedCluster", point_alpha=0.5)
-plotTSNE(sce, colour_by="sum", point_alpha=0.5)
-plotTSNE(sce, colour_by="doubletScore", point_alpha=0.5)
-# And some more informative UMAPs
-plotUMAP(sce, colour_by="sampleID", point_alpha=0.5)
-plotUMAP(sce, colour_by="collapsedCluster", point_alpha=0.5)
+tail(table(sce$prelimCluster, sce$collapsedCluster),20)
+
+
+## Plot clusters in TSNE
+TSNE_clusters <- ggcells(sce, mapping=aes(x=TSNE.1, y=TSNE.2, colour=collapsedCluster)) +
+  geom_point(size = 0.2, alpha = 0.3) +
+  scale_color_manual(values = cluster_colors) +
+  my_theme +
+  coord_equal()
+
+ggsave(TSNE_clusters + 
+         guides(colour = guide_legend(override.aes = list(size=2, alpha = 1))),
+       filename = here(plot_dir, "clusters_HC-29.png"), width = 10)
+
+
+#### compare w/ mb k-means ####
+load(here("processed-data", "03_build_sce","km_res.Rdata"), verbose = TRUE)
+k_list <- seq(5, 50) ## keep index
+sce$kmeans<- as.factor(paste0("mbk", numform::f_pad_zero(km_res[[which(k_list==29)]]$Clusters)))
+
+cluster_compare <- table(sce$collapsedCluster, sce$kmeans)
+
+library("pheatmap")
+
+cluster_compare2 <- cluster_compare
+cluster_compare2[cluster_compare > 5000] <- 5000
+
+png(here(plot_dir, "cluster_compare_heatmap.png"),height = 800, width = 800)
+pheatmap(cluster_compare2)
 dev.off()
 
-tail(table(sce$prelimCluster, sce$collapsedCluster),20)
+
+#### Marker Genes ####
+# Just for logcounts
+sce <- batchelor::multiBatchNorm(sce, batch=sce$Sample)
+
+# load Mathy's markers
+load("/dcl01/lieber/ajaffe/Matt/MNT_thesis/snRNAseq/10x_pilot_FINAL/rdas/revision/markers.rda", verbose = TRUE)
+# markers.mathys.custom
+all(unlist(markers.mathys.custom) %in% rowData(sce)$gene_name)
+
+rownames(sce) <- rowData(sce)$gene_name
+
+source("my_plotExpression.R")
+
+## Mathys
+my_plotMarkers(sce = sce, 
+               marker_list = markers.mathys.custom,
+               cat = "collapsedCluster",
+               fill_colors = cluster_colors,
+               pdf_fn = here(plot_dir, "HC_mathys_markers.pdf"))
+
+## Tran 
+dlpfc_markers <- read.csv("/dcl01/lieber/ajaffe/Matt/MNT_thesis/snRNAseq/10x_pilot_FINAL/tables/revision/top40genesLists_DLPFC-n3_cellType_SN-LEVEL-tests_LAH2020.csv")
+dlpfc_markers_list <- as.list(dlpfc_markers[1:4,grepl("_1vAll", colnames(dlpfc_markers))])
+
+my_plotMarkers(sce = sce, 
+               marker_list = dlpfc_markers_list,
+               cat = "collapsedCluster",
+               fill_colors = cluster_colors,
+               pdf_fn = here(plot_dir, "HC_Tran_markers.pdf"))
+
+## Mean Ratio Top Markers
+load("/dcl01/lieber/ajaffe/lab/deconvolution_bsp2/data/marker_stats_pan.v2.Rdata", verbose = TRUE)
+
+mr_list <- marker_stats %>% 
+  ungroup() %>%
+  arrange(cellType.target) %>%
+  filter(rank_ratio < 5) %>%
+  select(rank_ratio, cellType.target, Symbol) %>%
+  tidyr::pivot_wider(names_from = 'cellType.target', values_from = 'Symbol') %>%
+  select(-rank_ratio) %>%
+  as.list()
+
+my_plotMarkers(sce = sce, 
+               marker_list = mr_list,
+               cat = "collapsedCluster",
+               fill_colors = cluster_colors,
+               pdf_fn = here(plot_dir, "HC_MeanRatio_markers.pdf"))
