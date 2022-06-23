@@ -126,7 +126,7 @@ save(dend, tree.clusCollapsed, dist.clusCollapsed, file = here("processed-data",
 #     plot(dend,main = "DLPFC prelim clusters", horiz = TRUE)
 #     abline(v = 525, lty = 2)
 # dev.off()
-    
+
 
 # pdf(here(plot_dir, "dend_test.pdf"), height = 14)
 # par(cex=0.5)
@@ -292,3 +292,56 @@ my_plotMarkers(sce = sce,
                cat = "collapsedCluster",
                fill_colors = cluster_colors,
                pdf_fn = here(plot_dir, "HC_MeanRatio_markers.pdf"))
+
+my_plotClusterMarkers(sce = sce,
+                      marker_list = markers.mathys.custom,
+                      cat = "collapsedCluster",
+                      pdf_fn = here(plot_dir, "pcm_test2.pdf"))
+
+my_plotClusterMarkers(sce = sce,
+                      marker_list = markers.mathys.custom,
+                      cat = "kmeans",
+                      pdf_fn = here(plot_dir, "pcm_test2.pdf"))
+
+my_plotClusterMarkers(sce = sce,
+                      marker_list = mr_list,
+                      cat = "collapsedCluster",
+                      pdf_fn = here(plot_dir, "pcm_MR.pdf"))
+
+pdf(here(plot_dir, "pcm_test.pdf"), height=6, width=8)
+my_plotExpression_flip(sce[,sce$collapsedCluster == "HC01"],
+               marker_list = markers.mathys.custom, 
+               assay = "logcounts")
+dev.off()
+
+## check out annotation 
+anno_k <- read.csv(here("processed-data", "03_build_sce", "DLPFC_k29_anno.csv"))
+
+anno_k2 <- anno_k %>% 
+  arrange(broad) %>%
+  group_by(broad) %>% 
+  mutate(ci = as.character(row_number()),
+         ct = paste0(broad,'_',ci),
+         cellType = ifelse(n()>1,"multi",broad))
+
+anno_k2 %>% select(broad,ci,ct,cellType)
+
+anno_k %>% group_by(broad) %>% mutate(cellType = paste0(broad,"_",rownumber()))
+table(anno_k$broad)
+
+anno_hc <- read.csv(here("processed-data", "03_build_sce", "DLPFC_HC_anno.csv"))
+table(anno_hc$broad)
+
+sce$cellType_k <- factor(anno_k$broad[match(sce$kmeans, anno_k$cluster)])
+table(sce$cellType_k)
+
+sce$cellType_hc <- factor(anno_hc$broad[match(sce$collapsedCluster, anno_hc$cluster)])
+table(sce$cellType_hc)
+table(sce$collapsedCluster)
+
+ct_tab <- table(sce$cellType_hc,sce$cellType_k)
+
+png(here(plot_dir, "cellType_compare_heatmap.png"),height = 800, width = 800)
+pheatmap(ct_tab)
+dev.off()
+
