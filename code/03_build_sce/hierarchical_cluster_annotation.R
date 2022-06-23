@@ -194,12 +194,18 @@ cluster_colors <- DeconvoBuddies::create_cell_colors(cell_types = sort(unique(na
 labels_colors(dend) <- cluster_colors[clust.treeCut[order.dendrogram(dend)]]
 
 # Print for future reference
-pdf(here(plot_dir, "dend_cut525.pdf"), height = 9)
-par(cex=0.6, font=2)
+pdf(here(plot_dir, "dend_cut.pdf"), height = 11)
+par(cex=0.3, font=1)
 plot(dend, main="DLPFC prelim-kNN-cluster relationships with collapsed assignments", horiz = TRUE)
 abline(v = chosen_cut_height, lty = 2)
 dev.off()
 
+# png(here(plot_dir, "dend_cut.png"),width = 1000, height = 2000)
+png(here(plot_dir, "dend_cut.png"), height = 10, width = 6, unit = "in", res = 400)
+par(cex=0.3, font=1)
+plot(dend, main="DLPFC prelim-kNN-cluster relationships with collapsed assignments", horiz = TRUE)
+abline(v = chosen_cut_height, lty = 2)
+dev.off()
 
 # Make reference for new cluster assignment
 clusterRefTab.dlpfc <- data.frame(origClust=order.dendrogram(dend),
@@ -232,17 +238,6 @@ ggsave(TSNE_clusters +
 load(here("processed-data", "03_build_sce","km_res.Rdata"), verbose = TRUE)
 k_list <- seq(5, 50) ## keep index
 sce$kmeans<- as.factor(paste0("mbk", numform::f_pad_zero(km_res[[which(k_list==29)]]$Clusters)))
-
-cluster_compare <- table(sce$collapsedCluster, sce$kmeans)
-
-library("pheatmap")
-
-cluster_compare2 <- cluster_compare
-cluster_compare2[cluster_compare > 5000] <- 5000
-
-png(here(plot_dir, "cluster_compare_heatmap.png"),height = 800, width = 800)
-pheatmap(cluster_compare2)
-dev.off()
 
 
 #### Marker Genes ####
@@ -309,7 +304,7 @@ my_plotClusterMarkers(sce = sce,
                       pdf_fn = here(plot_dir, "pcm_MR.pdf"))
 
 pdf(here(plot_dir, "pcm_test.pdf"), height=6, width=8)
-my_plotExpression_flip(sce[,sce$collapsedCluster == "HC01"],
+my_plotExpression_flip(sce[,sce$kmeans == "mbk04"],
                marker_list = markers.mathys.custom, 
                assay = "logcounts")
 dev.off()
@@ -334,10 +329,50 @@ table(anno_hc$broad)
 
 sce$cellType_k <- factor(anno_k$broad[match(sce$kmeans, anno_k$cluster)])
 table(sce$cellType_k)
+(prop_k <- 100*round(table(sce$cellType_k)/ncol(sce),3))
+# Ambig Ambig_04    Astro    Excit     Glia    Inhib    Micro    Mural     Neun    Oligo      OPC 
+# 2.9     36.2      4.6     23.2      7.1     10.5      0.0      1.7      4.1      7.3      2.3
 
 sce$cellType_hc <- factor(anno_hc$broad[match(sce$collapsedCluster, anno_hc$cluster)])
 table(sce$cellType_hc)
 table(sce$collapsedCluster)
+
+(prop_hc <- 100*round(table(sce$cellType_hc)/ncol(sce),3))
+# Ambig Astro  Endo Excit Inhib Mural  Neun Oligo   OPC 
+# 31.4   5.1   0.6  28.0  12.6   2.2   3.9  11.6   2.5 
+
+## Tram, Maynard DLPFC dataset
+# Astro      Excit      Inhib Macrophage      Micro      Mural      Oligo        OPC      Tcell 
+# 7.0       21.3       14.1        0.1        3.5        0.2       48.7        5.1        0.1 
+
+#### Compare annotaitons ####
+library("pheatmap")
+
+table(sce$kmeans)
+table(sce$collapsedCluster)
+
+cluster_compare <- table(sce$kmeans, sce$collapsedCluster)
+cluster_compare2 <- cluster_compare
+cluster_compare2[cluster_compare > 5000] <- 5000
+
+hc_anno <- anno_hc %>% select(cluster, broad) %>% tibble::column_to_rownames("cluster")
+km_anno <- anno_k %>% select(cluster, broad) %>% tibble::column_to_rownames("cluster")
+
+ct <- unique(c(hc_anno$broad,km_anno$broad))
+p1 <- DeconvoBuddies::create_cell_colors(pallet = "classic")
+ct_missing <- ct[!ct %in% names(p1)]
+p2 <- DeconvoBuddies::create_cell_colors(ct_missing, pallet = "gg",split ="_")
+
+
+temp_pallet <- c(p1,p2)
+
+png(here(plot_dir, "cluster_compare_heatmap.png"),height = 800, width = 800)
+pheatmap(cluster_compare2,
+         annotation_row = hc_anno,
+         annotation_col = km_anno,
+         annotation_colors = list(broad = temp_pallet)
+         )
+dev.off()
 
 ct_tab <- table(sce$cellType_hc,sce$cellType_k)
 
@@ -345,3 +380,4 @@ png(here(plot_dir, "cellType_compare_heatmap.png"),height = 800, width = 800)
 pheatmap(ct_tab)
 dev.off()
 
+save(sce, file = here("processed-data", "sce","sce_DLPFC.Rdata"))
