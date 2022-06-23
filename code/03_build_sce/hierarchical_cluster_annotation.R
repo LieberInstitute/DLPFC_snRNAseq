@@ -111,27 +111,28 @@ dend <- as.dendrogram(tree.clusCollapsed, hang=0.2)
 save(dend, tree.clusCollapsed, dist.clusCollapsed, file = here("processed-data", "03_build_sce", "HC_dend.Rdata"))
 # load(here("processed-data", "03_build_sce", "HC_dend.Rdata"), verbose = TRUE)
 
-clus = cutree(dend, 19)
-cluster_colors <- c(c0 = "black", c(DeconvoBuddies::create_cell_colors(cell_types = paste0("c",1:19), pallet = "gg")))
-clus[156] <- 0
-
-cluster_colors[clus + 1]
-
-library(ape)
-
-# Print for future reference
-pdf(here(plot_dir, "dend_aac.pdf"), height = 14)
-    par(cex=0.3)
-    plot(dend,main = "DLPFC prelim clusters", horiz = TRUE)
-    abline(v = 525, lty = 2)
-dev.off()
+## pick k clusters?
+# clus = cutree(dend, 19)
+# cluster_colors <- c(c0 = "black", c(DeconvoBuddies::create_cell_colors(cell_types = paste0("c",1:19), pallet = "gg")))
+# clus[156] <- 0
+# 
+# cluster_colors[clus + 1]
+# 
+# library(ape)
+# 
+# # Print for future reference
+# pdf(here(plot_dir, "dend_aac.pdf"), height = 14)
+#     par(cex=0.3)
+#     plot(dend,main = "DLPFC prelim clusters", horiz = TRUE)
+#     abline(v = 525, lty = 2)
+# dev.off()
     
 
-pdf(here(plot_dir, "dend_test.pdf"), height = 14)
-par(cex=0.5)
-plot(as.phylo(dend),main = "DLPFC prelim clusters", tip.color = cluster_colors[clus +1])
-abline(v = 500, lty = 2)
-dev.off()
+# pdf(here(plot_dir, "dend_test.pdf"), height = 14)
+# par(cex=0.5)
+# plot(as.phylo(dend),main = "DLPFC prelim clusters", tip.color = cluster_colors[clus +1])
+# abline(v = 500, lty = 2)
+# dev.off()
 
 
 # labels(dend)[grep(c("19|32|73"),labels(dend))] <- paste0(labels(dend)[grep(c("19|32|73"),labels(dend))], "*")
