@@ -1,6 +1,6 @@
 #!/bin/bash
 #$ -cwd
-#$ -l mem_free=100G,h_vmem=100G,h_fsize=100G
+#$ -l mem_free=20G,h_vmem=20G,h_fsize=100G
 #$ -N hierarchical_cluster
 #$ -o logs/hierarchical_cluster.txt
 #$ -e logs/hierarchical_cluster.txt

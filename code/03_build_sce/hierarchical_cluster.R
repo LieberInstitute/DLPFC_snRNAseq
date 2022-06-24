@@ -58,11 +58,11 @@ dend <- as.dendrogram(tree.clusCollapsed, hang=0.2)
 pdf(here(plot_dir, "dend.pdf"), height = 12)
     par(cex=0.6, font=2)
     plot(dend, main="hierarchical cluster dend", horiz = TRUE)
-    abline(v = 525, lty = 2)
+    # abline(v = 525, lty = 2)
 dev.off()
 
-save(dend, file = here("processed-data", "03_build_sce", "HC_dend.Rdata"))
-
+## Save data
+save(dend, tree.clusCollapsed, dist.clusCollapsed, file = here("processed-data", "03_build_sce", "HC_dend.Rdata"))
 
 # sgejobs::job_single('hierarchical_cluster', create_shell = TRUE, memory = '100G', command = "Rscript hierarchical_cluster.R")
 
