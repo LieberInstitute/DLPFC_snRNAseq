@@ -1,30 +1,30 @@
-﻿cluster,cell_type_mathys,note_mathys,cell_type_Tran,note_tran,MR,MR_note,broad
-mbk01,Endo,neuron,Mural,Mural,Mural,,Mural
-mbk02,Excit,,Excit_F,,,,Excit
-mbk03,Excit/Inhib,,Excit_C,Excit_E,Excit,,Excit
-mbk04,Excit,"Micro, Oligo",Oligo,"Macro, Micro",,,Oligo
-mbk05,Inhib,,Micro,,Micro,Excit,Micro
-mbk06,Excit,,Excit,Excit_D,Excit,,Excit
-mbk07,OPC,,OPC,,OPC,,OPC
-mbk08,Endo,,Excit_F,Inhib,,,Excit
-mbk09,Inhib,,Inhib_B,Inhib_E,Inhib,,Inhib
-mbk10,Excit,,Excit_B,"Excit_C, Excit_D",Excit,,Excit
-mbk11,Oligo,,Oligo,Inhib-B,Oligo,,Oligo
-mbk12,Inhib,,Inhib_C,,Inhib,,Inhib
-mbk13,Excit,,,,Excit,,Excit
-mbk14,Inhib,OPC,Excit_B,Excit_C,Excit,,Neun
-mbk15,Excit,,Excit_B,,Excit,,Excit
-mbk16,Oligo,Astro/Micro,Oligo,Micro,Oligo,"Micro, macro",Micro
-mbk17,,,Excit_A,Excit_E,Excit,,Excit
-mbk18,OPC,,,,Excit,,Ambig
-mbk19,Excit,,Excit,Excit_E,Excit,,Excit
-mbk20,Excit,Astro,,Excit_E,Excit,,Excit
-mbk21,Astro,,Astro,,Astro,,Astro
-mbk22,Micro,,Inhib_B,,,,Ambig
-mbk23,Excit,,Excit_A,,,,Excit
-mbk24,Inhib,,Inhib,,Inhib,,Inhib
-mbk25,Inhib,,Inhib_D,,Inhib,,Inhib
-mbk26,Inhib,,Inhib_D,,Inhib,,Inhib
-mbk27,Excit,,Excit_F,,,,Excit
-mbk28,Inhib,,Inhib_F,"Inhib_C, Inhib_B",Inhib,,Inhib
-mbk29,Oligo,,Excit,,Excit,,Excit
+﻿cluster,cell_type_mathys,note_mathys,MR,MR_note,broad
+mbk01,Endo,Mural,Mural,,Endo
+mbk02,Excit,,,,Excit
+mbk03,Excit/Inhib,,Excit,,Excit
+mbk04,Oligo,"Micro, Oligo",,,Oligo
+mbk05,Inhib,,Micro,Excit,Micro
+mbk06,Excit,,Excit,,Excit
+mbk07,OPC,,OPC,,OPC
+mbk08,Endo,,,,Excit
+mbk09,Inhib,,Inhib,,Inhib
+mbk10,Excit,,Excit,,Excit
+mbk11,Oligo,,Oligo,,Oligo
+mbk12,Inhib,MSN,Inhib,,Inhib
+mbk13,Excit,,Excit,,Excit
+mbk14,Inhib,OPC,Excit,,Neun
+mbk15,Excit,,Excit,,Excit
+mbk16,Micro,Astro/Micro,Oligo,"Micro, macro",Micro
+mbk17,,,Excit,,Excit
+mbk18,OPC,,Excit,,Ambig
+mbk19,Excit,,Excit,,Excit
+mbk20,Excit,Astro,Excit,,Excit
+mbk21,Astro,,Astro,,Astro
+mbk22,Micro,,,,Ambig
+mbk23,Excit,,,,Excit
+mbk24,Inhib,MSN,Inhib,,Inhib
+mbk25,Inhib,,Inhib,,Inhib
+mbk26,Inhib,,Inhib,,Inhib
+mbk27,Excit,MSN,,,Excit
+mbk28,Inhib,,Inhib,,Inhib
+mbk29,Oligo,,Excit,,Excit
