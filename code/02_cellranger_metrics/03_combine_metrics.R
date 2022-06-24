@@ -32,7 +32,7 @@ all_metrics$Sample.ID <- basename(gsub("outs/metrics_summary.csv", "", all_metri
 ## Used https://rpkgs.datanovia.com/ggpubr/reference/ggboxplot.html
 pdf(
     here(
-        "processed-data",
+        "plots",
         "02_cellranger_metrics",
         "cross_study_cellranger_metrics_boxplots.pdf"
     ),
@@ -53,15 +53,15 @@ for (i in colnames(all_metrics)[-which(colnames(all_metrics) %in% c("Sample.ID",
             shape = "set",
             label = "Sample.ID",
             repel = TRUE,
-            font.label = list(size = 5),
+            font.label = list(size = 6),
             legend = "none",
-            ggtheme = theme_pubr(base_size = 30)
+            ggtheme = theme_pubr(base_size = 15)
         )
     print(p)
 }
 dev.off()
 
-
+# sgejobs::job_single('combine_metrics', create_shell = TRUE, queue= 'bluejay', memory = '5G', command = "Rscript 03_combine_metrics.R")
 
 ## Reproducibility information
 print("Reproducibility information:")
