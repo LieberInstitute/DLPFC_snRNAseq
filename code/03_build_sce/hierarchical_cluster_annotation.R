@@ -216,6 +216,10 @@ head(clusterRefTab.dlpfc)
 sce$collapsedCluster <- factor(clusterRefTab.dlpfc$merged[match(sce$prelimCluster, clusterRefTab.dlpfc$origClust)])
 
 table(sce$collapsedCluster)
+# HC01  HC02  HC03  HC04  HC05  HC06  HC07  HC08  HC09  HC10  HC11  HC12  HC13  HC14  HC15  HC16  HC17  HC18  HC19  HC20 
+# 23025  7927  2487  5366  1309  2171  4732  1267  2532   329  4294  1940   334  1463  1310   565  2561  3979  1192  1367 
+# HC21  HC22  HC23  HC24  HC25  HC26  HC27  HC28  HC29 
+# 1079   482   420  1601  1567   446  1711    82    66 
 
 n_clusters <- length(levels(sce$collapsedCluster))
 # Print some visualizations:
@@ -238,7 +242,7 @@ ggsave(TSNE_clusters +
 load(here("processed-data", "03_build_sce","km_res.Rdata"), verbose = TRUE)
 k_list <- seq(5, 50) ## keep index
 sce$kmeans<- as.factor(paste0("mbk", numform::f_pad_zero(km_res[[which(k_list==29)]]$Clusters)))
-
+table(sce$kmeans)
 
 #### Marker Genes ####
 # Just for logcounts
@@ -321,7 +325,6 @@ anno_k2 <- anno_k %>%
 
 anno_k2 %>% select(broad,ci,ct,cellType)
 
-anno_k %>% group_by(broad) %>% mutate(cellType = paste0(broad,"_",rownumber()))
 table(anno_k$broad)
 
 anno_hc <- read.csv(here("processed-data", "03_build_sce", "DLPFC_HC_anno.csv"))
@@ -329,17 +332,21 @@ table(anno_hc$broad)
 
 sce$cellType_k <- factor(anno_k$broad[match(sce$kmeans, anno_k$cluster)])
 table(sce$cellType_k)
+# Ambig Astro Excit Inhib Micro Mural  Neun Oligo   OPC 
+# 2245  3557 18042  8173  5552  1330  3198 33716  1791
+
 (prop_k <- 100*round(table(sce$cellType_k)/ncol(sce),3))
-# Ambig Ambig_04    Astro    Excit     Glia    Inhib    Micro    Mural     Neun    Oligo      OPC 
-# 2.9     36.2      4.6     23.2      7.1     10.5      0.0      1.7      4.1      7.3      2.3
+# Ambig Astro Excit Inhib Micro Mural  Neun Oligo   OPC 
+# 2.9   4.6  23.2  10.5   7.2   1.7   4.1  43.4   2.3 
 
 sce$cellType_hc <- factor(anno_hc$broad[match(sce$collapsedCluster, anno_hc$cluster)])
 table(sce$cellType_hc)
-table(sce$collapsedCluster)
+# Ambig Astro  Endo Excit Inhib Micro Mural  Neun Oligo   OPC 
+# 1310  3979   446 21766  9757  1601  1711  3043 32051  1940 
 
 (prop_hc <- 100*round(table(sce$cellType_hc)/ncol(sce),3))
-# Ambig Astro  Endo Excit Inhib Mural  Neun Oligo   OPC 
-# 31.4   5.1   0.6  28.0  12.6   2.2   3.9  11.6   2.5 
+# Ambig Astro  Endo Excit Inhib Micro Mural  Neun Oligo   OPC 
+# 1.7   5.1   0.6  28.0  12.6   2.1   2.2   3.9  41.3   2.5 
 
 ## Tram, Maynard DLPFC dataset
 # Astro      Excit      Inhib Macrophage      Micro      Mural      Oligo        OPC      Tcell 
@@ -354,6 +361,8 @@ table(sce$collapsedCluster)
 cluster_compare <- table(sce$kmeans, sce$collapsedCluster)
 cluster_compare2 <- cluster_compare
 cluster_compare2[cluster_compare > 5000] <- 5000
+
+cluster_compare > 0
 
 hc_anno <- anno_hc %>% select(cluster, broad) %>% tibble::column_to_rownames("cluster")
 km_anno <- anno_k %>% select(cluster, broad) %>% tibble::column_to_rownames("cluster")
@@ -374,7 +383,10 @@ pheatmap(cluster_compare2,
          )
 dev.off()
 
-ct_tab <- table(sce$cellType_hc,sce$cellType_k)
+(ct_tab <- table(sce$cellType_hc,sce$cellType_k))
+
+table(sce$cellType_hc,sce$round)
+table(sce$cellType_hc,sce$collapsedCluster)
 
 png(here(plot_dir, "cellType_compare_heatmap.png"),height = 800, width = 800)
 pheatmap(ct_tab)
