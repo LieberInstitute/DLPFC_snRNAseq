@@ -1,0 +1,30 @@
+﻿cluster,mathys,tran,MR,broad
+HC01,,,,Oligo
+HC02,Excit,Excit,Excit,Excit
+HC03,Excit,Excit,Excit,Excit
+HC04,Inhib,Inhib,Inhib,Inhib
+HC05,Excit,Excit,Excit,Excit
+HC06,Excit,Excit,Excit,Excit
+HC07,Oligo,Oligo,Oligo,Oligo
+HC08,Inhib,Inhib,Inhib,Inhib
+HC09,Excit,,Excit,Excit
+HC10,,"Excit, Oligo",Excit,Excit
+HC11,Oligo,Oligo,Oligo,Oligo
+HC12,OPC,OPC,OPC,OPC
+HC13,Excit,Excit,,Excit
+HC14,Excit,Excit,,Excit
+HC15,,,,Ambig
+HC16,Inhib,Inhib,Inhib,Inhib
+HC17,Excit,,,Neun
+HC18,Astro,Astro,Astro,Astro
+HC19,Inhib,Inhib,Inhib,Inhib
+HC20,Inhib,Inhib,Inhib,Inhib
+HC21,Excit,Excit,,Excit
+HC22,,"Excit,Inhib",,Neun
+HC23,Excit,Excit,,Excit
+HC24,Micro,Micro,Micro,Micro
+HC25,Excit,Exit,,Excit
+HC26,Endo,Mural,"Endo, Mural",Endo
+HC27,,"Excit, Mural","Mural,Tcell",Mural
+HC28,Excit,Excit,,Excit
+HC29,Excit,Excit,,Excit
