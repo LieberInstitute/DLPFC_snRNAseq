@@ -1,0 +1,111 @@
+Adding LIBD modules
+Loading git
+Loading LIBD module for git-status-size/github
+Loading LIBD module for git-lfs/2.8.0
+Loading LIBD module for rmate/1.5.9
+Loading LIBD module for ruby/2.6.4p104
+Loading conda_R/devel
+**** Job starts ****
+Wed Jun  1 13:51:55 EDT 2022
+**** JHPCE info ****
+User: lhuuki
+Job id: 246749
+Job name: combine_metrics
+Hostname: compute-095.cm.cluster
+Task id: undefined
+Unloading conda_R/devel
+Loading conda_R/4.1.x
+
+The following have been reloaded with a version change:
+  1) conda_R/devel => conda_R/4.1.x
+
+
+Currently Loaded Modules:
+  1) matlab/R2019a     6) COMMUNITY_CENTOS7_DEFAULT_ENV  11) ruby/2.6.4p104
+  2) stata/17          7) JHPCE_CENTOS7_DEFAULT_ENV      12) rmate/1.5.9
+  3) JHPCE_tools/1.0   8) git-status-size/github         13) conda/3-4.6.14
+  4) sge/8.1.9         9) git/2.28.0                     14) conda_R/4.1.x
+  5) gcc/4.4.7        10) git-lfs/2.8.0
+
+ 
+
+here() starts at /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq
+Loading required package: ggplot2
+Loading objects:
+  tran_metrics
+Loading objects:
+  cellranger_metrics
+[1] 55 22
+There were 40 warnings (use warnings() to see them)
+null device 
+          1 
+[1] "Reproducibility information:"
+[1] "2022-06-01 13:52:30 EDT"
+   user  system elapsed 
+ 30.184   0.398  32.820 
+─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.1.2 Patched (2021-11-04 r81138)
+ os       CentOS Linux 7 (Core)
+ system   x86_64, linux-gnu
+ ui       X11
+ language (EN)
+ collate  en_US.UTF-8
+ ctype    en_US.UTF-8
+ tz       US/Eastern
+ date     2022-06-01
+ pandoc   2.13 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1.x/bin/pandoc
+
+─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+ package      * version date (UTC) lib source
+ abind          1.4-5   2016-07-21 [2] CRAN (R 4.1.0)
+ assertthat     0.2.1   2019-03-21 [2] CRAN (R 4.1.0)
+ backports      1.4.1   2021-12-13 [2] CRAN (R 4.1.2)
+ broom          0.8.0   2022-04-13 [2] CRAN (R 4.1.2)
+ car            3.0-13  2022-05-02 [2] CRAN (R 4.1.2)
+ carData        3.0-5   2022-01-06 [2] CRAN (R 4.1.2)
+ cli            3.3.0   2022-04-25 [2] CRAN (R 4.1.2)
+ colorspace     2.0-3   2022-02-21 [2] CRAN (R 4.1.2)
+ crayon         1.5.1   2022-03-26 [2] CRAN (R 4.1.2)
+ DBI            1.1.2   2021-12-20 [2] CRAN (R 4.1.2)
+ digest         0.6.29  2021-12-01 [2] CRAN (R 4.1.2)
+ dplyr          1.0.9   2022-04-28 [2] CRAN (R 4.1.2)
+ ellipsis       0.3.2   2021-04-29 [2] CRAN (R 4.1.0)
+ fansi          1.0.3   2022-03-24 [2] CRAN (R 4.1.2)
+ farver         2.1.0   2021-02-28 [2] CRAN (R 4.1.0)
+ generics       0.1.2   2022-01-31 [2] CRAN (R 4.1.2)
+ ggplot2      * 3.3.6   2022-05-03 [2] CRAN (R 4.1.2)
+ ggpubr       * 0.4.0   2020-06-27 [2] CRAN (R 4.1.2)
+ ggrepel        0.9.1   2021-01-15 [2] CRAN (R 4.1.0)
+ ggsignif       0.6.3   2021-09-09 [2] CRAN (R 4.1.2)
+ glue           1.6.2   2022-02-24 [2] CRAN (R 4.1.2)
+ gtable         0.3.0   2019-03-25 [2] CRAN (R 4.1.0)
+ here         * 1.0.1   2020-12-13 [2] CRAN (R 4.1.2)
+ lifecycle      1.0.1   2021-09-24 [1] CRAN (R 4.1.1)
+ magrittr       2.0.3   2022-03-30 [2] CRAN (R 4.1.2)
+ munsell        0.5.0   2018-06-12 [2] CRAN (R 4.1.0)
+ pillar         1.7.0   2022-02-01 [1] CRAN (R 4.1.2)
+ pkgconfig      2.0.3   2019-09-22 [2] CRAN (R 4.1.0)
+ purrr          0.3.4   2020-04-17 [2] CRAN (R 4.1.0)
+ R6             2.5.1   2021-08-19 [1] CRAN (R 4.1.1)
+ RColorBrewer   1.1-3   2022-04-03 [2] CRAN (R 4.1.2)
+ Rcpp           1.0.8.3 2022-03-17 [2] CRAN (R 4.1.2)
+ rlang          1.0.2   2022-03-04 [2] CRAN (R 4.1.2)
+ rprojroot      2.0.3   2022-04-02 [2] CRAN (R 4.1.2)
+ rstatix        0.7.0   2021-02-13 [2] CRAN (R 4.1.2)
+ scales         1.2.0   2022-04-13 [2] CRAN (R 4.1.2)
+ sessioninfo  * 1.2.2   2021-12-06 [2] CRAN (R 4.1.2)
+ tibble         3.1.7   2022-05-03 [2] CRAN (R 4.1.2)
+ tidyr          1.2.0   2022-02-01 [2] CRAN (R 4.1.2)
+ tidyselect     1.1.2   2022-02-21 [2] CRAN (R 4.1.2)
+ utf8           1.2.2   2021-07-24 [2] CRAN (R 4.1.0)
+ vctrs          0.4.1   2022-04-13 [2] CRAN (R 4.1.2)
+ withr          2.5.0   2022-03-03 [2] CRAN (R 4.1.2)
+
+ [1] /users/lhuuki/R/4.1.x
+ [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1.x/R/4.1.x/lib64/R/site-library
+ [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1.x/R/4.1.x/lib64/R/library
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+**** Job ends ****
+Wed Jun  1 13:52:30 EDT 2022
