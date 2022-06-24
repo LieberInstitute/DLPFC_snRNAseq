@@ -15,6 +15,7 @@ fastq_naming_path = here(
 )
 
 pd = read.csv(pd_path)
+fastq_naming = read.csv(fastq_naming_path)
 
 paths = c( 
     here('processed-data', '04_synapse_upload', 'assay.csv'),
@@ -33,11 +34,14 @@ num_fastq = length(fastq_naming$new_path)
 #  Populate a data frame
 meta_df = data.frame(
     'path' = paths,
-    'parent' = stop(), # need to ask this
-    'individualID' = pd$subject[
-        match(fastq_naming$sample_id, pd$Sample)
-    ],
-    'specimenID' = fastq_naming$sample_id,
+    'parent' = NA, # need to ask this
+    'individualID' = c(
+        rep(NA, num_metadata),
+        pd$subject[match(fastq_naming$sample_id, pd$Sample)]
+    ),
+    'specimenID' = c(
+        rep(NA, num_metadata), fastq_naming$sample_id
+    ),
     'isMultiIndividual' = c(
         rep(NA, num_metadata), rep(FALSE, num_fastq)
     ),
@@ -45,19 +49,19 @@ meta_df = data.frame(
         rep(NA, num_metadata), rep(FALSE, num_fastq)
     ),
     'assay' = 'scrnaSeq',
-    'libraryID' = libraryID,
+    'libraryID' = NA,
     'fileFormat' = c(
         rep('csv', num_metadata), rep('fastq', num_fastq)
     ),
     'consortium' = 'PEC',
-    'study' = stop(), # need to ask this
-    'grant' = stop(), # need to ask this
+    'study' = "LIBD_U01_DLPFC_snRNAseq",
+    'grant' = NA, # need to ask this
     'resourceType' = 'experimentalData',
     'dataType' = NA,
     'dataSubtype' = c(
         rep('metadata', num_metadata), rep('raw', num_fastq)
     ),
-    'metadataType' = metadataType = c(
+    'metadataType' = c(
         'assay', 'biospecimen', 'individual',
         rep(NA, num_fastq)
     ),
