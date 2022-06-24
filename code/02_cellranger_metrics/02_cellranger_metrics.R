@@ -12,17 +12,18 @@ metrics_files <- find_metrics_csv(here("processed-data", "cellranger"))
 ## Read in the metrics
 cellranger_metrics_raw <- lapply(metrics_files, read.csv)
 table(sapply(cellranger_metrics_raw, ncol))
-# 19
-#  3
+# 19 
+# 19 
 
 
 ## Merge
-cellranger_metrics <- do.call(rbind, cellranger_metrics_raw)
-dim(cellranger_metrics)
-# [1]  3 19
+cellranger_metrics_chr <- do.call(rbind, cellranger_metrics_raw)
+dim(cellranger_metrics_chr)
+# [1] 19 19
 
 ## Simplify to numbers
-cellranger_metrics <- metrics_to_numbers(cellranger_metrics)
+cellranger_metrics <- metrics_to_numbers(cellranger_metrics_chr)
+rownames(cellranger_metrics) <- rownames(cellranger_metrics_chr)
 
 ## Add information about the samples
 tmp <- read.table(here("raw-data", "sample_libs_round0-5.tsv"), header = FALSE, row.names = 1)

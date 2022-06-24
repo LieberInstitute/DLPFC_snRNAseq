@@ -71,6 +71,10 @@ dev.off()
 ## Save data
 save(km_res,km_metrics, file = here("processed-data", "03_build_sce","km_res.Rdata"))
 
+message("Saving Data - ", Sys.time())
+saveHDF5SummarizedExperiment(sce, dir = here("processed-data", "sce","sce_DLPFC"))
+
+
 # sgejobs::job_single('cluster_mb_kmeans', create_shell = TRUE, queue= 'bluejay', memory = '25G', command = "Rscript cluster_mb_kmeans.R")
 ## Reproducibility information
 print('Reproducibility information:')
