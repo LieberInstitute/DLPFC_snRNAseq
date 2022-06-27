@@ -314,9 +314,12 @@ my_plotExpression_flip(sce[,sce$kmeans == "mbk05"],
                assay = "logcounts")
 dev.off()
 
-## check out annotation 
+#### Assign annotation ####
+## mbkm annotation
 anno_k <- read.csv(here("processed-data", "03_build_sce", "DLPFC_k29_anno.csv"))
 table(anno_k$broad)
+# Astro        drop  Endo.Mural       Excit       Inhib Micro.Oligo       Oligo         OPC 
+# 1           4           1          13           6           1           2           1 
 
 ## Add index to multiple cell types
 anno_k2 <- anno_k %>% 
@@ -326,12 +329,15 @@ anno_k2 <- anno_k %>%
   ungroup() %>%
   mutate(cellType = as.factor(ifelse(n>1,ct,broad)))
 
-anno_k2 %>% select(broad,ct,cellType) %>%arrange(cellType)
+anno_k2 %>% select(broad,ct,cellType) %>% arrange(cellType)
 anno_k2 %>% filter(n == 1)
 
-
+## HC annotation 
 anno_hc <- read.csv(here("processed-data", "03_build_sce", "DLPFC_HC_anno.csv"))
 table(anno_hc$broad)
+# Astro Endo.Mural      Excit      Inhib      Micro      Oligo        OPC 
+# 1          2         15          6          1          3          1 
+
 
 anno_hc2 <- anno_hc %>% 
   group_by(broad) %>% 
@@ -346,43 +352,54 @@ sce$cellType_broad_k <- factor(anno_k$broad[match(sce$kmeans, anno_k$cluster)])
 sce$cellType_k <- factor(anno_k2$cellType[match(sce$kmeans, anno_k2$cluster)])
 
 table(sce$cellType_broad_k)
-# Ambig Astro Excit Inhib Micro Mural  Neun Oligo   OPC 
-# 2245  3557 18042  8173  5552  1330  3198 33716  1791
+# Astro        drop  Endo.Mural       Excit       Inhib Micro.Oligo       Oligo         OPC 
+# 3557          23        1330       21233       10413        5541       33716        1791
 
 table(sce$cellType_k)
-# Ambig_1  Ambig_2    Astro     Endo  Excit_1 Excit_10 Excit_11 Excit_12 Excit_13  Excit_2  Excit_3  Excit_4  Excit_5 
-# 3     2242     3557     1330     5879     1732     1292      295        7     1058      548     1188       82 
-# Excit_6  Excit_7  Excit_8  Excit_9  Inhib_1  Inhib_2  Inhib_3  Inhib_4  Inhib_5  Inhib_6  Micro_1  Micro_2     Neun 
-# 633     2851      896     1581      132      461        2     6018     1311      249       11     5541     3198 
-# Oligo_1  Oligo_2      OPC 
-# 28085     5631     1791
+# Astro     drop_01     drop_02     drop_03     drop_04  Endo.Mural    Excit_01    Excit_02    Excit_03    Excit_04 
+# 3557          11           3           2           7        1330        5879        1058         548        1188 
+# Excit_05    Excit_06    Excit_07    Excit_08    Excit_09    Excit_10    Excit_11    Excit_12    Excit_13    Inhib_01 
+# 82         633        3198        2851         896        1581        1732        1292         295         132 
+# Inhib_02    Inhib_03    Inhib_04    Inhib_05    Inhib_06 Micro.Oligo    Oligo_01    Oligo_02         OPC 
+# 461        2242        6018        1311         249        5541       28085        5631        1791 
 
 
 sce$cellType_broad_hc <- factor(anno_hc$broad[match(sce$collapsedCluster, anno_hc$cluster)])
 sce$cellType_hc <- factor(anno_hc2$cellType[match(sce$collapsedCluster, anno_hc2$cluster)])
 table(sce$cellType_broad_hc)
+# Astro Endo.Mural      Excit      Inhib      Micro      Oligo        OPC 
+# 3979       2157      24809      11067       1601      32051       1940 
+
 table(sce$cellType_hc)
-# Ambig Astro  Endo Excit Inhib Micro Mural  Neun Oligo   OPC 
-# 1310  3979   446 21766  9757  1601  1711  3043 32051  1940 
+# Endo.Mural_01 Endo.Mural_02      Excit_01      Excit_02      Excit_03      Excit_04      Excit_05      Excit_06 
+# 446          1711          7927          2487          1309          2171          2532           329 
+# Excit_07      Excit_08      Excit_09      Excit_10      Excit_11      Excit_12      Excit_13      Excit_14 
+# 334          1463          2561          3979          1079           482           420          1567 
+# Excit_15      Excit_16      Inhib_01      Inhib_02      Inhib_03      Inhib_04      Inhib_05      Inhib_06 
+# 82            66          5366          1267          1310           565          1192          1367 
+# Micro      Oligo_01      Oligo_02      Oligo_03           OPC 
+# 1601         23025          4732          4294          1940 
 
 ## Check out prop
 (prop_k <- 100*round(table(sce$cellType_broad_k)/ncol(sce),3))
-# Ambig Astro Excit Inhib Micro Mural  Neun Oligo   OPC 
-# 2.9   4.6  23.2  10.5   7.2   1.7   4.1  43.4   2.3 
+# Astro        drop  Endo.Mural       Excit       Inhib Micro.Oligo       Oligo         OPC 
+# 4.6         0.0         1.7        27.4        13.4         7.1        43.4         2.3 
 
 (prop_hc <- 100*round(table(sce$cellType_broad_hc)/ncol(sce),3))
-# Ambig Astro  Endo Excit Inhib Micro Mural  Neun Oligo   OPC 
-# 1.7   5.1   0.6  28.0  12.6   2.1   2.2   3.9  41.3   2.5 
+# Astro Endo.Mural      Excit      Inhib      Micro      Oligo        OPC 
+# 5.1        2.8       32.0       14.3        2.1       41.3        2.5 
 
-## Tram, Maynard DLPFC dataset
+## Tran, Maynard DLPFC dataset for refrence
 # Astro      Excit      Inhib Macrophage      Micro      Mural      Oligo        OPC      Tcell 
 # 7.0       21.3       14.1        0.1        3.5        0.2       48.7        5.1        0.1 
 
 
 #### Replot with Annotations ####
-ct <- sort(unique(as.character(c(sce$cellType_k,sce$cellType_hc))))
+(ct <- sort(unique(as.character(c(sce$cellType_k,sce$cellType_hc)))))
 cat(ct, file = here("processed-data","03_build_sce","cell_types.txt"), sep = "\n")
-ct2 <- ct[!grepl("Ambig", ct)]
+
+
+ct2 <- ct[!grepl("drop", ct)]
 p1 <- DeconvoBuddies::create_cell_colors(ct2, split = "_", pallet = "classic")
 ct_missing <- ct[!ct %in% names(p1)]
 p_ambig <- c(Ambig="black", Ambig_01 = "grey15",Ambig_02 = "gray30")
@@ -400,6 +417,19 @@ TSNE_HC_cellTypes <- ggcells(sce, mapping=aes(x=TSNE.1, y=TSNE.2, colour=cellTyp
 ggsave(TSNE_HC_cellTypes + 
          guides(colour = guide_legend(override.aes = list(size=2, alpha = 1))),
        filename = here(plot_dir, "TSNE_HC-29_cellType.png"), width = 10)
+
+
+TSNE_HC_cellTypes <- ggcells(sce, mapping=aes(x=TSNE.1, y=TSNE.2, colour=cellType_broad_hc)) +
+  geom_point(size = 0.2, alpha = 0.3) +
+  scale_color_manual(values = cell_type_colors[levels(sce$cellType_broad_hc)], drop = TRUE) +
+  my_theme +
+  coord_equal()
+
+ggsave(TSNE_HC_cellTypes + 
+         guides(colour = guide_legend(override.aes = list(size=2, alpha = 1))),
+       filename = here(plot_dir, "TSNE_HC_broad_cellType.png"), width = 10)
+
+
 
 TSNE_km_cellTypes <- ggcells(sce, mapping=aes(x=TSNE.1, y=TSNE.2, colour=cellType_k)) +
   geom_point(size = 0.2, alpha = 0.3) +

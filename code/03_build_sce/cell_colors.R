@@ -33,3 +33,36 @@ iwanthue_k29 <- c("#ff6785",
 iWantHue_k29 <- toupper(iwanthue_k29)
 
 save(iWantHue_k29, file = here("processed-data", "03_build_sce","color_palletes.Rdata"))
+
+
+## define cell Type colors ##
+
+cell_type_colors <- c(
+  Excit = "#3264FF", #blue
+  Inhib = "#D72C00", #red
+  Astro = "#2C4700", # Green
+  Endo.Mural = "#FF56AF", #pink
+  Micro = "#4D2B70", #purple
+  Micro.Oligo = "#AB0091", #magenta
+  OPC = "#D2B037", # gold
+  Oligo = "#E07000", #orange
+  # OPC = "#AE8D00", # yellow
+  drop = "black",
+  Multi = "#4E586A",
+  Other = "#90A583"
+)
+
+# cell_type_colors <- cell_type_colors[order(names(cell_type_colors))]
+cell_type_colors <- sort(cell_type_colors)
+
+## preview
+par(las = 2) # make label text perpendicular to axis
+par(mar = c(5, 8, 4, 2)) # increase y-axis margin.
+barplot(rep(1, length(cell_type_colors)),
+        col = cell_type_colors,
+        horiz = TRUE,
+        axes = FALSE,
+        names.arg = names(cell_type_colors)
+)
+
+
