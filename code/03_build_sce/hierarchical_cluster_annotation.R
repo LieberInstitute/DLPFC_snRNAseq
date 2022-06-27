@@ -380,7 +380,8 @@ table(sce$cellType_hc)
 
 
 #### Replot with Annotations ####
-ct <- sort(unique(as.character(c(anno_hc2$cellType,anno_k2$cellType))))
+ct <- sort(unique(as.character(c(sce$cellType_k,sce$cellType_hc))))
+cat(ct, file = here("processed-data","03_build_sce","cell_types.txt"), sep = "\n")
 ct2 <- ct[!grepl("Ambig", ct)]
 p1 <- DeconvoBuddies::create_cell_colors(ct2, split = "_", pallet = "classic")
 ct_missing <- ct[!ct %in% names(p1)]
