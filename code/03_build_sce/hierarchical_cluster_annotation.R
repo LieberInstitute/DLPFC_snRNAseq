@@ -382,13 +382,13 @@ table(sce$cellType_broad_hc)
 
 table(sce$cellType_hc)
 # Endo.Mural_01 Endo.Mural_02      Excit_01      Excit_02      Excit_03      Excit_04      Excit_05      Excit_06 
-# 446          1711          7927          2487          1309          2171          2532           329 
+#           446          1711          7927          2487          1309          2171          2532           329 
 # Excit_07      Excit_08      Excit_09      Excit_10      Excit_11      Excit_12      Excit_13      Excit_14 
-# 334          1463          2561          3979          1079           482           420          1567 
+#      334          1463          2561          3979          1079           482           420          1567 
 # Excit_15      Excit_16      Inhib_01      Inhib_02      Inhib_03      Inhib_04      Inhib_05      Inhib_06 
-# 82            66          5366          1267          1310           565          1192          1367 
+#       82            66          5366          1267          1310           565          1192          1367 
 # Micro      Oligo_01      Oligo_02      Oligo_03           OPC 
-# 1601         23025          4732          4294          1940 
+#  1601         23025          4732          4294          1940 
 
 ## Check out prop
 (prop_k <- 100*round(table(sce$cellType_broad_k)/ncol(sce),3))
@@ -399,10 +399,23 @@ table(sce$cellType_hc)
 # Astro Endo.Mural      Excit      Inhib      Micro      Oligo        OPC 
 # 5.1        2.8       32.0       14.3        2.1       41.3        2.5 
 
+as.data.frame(prop_k) %>% full_join(as.data.frame(prop_hc) %>% rename(Freq_HC = Freq))
+#          Var1 Freq Freq_HC
+# 1       Astro  4.6     5.1
+# 2        drop  0.0      NA
+# 3  Endo.Mural  1.7     2.8
+# 4       Excit 27.4    32.0
+# 5       Inhib 13.4    14.3
+# 6 Micro.Oligo  7.1      NA
+# 7       Oligo 43.4    41.3
+# 8         OPC  2.3     2.5
+# 9       Micro   NA     2.1
+
 ## Tran, Maynard DLPFC dataset for refrence
 # Astro      Excit      Inhib Macrophage      Micro      Mural      Oligo        OPC      Tcell 
 # 7.0       21.3       14.1        0.1        3.5        0.2       48.7        5.1        0.1 
 
+save(sce, file = here("processed-data", "sce","sce_DLPFC.Rdata"))
 
 #### Replot with Annotations ####
 (ct <- sort(unique(as.character(c(sce$cellType_k,sce$cellType_hc)))))
@@ -474,7 +487,7 @@ hc_counts <- table(sce$kmeans)
 hc_anno <- anno_hc %>% select(cluster, broad) %>% tibble::column_to_rownames("cluster") %>% mutate(n = table(sce$collapsedCluster))
 km_anno <- anno_k %>% select(cluster, broad) %>% tibble::column_to_rownames("cluster") %>% mutate(n = table(sce$kmeans))
 
-temp_pallet <- cell_type_colors_broad[unique(c(hc_anno$broad, km_anno$broad))] 
+broad_pallet <- cell_type_colors_broad[unique(c(hc_anno$broad, km_anno$broad))] 
 
 png(here(plot_dir, "cluster_compare_heatmap.png"),height = 800, width = 800)
 pheatmap(cluster_compare_prop,
@@ -504,10 +517,38 @@ DataFrame(
   Index=jacc.mat[cbind(seq_len(nrow(jacc.mat)), best)]
 )
 
+## compare cell types
+ct_tab <- table(sce$cellType_k, sce$cellType_hc)
+ct_tab_prop <- sweep(ct_tab,2,colSums(ct_tab),`/`)
+
+hc_ct_anno <- table(sce$cellType_hc) %>% as.data.frame() %>% rename(ct = Var1, n = Freq)
+rownames(hc_ct_anno) <- hc_ct_anno$ct
+
+km_ct_anno <- table(sce$cellType_k) %>% as.data.frame() %>% rename(ct = Var1, n = Freq)
+rownames(km_ct_anno) <- km_ct_anno$ct
+
+png(here(plot_dir, "cellType_compare_heatmap.png"),height = 800, width = 800)
+pheatmap(ct_tab_prop,
+         annotation_col = hc_ct_anno,
+         annotation_row = km_ct_anno,
+         annotation_colors = list(ct = cell_type_colors)
+         )
+dev.off()
+
+jacc.mat.ct <- linkClustersMatrix(sce$cellType_k, sce$cellType_hc)
+
+png(here(plot_dir, "cellType_compare_heatmap_jacc.png"),height = 800, width = 800)
+pheatmap(jacc.mat.ct,
+         annotation_col = hc_ct_anno,
+         annotation_row = km_ct_anno,
+         annotation_colors = list(ct = cell_type_colors)
+)
+dev.off()
+
 ## compare broad cell types
 
-(ct_tab <- table(sce$cellType_broad_k, sce$cellType_broad_hc))
-ct_tab_prop <- sweep(ct_tab,2,colSums(ct_tab),`/`)
+(ctb_tab <- table(sce$cellType_broad_k, sce$cellType_broad_hc))
+ctb_tab_prop <- sweep(ctb_tab,2,colSums(ctb_tab),`/`)
 
 hc_broad_anno <- table(sce$cellType_broad_hc) %>% as.data.frame() %>% rename(broad = Var1, n = Freq)
 rownames(hc_broad_anno) <- hc_broad_anno$broad
@@ -515,22 +556,20 @@ rownames(hc_broad_anno) <- hc_broad_anno$broad
 km_broad_anno <- table(sce$cellType_broad_k) %>% as.data.frame() %>% rename(broad = Var1, n = Freq)
 rownames(km_broad_anno) <- km_broad_anno $broad
   
-png(here(plot_dir, "cellType_compare_heatmap.png"),height = 800, width = 800)
-pheatmap(ct_tab_prop,
+png(here(plot_dir, "cellType_broad_compare_heatmap.png"),height = 800, width = 800)
+pheatmap(ctb_tab_prop,
          annotation_col = hc_broad_anno,
          annotation_row = km_broad_anno,
-         annotation_colors = list(broad = temp_pallet))
+         annotation_colors = list(broad = broad_pallet))
 dev.off()
-
-save(sce, file = here("processed-data", "sce","sce_DLPFC.Rdata"))
 
 jacc.mat.broad <- linkClustersMatrix(sce$cellType_broad_k, sce$cellType_broad_hc)
 
-png(here(plot_dir, "cellType_compare_heatmap_jacc.png"),height = 800, width = 800)
+png(here(plot_dir, "cellType_broad_compare_heatmap_jacc.png"),height = 800, width = 800)
 pheatmap(jacc.mat.broad ,
          annotation_col = hc_broad_anno,
          annotation_row = km_broad_anno,
-         annotation_colors = list(broad = temp_pallet))
+         annotation_colors = list(broad = broad_pallet))
 dev.off()
 
 ## Adjusted Rand Index
@@ -539,3 +578,71 @@ pairwiseRand(sce$kmeans, sce$collapsedCluster, mode="index")
 # [1] 0.5875801
 pairwiseRand(sce$cellType_broad_k, sce$cellType_broad_hc, mode="index")
 # [1] 0.5791338
+
+#### Explore UMI ####
+UMI_ct_k <- ggcells(sce, mapping=aes(x=cellType_k, y=sum, fill=cellType_k)) +
+  geom_boxplot()+
+  scale_fill_manual(values = cell_type_colors[levels(sce$cellType_k)], drop = TRUE) +
+  my_theme +
+  theme(legend.position = "None",axis.title.x=element_blank(),
+        axis.text.x=element_text(angle=90,hjust=1))
+
+ggsave(UMI_ct_k,filename = here(plot_dir, "UMI_mbkm-29_cellType.png"), width = 10)
+
+
+UMI_ct_hc <- ggcells(sce, mapping=aes(x=cellType_hc, y=sum, fill=cellType_hc)) +
+  geom_boxplot()+
+  scale_fill_manual(values = cell_type_colors) +
+  my_theme +
+  theme(legend.position = "None",axis.title.x=element_blank(),
+        axis.text.x=element_text(angle=90,hjust=1))
+
+ggsave(UMI_ct_hc,filename = here(plot_dir, "UMI_HC_cellType.png"), width = 10)
+
+
+#### Explore doublet scores
+dbs_ct_k <- ggcells(sce, mapping=aes(x=cellType_k, y=doubletScore, fill=cellType_k)) +
+  geom_boxplot()+
+  scale_fill_manual(values = cell_type_colors) +
+  my_theme +
+  theme(legend.position = "None",axis.title.x=element_blank(),
+        axis.text.x=element_text(angle=90,hjust=1))
+
+ggsave(dbs_ct_k,filename = here(plot_dir, "doubletScore_mbkm-29_cellType.png"), width = 10)
+
+
+dbs_ct_hc <- ggcells(sce, mapping=aes(x=cellType_hc, y=doubletScore, fill=cellType_hc)) +
+  geom_boxplot()+
+  scale_fill_manual(values = cell_type_colors) +
+  my_theme +
+  theme(legend.position = "None",axis.title.x=element_blank(),
+        axis.text.x=element_text(angle=90,hjust=1))
+
+ggsave(dbs_ct_hc,filename = here(plot_dir, "doubletScore_HC_cellType.png"), width = 10)
+
+
+cellType.idx <- splitit(sce$cellType_hc)
+#sapply(c("Excit", "Inhib", "MSN"), function(x){grep(x, names(cellType.idx))})
+
+sapply(cellType.idx, function(x){quantile(sce$sum[x])})[ ,order(sapply(cellType.idx, function(x){quantile(sce$sum[x])["50%"]}))]
+#      Excit_15 Oligo_01 Excit_09 Oligo_03 Micro Endo.Mural_02   Astro Excit_13 Oligo_02 Excit_10 Excit_05      OPC
+# 0%        678      220      462      359   350         407.0   276.0    648.0    968.0      533   292.00   397.00
+# 25%      1101     1232     1389     1464  1756        2020.5  1474.0   2447.5   3750.0     3298  3077.25  3933.25
+# 50%      1218     1907     2121     2211  2633        3140.0  3280.0   3445.0   5113.5     5489  5668.50  5951.00
+# 75%      1348     3147     3225     3410  4300        4546.0  7305.5   4680.5   7314.5     8100 10000.00  8510.00
+# 100%    15127    27828    50703    36108 15576       32302.0 61842.0  16113.0  49758.0    95913 65772.00 83867.00
+#      Excit_14 Endo.Mural_01 Inhib_03 Inhib_06  Inhib_05 Inhib_01 Inhib_04 Excit_11 Excit_12 Excit_03 Inhib_02  Excit_07
+# 0%    2853.00       2040.00   641.00   1598.0   1402.00   317.00     1571  4585.00  1215.00     1651   4438.0   2691.00
+# 25%   5537.75       6102.75  7002.00   8979.5  10839.25 10929.00    12837 14424.25 13997.75    14598  16177.5  17929.75
+# 50%   7893.00       8219.50 12173.00  13173.0  15142.50 16488.00    18805 19989.50 20810.00    20879  23964.0  25357.50
+# 75%  17635.75      11667.25 18893.25  20914.5  21695.25 23337.75    26787 28125.75 28306.25    30108  35836.5  39349.00
+# 100% 74260.00      44112.00 61063.00  99561.0 135464.00 97656.00    75908 67166.00 59560.00   103322 118342.0 105390.00
+#      Excit_04 Excit_01 Excit_08 Excit_06 Excit_02
+# 0%     1449.0    327.0    922.0     1437    629.0
+# 25%   21769.5  22253.5  19554.5    24773  27708.5
+# 50%   31522.0  33633.0  33928.0    37075  42935.0
+# 75%   47549.5  51601.5  53335.0    51649  65244.0
+# 100% 179194.0 203794.0 188090.0   152333 296099.0
+
+
+
