@@ -37,32 +37,81 @@ save(iWantHue_k29, file = here("processed-data", "03_build_sce","color_palletes.
 
 ## define cell Type colors ##
 
-cell_type_colors <- c(
-  Excit = "#3264FF", #blue
-  Inhib = "#D72C00", #red
-  Astro = "#2C4700", # Green
-  Endo.Mural = "#FF56AF", #pink
-  Micro = "#4D2B70", #purple
-  Micro.Oligo = "#AB0091", #magenta
-  OPC = "#D2B037", # gold
+cell_type_colors_all <- c(
+  # Excit = "#3264FF", #blue
+  Excit = "#247FBC", #star command blue
+  # Inhib = "#D72C00", #red
+  Inhib = "#E94F37", #cinnabar
+  # Astro = "#2C4700", # Green
   Oligo = "#E07000", #orange
+  OPC = "#D2B037", # gold
   # OPC = "#AE8D00", # yellow
+  Astro = "#3BB273", # Sea Green
+    # Micro = "#4D2B70", #purple
+  Micro = "#663894", #Rebecca purple
+  Endo.Mural = "#FF56AF", #pink
+  Micro.Oligo = "#AB0091", #magenta
   drop = "black",
   Multi = "#4E586A",
   Other = "#90A583"
 )
 
-# cell_type_colors <- cell_type_colors[order(names(cell_type_colors))]
-cell_type_colors <- sort(cell_type_colors)
 
-## preview
-par(las = 2) # make label text perpendicular to axis
-par(mar = c(5, 8, 4, 2)) # increase y-axis margin.
-barplot(rep(1, length(cell_type_colors)),
-        col = cell_type_colors,
-        horiz = TRUE,
-        axes = FALSE,
-        names.arg = names(cell_type_colors)
-)
+preview_colors <- function(cell_colors){
+  par(las = 2) # make label text perpendicular to axis
+  par(mar = c(5, 8, 4, 2)) # increase y-axis margin.
+  barplot(rep(1, length(cell_colors)),
+          col = cell_colors,
+          horiz = TRUE,
+          axes = FALSE,
+          names.arg = names(cell_colors)
+  )
+  
+}
 
+.scale_cell_colors <- function(color, cell_types) {
+  n_ct <- length(cell_types)
+  scale_colors <- grDevices::colorRampPalette(c(color, "white"))(n_ct + 1)
+  scale_colors <- utils::head(scale_colors, n_ct)
+  names(scale_colors) <- cell_types
+  
+  return(scale_colors)
+}
+
+preview_colors(scale_cell_colors("#247FBC", paste0("Excit_",1:15)))
+preview_colors(scale_cell_colors("#E94F37", paste0("Inhib_",1:6)))
+
+
+expand_cell_colors <- function(cell_colors, cell_types, split = "_"){
+  
+  base_cell_types <- unique(ss(cell_types, pattern = split))
+  nct <- length(base_cell_types)
+  
+  cell_colors <- cell_colors[base_cell_types]
+  
+  
+  if (!identical(base_cell_types, cell_types)) {
+    split_cell_types <- cell_types[!cell_types %in% base_cell_types]
+    base_split <- rafalib::splitit(ss(split_cell_types, split))
+    
+    split_scale_colors <- purrr::map2(
+      names(base_split), base_split,
+      ~ .scale_cell_colors(
+        cell_colors[[.x]],
+        split_cell_types[.y]
+      )
+    )
+    
+    split_scale_colors <- unlist(split_scale_colors)
+    cell_colors <- c(cell_colors, split_scale_colors)
+  }
+  
+  return(cell_colors)
+  
+}
+exapand_cell_colors <- expand_cell_colors(cell_type_colors_all, cell_types)
+preview_colors(exapand_cell_colors)
+## All cell types
+
+cell_types <- readLines("cell_types.txt")
 
