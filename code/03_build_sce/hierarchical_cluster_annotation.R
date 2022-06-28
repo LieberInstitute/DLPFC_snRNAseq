@@ -226,6 +226,12 @@ n_clusters <- length(levels(sce$collapsedCluster))
 tail(table(sce$prelimCluster, sce$collapsedCluster),20)
 
 
+#### Find TSNE centers ####
+# 
+# TSNE_center <- colData(sce) %>% as.data.frame() %>% select(collapsedCluster, kmean, )
+# 
+# reducedDim(sce, type = "TSNE")
+
 ## Plot clusters in TSNE
 TSNE_clusters <- ggcells(sce, mapping=aes(x=TSNE.1, y=TSNE.2, colour=collapsedCluster)) +
   geom_point(size = 0.2, alpha = 0.3) +
@@ -235,11 +241,11 @@ TSNE_clusters <- ggcells(sce, mapping=aes(x=TSNE.1, y=TSNE.2, colour=collapsedCl
 
 ggsave(TSNE_clusters + 
          guides(colour = guide_legend(override.aes = list(size=2, alpha = 1))),
-       filename = here(plot_dir, "clusters_HC-29.png"), width = 10)
+       filename = here(plot_dir, "TSNE_HC-29_clusters.png"), width = 10)
 
 
-# Just for logcounts
-sce <- batchelor::multiBatchNorm(sce, batch=sce$Sample)
+# get logcounts
+sce <- logNormCounts(sce)
 rownames(sce) <- rowData(sce)$gene_name
 
 #### compare w/ mb k-means ####
@@ -415,8 +421,8 @@ ggsave(TSNE_HC_cellTypes +
        filename = here(plot_dir, "TSNE_HC-29_cellType.png"), width = 10)
 
 
-TSNE_HC_cellTypes <- ggcells(sce, mapping=aes(x=TSNE.1, y=TSNE.2, colour=cellType_broad_hc)) +
-  geom_point(size = 0.2, alpha = 0.3) +
+TSNE_HC_cellTypes <- ggcells(sce, mapping=aes(x=TSNE.1, y=TSNE.2)) +
+  geom_point(aes(colour=cellType_broad_hc), size = 0.2, alpha = 0.3) +
   scale_color_manual(values = cell_type_colors[levels(sce$cellType_broad_hc)], drop = TRUE) +
   my_theme +
   coord_equal()
@@ -459,31 +465,77 @@ table(sce$kmeans)
 table(sce$collapsedCluster)
 
 cluster_compare <- table(sce$kmeans, sce$collapsedCluster)
-cluster_compare2 <- cluster_compare
-cluster_compare2[cluster_compare > 5000] <- 5000
+cluster_compare_prop <- sweep(cluster_compare,2,colSums(cluster_compare),`/`)
 
 cluster_compare > 0
 
-hc_anno <- anno_hc %>% select(cluster, broad) %>% tibble::column_to_rownames("cluster")
-km_anno <- anno_k %>% select(cluster, broad) %>% tibble::column_to_rownames("cluster")
+hc_counts <- table(sce$kmeans)
 
-temp_pallet <- cell_colors[!grepl("_",names(cell_colors))] 
+hc_anno <- anno_hc %>% select(cluster, broad) %>% tibble::column_to_rownames("cluster") %>% mutate(n = table(sce$collapsedCluster))
+km_anno <- anno_k %>% select(cluster, broad) %>% tibble::column_to_rownames("cluster") %>% mutate(n = table(sce$kmeans))
+
+temp_pallet <- cell_type_colors_broad[unique(c(hc_anno$broad, km_anno$broad))] 
 
 png(here(plot_dir, "cluster_compare_heatmap.png"),height = 800, width = 800)
-pheatmap(cluster_compare2,
-         annotation_row = hc_anno,
-         annotation_col = km_anno,
+pheatmap(cluster_compare_prop,
+         annotation_col= hc_anno,
+         annotation_row = km_anno,
          annotation_colors = list(broad = temp_pallet)
          )
 dev.off()
 
-(ct_tab <- table(sce$cellType_hc,sce$cellType_k))
+## Jaccard indicies
+library(bluster)
+jacc.mat <- linkClustersMatrix(sce$kmeans, sce$collapsedCluster)
 
-table(sce$cellType_hc,sce$round)
-table(sce$cellType_hc,sce$collapsedCluster)
+png(here(plot_dir, "cluster_compare_heatmap_jacc.png"),height = 800, width = 800)
+pheatmap(jacc.mat,
+         annotation_col= hc_anno,
+         annotation_row = km_anno,
+         annotation_colors = list(broad = temp_pallet)
+)
+dev.off()
 
+## best cluster pairing
+best <- max.col(jacc.mat, ties.method="first")
+DataFrame(
+  Cluster=rownames(jacc.mat), 
+  Corresponding=colnames(jacc.mat)[best], 
+  Index=jacc.mat[cbind(seq_len(nrow(jacc.mat)), best)]
+)
+
+## compare broad cell types
+
+(ct_tab <- table(sce$cellType_broad_k, sce$cellType_broad_hc))
+ct_tab_prop <- sweep(ct_tab,2,colSums(ct_tab),`/`)
+
+hc_broad_anno <- table(sce$cellType_broad_hc) %>% as.data.frame() %>% rename(broad = Var1, n = Freq)
+rownames(hc_broad_anno) <- hc_broad_anno$broad
+
+km_broad_anno <- table(sce$cellType_broad_k) %>% as.data.frame() %>% rename(broad = Var1, n = Freq)
+rownames(km_broad_anno) <- km_broad_anno $broad
+  
 png(here(plot_dir, "cellType_compare_heatmap.png"),height = 800, width = 800)
-pheatmap(ct_tab)
+pheatmap(ct_tab_prop,
+         annotation_col = hc_broad_anno,
+         annotation_row = km_broad_anno,
+         annotation_colors = list(broad = temp_pallet))
 dev.off()
 
 save(sce, file = here("processed-data", "sce","sce_DLPFC.Rdata"))
+
+jacc.mat.broad <- linkClustersMatrix(sce$cellType_broad_k, sce$cellType_broad_hc)
+
+png(here(plot_dir, "cellType_compare_heatmap_jacc.png"),height = 800, width = 800)
+pheatmap(jacc.mat.broad ,
+         annotation_col = hc_broad_anno,
+         annotation_row = km_broad_anno,
+         annotation_colors = list(broad = temp_pallet))
+dev.off()
+
+## Adjusted Rand Index
+# 0.5 corresponds to “good” similarity
+pairwiseRand(sce$kmeans, sce$collapsedCluster, mode="index")
+# [1] 0.5875801
+pairwiseRand(sce$cellType_broad_k, sce$cellType_broad_hc, mode="index")
+# [1] 0.5791338
