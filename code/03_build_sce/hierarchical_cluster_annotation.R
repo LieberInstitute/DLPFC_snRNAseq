@@ -241,7 +241,6 @@ ggsave(TSNE_clusters +
 # Just for logcounts
 sce <- batchelor::multiBatchNorm(sce, batch=sce$Sample)
 rownames(sce) <- rowData(sce)$gene_name
-# load(here("processed-data", "sce","sce_DLPFC.Rdata"), verbose = TRUE)
 
 #### compare w/ mb k-means ####
 load(here("processed-data", "03_build_sce","km_res.Rdata"), verbose = TRUE)
@@ -249,8 +248,13 @@ k_list <- seq(5, 50) ## keep index
 sce$kmeans<- as.factor(paste0("mbk", numform::f_pad_zero(km_res[[which(k_list==29)]]$Clusters)))
 table(sce$kmeans)
 
-load(here("processed-data", "03_build_sce","color_palletes.Rdata"), verbose = TRUE)
-names(iWantHue_k29) <- levels(sce$kmeans)
+
+#### Load data ####
+load(here("processed-data", "03_build_sce","cell_type_colors.Rdata"), verbose = TRUE)
+# cell_type_colors_broad
+# cell_type_colors
+# load(here("processed-data", "sce","sce_DLPFC.Rdata"), verbose = TRUE)
+
 
 #### Marker Genes ####
 # load Mathy's markers
@@ -397,21 +401,13 @@ table(sce$cellType_hc)
 #### Replot with Annotations ####
 (ct <- sort(unique(as.character(c(sce$cellType_k,sce$cellType_hc)))))
 cat(ct, file = here("processed-data","03_build_sce","cell_types.txt"), sep = "\n")
-
-
-ct2 <- ct[!grepl("drop", ct)]
-p1 <- DeconvoBuddies::create_cell_colors(ct2, split = "_", pallet = "classic")
-ct_missing <- ct[!ct %in% names(p1)]
-p_ambig <- c(Ambig="black", Ambig_01 = "grey15",Ambig_02 = "gray30")
-cell_colors = c(p1, p_ambig)
-
-# load("/dcl01/lieber/ajaffe/lab/deconvolution_bsp2/data/cell_colors.Rdata", verbose = TRUE)
+all(ct %in% names(cell_type_colors)) ## if not revisit cell_colors
 
 ## Plot clusters in TSNE
 TSNE_HC_cellTypes <- ggcells(sce, mapping=aes(x=TSNE.1, y=TSNE.2, colour=cellType_hc)) +
   geom_point(size = 0.2, alpha = 0.3) +
-  scale_color_manual(values = cell_colors, drop = TRUE) +
-  # my_theme +
+  scale_color_manual(values = cell_type_colors[levels(sce$cellType_hc)], drop = TRUE) +
+  my_theme +
   coord_equal()
 
 ggsave(TSNE_HC_cellTypes + 
@@ -433,8 +429,7 @@ ggsave(TSNE_HC_cellTypes +
 
 TSNE_km_cellTypes <- ggcells(sce, mapping=aes(x=TSNE.1, y=TSNE.2, colour=cellType_k)) +
   geom_point(size = 0.2, alpha = 0.3) +
-  scale_color_manual(values = cell_colors, drop = TRUE) +
-  # scale_color_manual(values = cluster_colors) +
+  scale_color_manual(values = cell_type_colors[levels(sce$cellType_k)], drop = TRUE) +
   my_theme +
   coord_equal()
 
@@ -447,13 +442,13 @@ ggsave(TSNE_km_cellTypes +
 my_plotMarkers(sce = sce, 
                marker_list = markers.mathys.tran,
                cat = "cellType_hc",
-               fill_colors = cell_colors,
+               fill_colors = cell_type_colors,
                pdf_fn = here(plot_dir, "HC_mathys_markers_ct.pdf"))
 
 my_plotMarkers(sce = sce, 
                marker_list = markers.mathys.tran,
                cat = "cellType_k",
-               fill_colors = cell_colors,
+               fill_colors = cell_type_colors,
                pdf_fn = here(plot_dir, "mb_kmeans_29_mathys_markers_ct.pdf"))
 
 

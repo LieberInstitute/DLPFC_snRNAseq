@@ -1,4 +1,5 @@
 library("here")
+library("jaffelab")
 
 iwanthue_k29 <- c("#ff6785",
                  "#f50042",
@@ -37,7 +38,7 @@ save(iWantHue_k29, file = here("processed-data", "03_build_sce","color_palletes.
 
 ## define cell Type colors ##
 
-cell_type_colors_all <- c(
+cell_type_colors_broad <- c(
   # Excit = "#3264FF", #blue
   Excit = "#247FBC", #star command blue
   # Inhib = "#D72C00", #red
@@ -78,10 +79,6 @@ preview_colors <- function(cell_colors){
   return(scale_colors)
 }
 
-preview_colors(scale_cell_colors("#247FBC", paste0("Excit_",1:15)))
-preview_colors(scale_cell_colors("#E94F37", paste0("Inhib_",1:6)))
-
-
 expand_cell_colors <- function(cell_colors, cell_types, split = "_"){
   
   base_cell_types <- unique(ss(cell_types, pattern = split))
@@ -92,7 +89,7 @@ expand_cell_colors <- function(cell_colors, cell_types, split = "_"){
   
   if (!identical(base_cell_types, cell_types)) {
     split_cell_types <- cell_types[!cell_types %in% base_cell_types]
-    base_split <- rafalib::splitit(ss(split_cell_types, split))
+    base_split <- rafalib::splitit(jaffelab::ss(split_cell_types, split))
     
     split_scale_colors <- purrr::map2(
       names(base_split), base_split,
@@ -109,9 +106,12 @@ expand_cell_colors <- function(cell_colors, cell_types, split = "_"){
   return(cell_colors)
   
 }
-exapand_cell_colors <- expand_cell_colors(cell_type_colors_all, cell_types)
-preview_colors(exapand_cell_colors)
-## All cell types
 
-cell_types <- readLines("cell_types.txt")
+
+## All cell types
+cell_types <- readLines(here("processed-data", "03_build_sce","cell_types.txt"))
+cell_type_colors <- expand_cell_colors(cell_type_colors_broad, cell_types)
+preview_colors(cell_type_colors)
+
+save(cell_type_colors_broad, cell_type_colors, file = here("processed-data", "03_build_sce","cell_type_colors.Rdata"))
 
