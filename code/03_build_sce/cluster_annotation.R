@@ -68,7 +68,7 @@ TSNE_clusters <- ggcells(sce, mapping=aes(x=TSNE.1, y=TSNE.2, colour=kmeans)) +
   coord_equal()
 
 ggsave(TSNE_clusters + 
-         guides(colour = guide_legend(override.aes = list(size=2))),
+         guides(colour = guide_legend(override.aes = list(size=2, alpha = 2))),
        filename = here(plot_dir, "clusters_mbkm-29.png"), width = 10)
 
 ggsave(TSNE_clusters + 
@@ -88,15 +88,6 @@ all(unlist(markers.mathys.custom) %in% rowData(sce)$gene_name)
 rownames(sce) <- rowData(sce)$gene_name
 
 source("my_plotExpression.R")
-
-test <- my_plotExpression(sce,
-                          genes = markers.mathys.custom[[2]], 
-                          title = names(markers.mathys.custom)[[2]],
-                          cat = "kmeans",
-                          fill_colors = cluster_colors)
-
-ggsave(test, filename = here("plots","03_build_sce","cluster", "my_plotExpression_test.png"))
-
 
 pdf(here("plots","03_build_sce","cluster", "mb_kmeans_29_mathys_markers.pdf"), height=6, width=8)
 for(i in 1:length(markers.mathys.custom)){
