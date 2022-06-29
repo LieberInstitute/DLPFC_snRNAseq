@@ -96,16 +96,19 @@ my_plotMarkers <- function(sce, marker_list, assay = "logcounts", cat = "cellTyp
 #'                  fill_colors = c(negative = "green", positive = "pink"))
 my_plotExpression_flip <- function(sce, marker_list, assay = "logcounts", fill_colors = NULL, title = NULL){
   
+  message("N nuc: ", ncol(sce))
   genes <- unlist(marker_list)
   # cat_df <- as.data.frame(colData(sce))[,cat, drop = FALSE]
   genes <- genes %in% rownames(sce)
+  message("N genes: ", length(genes))
   expression_long <- reshape2::melt(as.matrix(assays(sce)[[assay]][genes,])) 
   
   marker_df <- stack(marker_list)
   names(marker_df) <- c("Var1","marker")
   
-  expression_long <- dplyr::left_join(expression_long,marker_df, by = "Var1")
+  expression_long <- dplyr::left_join(expression_long, marker_df, by = "Var1")
   
+  message("creating plot")
   expression_violin <- ggplot(data = expression_long, aes(x = Var1, y = value, fill = marker)) +
     geom_violin(scale = "width") +
     facet_wrap(~marker, scales = "free_x")+
@@ -114,11 +117,12 @@ my_plotExpression_flip <- function(sce, marker_list, assay = "logcounts", fill_c
     theme_bw() +
     theme(legend.position = "None",axis.title.x=element_blank(),
           # axis.text.x=element_text(angle=45,hjust=1),
-          strip.text.x = element_text(face = "italic")) +
-    stat_summary(fun = median, 
-                 geom = "crossbar", 
-                 width = 0.3)
-  
+          strip.text.x = element_text(face = "italic")) 
+  # +
+  #   stat_summary(fun = median, 
+  #                geom = "crossbar", 
+  #                width = 0.3)
+  # 
   if(!is.null(fill_colors)) expression_violin <- expression_violin + scale_fill_manual(values = fill_colors)
   
   # expression_violin
