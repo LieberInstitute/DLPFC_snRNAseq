@@ -81,62 +81,8 @@ table(sce$prelimCluster)[names(doublet_clust)]
 # 156 
 # 68 
 
-
-#### Step 2: Hierarchical clustering of pseudo-bulked ("PB'd") counts with most robust normalization ####
-#         (as determined in: 'side-Rscript_testingStep2_HC-normalizn-approaches_wAmygData_MNTJan2020.R')
-#           ** That is, to pseudo-bulk (aka 'cluster-bulk') on raw counts, on all [non-zero] genes,
-#              normalize with `librarySizeFactors()`, log2-transform, then perform HC'ing
-
-# 
-# prelimCluster.PBcounts <- aggregateAcrossCells(sce,  DataFrame(
-#   prelimCluster = sce$prelimCluster
-# ))
-# 
-# table(rowSums(assays(prelimCluster.PBcounts)$counts) == 0)
-# # # FALSE  TRUE
-# # # 34987  1614
-# #
-# # # Compute LSFs at this level
-# sizeFactors.PB.all  <- librarySizeFactors(assays(prelimCluster.PBcounts)$counts)
-# #
-# # # Normalize with these LSFs
-# geneExprs.temp <- t(apply(assays(prelimCluster.PBcounts)$counts, 1, function(x) {log2(x/sizeFactors.PB.all + 1)}))
-# 
-# ## Perform hierarchical clustering
-# dist.clusCollapsed <- dist(t(geneExprs.temp))
-# tree.clusCollapsed <- hclust(dist.clusCollapsed, "ward.D2")
-# 
-# dend <- as.dendrogram(tree.clusCollapsed, hang=0.2)
-# 
-# ## save HC data
-# save(dend, tree.clusCollapsed, dist.clusCollapsed, file = here("processed-data", "03_build_sce", "HC_dend.Rdata"))
+## Cluster in 07_hierachiacal_cluster.R - need to organize 
 load(here("processed-data", "03_build_sce", "HC_dend.Rdata"), verbose = TRUE)
-
-## pick k clusters?
-# clus = cutree(dend, 19)
-# cluster_colors <- c(c0 = "black", c(DeconvoBuddies::create_cell_colors(cell_types = paste0("c",1:19), pallet = "gg")))
-# clus[156] <- 0
-# 
-# cluster_colors[clus + 1]
-# 
-# library(ape)
-# 
-# # Print for future reference
-# pdf(here(plot_dir, "dend_aac.pdf"), height = 14)
-#     par(cex=0.3)
-#     plot(dend,main = "DLPFC prelim clusters", horiz = TRUE)
-#     abline(v = 525, lty = 2)
-# dev.off()
-
-
-# pdf(here(plot_dir, "dend_test.pdf"), height = 14)
-# par(cex=0.5)
-# plot(as.phylo(dend),main = "DLPFC prelim clusters", tip.color = cluster_colors[clus +1])
-# abline(v = 500, lty = 2)
-# dev.off()
-
-
-# labels(dend)[grep(c("19|32|73"),labels(dend))] <- paste0(labels(dend)[grep(c("19|32|73"),labels(dend))], "*")
 
 ## Try different cut heights
 
@@ -226,13 +172,7 @@ n_clusters <- length(levels(sce$collapsedCluster))
 tail(table(sce$prelimCluster, sce$collapsedCluster),20)
 
 
-#### Find TSNE centers ####
-# 
-# TSNE_center <- colData(sce) %>% as.data.frame() %>% select(collapsedCluster, kmean, )
-# 
-# reducedDim(sce, type = "TSNE")
-
-## Plot clusters in TSNE
+#### Plot clusters in TSNE ####
 TSNE_clusters <- ggcells(sce, mapping=aes(x=TSNE.1, y=TSNE.2, colour=collapsedCluster)) +
   geom_point(size = 0.2, alpha = 0.3) +
   scale_color_manual(values = cluster_colors) +
@@ -624,6 +564,26 @@ ggsave(dbs_ct_hc,filename = here(plot_dir, "doubletScore_HC_cellType.png"), widt
 cellType.idx <- splitit(sce$cellType_hc)
 #sapply(c("Excit", "Inhib", "MSN"), function(x){grep(x, names(cellType.idx))})
 
+sapply(cellType.idx, function(x){quantile(sce$doubletScore[x])})[ ,order(sapply(cellType.idx, function(x){quantile(sce$doubletScore[x])["50%"]}))]
+#       Excit_15    Micro  Oligo_03 Excit_09     Astro       OPC Excit_10   Oligo_02 Excit_13  Excit_11 Endo.Mural_02
+# 0%   0.0086180 0.000000  0.000000  0.00000  0.000000  0.000000 0.000000  0.0000000 0.000000  0.050708      0.000000
+# 25%  0.0348360 0.032112  0.042816  0.04134  0.057876  0.068640 0.077310  0.0811380 0.103416  0.144880      0.085632
+# 50%  0.0751140 0.099216  0.137040  0.13744  0.143964  0.166296 0.180978  0.1896200 0.197182  0.282516      0.300958
+# 75%  0.1874415 0.388596  0.568988  0.45220  0.345052  0.639158 0.426949  0.4642535 0.426949  0.476293      0.765917
+# 100% 4.4314060 6.411696 15.852624  6.83060 12.939216 10.329944 7.175700 16.9815360 8.621844 24.470232      8.387922
+#       Inhib_03  Excit_12 Inhib_02 Endo.Mural_01 Excit_03 Inhib_06 Inhib_05 Excit_05 Excit_04  Inhib_01 Oligo_01
+# 0%    0.006864  0.074860 0.035706      0.011902 0.011902 0.074928 0.047608 0.000000 0.035706  0.000000  0.00000
+# 25%   0.239052  0.202122 0.255210      0.150456 0.253524 0.250351 0.279440 0.249900 0.368962  0.354956  0.20670
+# 50%   0.383932  0.396758 0.419160      0.422282 0.486492 0.489020 0.512789 0.524496 0.608780  0.688180  0.70438
+# 75%   0.738796  0.572276 1.123520      0.744120 1.196036 1.137776 1.246423 1.035300 1.277320  1.187472  1.72550
+# 100% 12.329442 17.515992 7.654660      4.900264 9.451632 9.283560 9.712032 9.719232 8.319498 31.475180 12.06863
+#       Excit_01 Inhib_04 Excit_08 Excit_14 Excit_02 Excit_06 Excit_07
+# 0%    0.023800 0.143892 0.019960 0.081284 0.016268 0.199600 0.137636
+# 25%   0.476444 0.345158 0.321237 0.477489 0.469060 0.356304 1.230960
+# 50%   0.742440 0.759984 0.778440 0.864066 0.902736 1.057420 1.477152
+# 75%   1.166396 1.447852 1.533816 1.438500 1.387359 1.712640 1.785096
+# 100% 13.872384 9.825768 8.841504 6.457070 8.640852 5.808176 4.430430
+
 sapply(cellType.idx, function(x){quantile(sce$sum[x])})[ ,order(sapply(cellType.idx, function(x){quantile(sce$sum[x])["50%"]}))]
 #      Excit_15 Oligo_01 Excit_09 Oligo_03 Micro Endo.Mural_02   Astro Excit_13 Oligo_02 Excit_10 Excit_05      OPC
 # 0%        678      220      462      359   350         407.0   276.0    648.0    968.0      533   292.00   397.00
@@ -644,5 +604,51 @@ sapply(cellType.idx, function(x){quantile(sce$sum[x])})[ ,order(sapply(cellType.
 # 75%   47549.5  51601.5  53335.0    51649  65244.0
 # 100% 179194.0 203794.0 188090.0   152333 296099.0
 
+#### Explore layer markers ####
+load("/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/processed-data/rdata/spe/07_spatial_registration/t_cor_plot_top_genes_k7.rda", verbose = TRUE)
+# dat_small
+table(dat_small$Layer)
+# Layer1 Layer2 Layer3 Layer4 Layer5 Layer6     WM 
+# 91     87     65     80     78     83    100 
+
+dat_symb <- rownames(sce)[match(rownames(dat_small),rowData(sce)$gene_id)]
+any(is.na(dat_symb))
+
+layer_idx <- splitit(dat_small$Layer)
+layer_top4 <- purrr::map(layer_idx, ~dat_symb[.x][1:4])
+# $Layer1
+# [1] "MT1G"  "VIM"   "FABP7" "MT1F" 
+# 
+# $Layer2
+# [1] "DACT1"   "STXBP6"  "SIPA1L1" "MAN1A1" 
+# 
+# $Layer3
+# [1] "CARTPT"    "BAIAP3"    "ADCYAP1"   "LINC01007"
+# 
+# $Layer4
+# [1] "VAMP1" "NEFH"  "SCN1B" "NGB"  
+# 
+# $Layer5
+# [1] "PCP4"    "CAMK2D"  "SMYD2"   "TRABD2A"
+# 
+# $Layer6
+# [1] "ISLR"  "NR4A2" "DACH1" "NTNG2"
+# 
+# $WM
+# [1] "NDRG1"  "PTP4A2" "AQP1"   "PAQR6"
+
+
+## markers
+my_plotMarkers(sce = sce, 
+               marker_list = layer_top4,
+               cat = "cellType_hc",
+               fill_colors = cell_type_colors,
+               pdf_fn = here(plot_dir, "HC_layer_markers_ct.pdf"))
+
+my_plotMarkers(sce = sce, 
+               marker_list = markers.mathys.tran,
+               cat = "cellType_k",
+               fill_colors = cell_type_colors,
+               pdf_fn = here(plot_dir, "mb_kmeans_29_mathys_markers_ct.pdf"))
 
 
