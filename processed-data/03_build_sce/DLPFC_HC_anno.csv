@@ -13,18 +13,18 @@ HC11,Oligo,Oligo,Oligo,Oligo
 HC12,OPC,OPC,OPC,OPC
 HC13,Excit,Excit,,Excit
 HC14,Excit,Excit,,Excit
-HC15,,,,Ambig
+HC15,,,,Inhib
 HC16,Inhib,Inhib,Inhib,Inhib
-HC17,Excit,,,Neun
+HC17,Excit,,,Excit
 HC18,Astro,Astro,Astro,Astro
 HC19,Inhib,Inhib,Inhib,Inhib
 HC20,Inhib,Inhib,Inhib,Inhib
 HC21,Excit,Excit,,Excit
-HC22,,"Excit,Inhib",,Neun
+HC22,,"Excit,Inhib",,Excit
 HC23,Excit,Excit,,Excit
 HC24,Micro,Micro,Micro,Micro
 HC25,Excit,Exit,,Excit
-HC26,Endo,Mural,"Endo, Mural",Endo
-HC27,,"Excit, Mural","Mural,Tcell",Mural
+HC26,Endo,Mural,"Endo, Mural",Endo.Mural
+HC27,,"Excit, Mural","Mural,Tcell",Endo.Mural
 HC28,Excit,Excit,,Excit
 HC29,Excit,Excit,,Excit

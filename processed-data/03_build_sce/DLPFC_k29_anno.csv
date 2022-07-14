@@ -1,9 +1,9 @@
 ﻿cluster,cell_type_mathys,note_mathys,MR,MR_note,broad
-mbk01,Endo,Mural,Mural,,Endo
+mbk01,Endo,Mural,Mural,,Endo.Mural
 mbk02,Excit,,,,Excit
 mbk03,Excit/Inhib,,Excit,,Excit
 mbk04,Oligo,"Micro, Oligo",,,Oligo
-mbk05,Inhib,,Micro,Excit,Micro
+mbk05,Inhib,,Micro,Excit,drop
 mbk06,Excit,,Excit,,Excit
 mbk07,OPC,,OPC,,OPC
 mbk08,Endo,,,,Excit
@@ -12,19 +12,19 @@ mbk10,Excit,,Excit,,Excit
 mbk11,Oligo,,Oligo,,Oligo
 mbk12,Inhib,MSN,Inhib,,Inhib
 mbk13,Excit,,Excit,,Excit
-mbk14,Inhib,OPC,Excit,,Neun
+mbk14,Inhib,OPC,Excit,,Excit
 mbk15,Excit,,Excit,,Excit
-mbk16,Micro,Astro/Micro,Oligo,"Micro, macro",Micro
+mbk16,Micro,Astro/Micro,Oligo,"Micro, macro",Micro.Oligo
 mbk17,,,Excit,,Excit
-mbk18,OPC,,Excit,,Ambig
+mbk18,OPC,,Excit,,drop
 mbk19,Excit,,Excit,,Excit
 mbk20,Excit,Astro,Excit,,Excit
 mbk21,Astro,,Astro,,Astro
-mbk22,Micro,,,,Ambig
+mbk22,Micro,,,,Inhib
 mbk23,Excit,,,,Excit
-mbk24,Inhib,MSN,Inhib,,Inhib
+mbk24,Inhib,MSN,Inhib,,drop
 mbk25,Inhib,,Inhib,,Inhib
 mbk26,Inhib,,Inhib,,Inhib
 mbk27,Excit,MSN,,,Excit
 mbk28,Inhib,,Inhib,,Inhib
-mbk29,Oligo,,Excit,,Excit
+mbk29,Oligo,,Excit,,drop
