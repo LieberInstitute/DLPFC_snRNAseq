@@ -104,7 +104,7 @@ dir.create(here::here("processed-data", "sce"), showWarnings = FALSE)
 save(sce, file = here::here("processed-data", "sce", "sce_raw.Rdata"))
 
 ## Size in Gb
-lobstr::obj_size(sce) / 1024^3
+lobstr::obj_size(sce) 
 # 15.52167
 
 ## Reproducibility information
