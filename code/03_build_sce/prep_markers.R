@@ -28,3 +28,10 @@ markers.mathys.tran = list(
 markers.mathys.tran
 
 save(markers.mathys.tran, file = here::here("processed-data", "03_build_sce", "markers.mathys.tran.Rdata"))
+
+markers.Zhaung2022 = list(
+  'inhib_subtypes' = c('SP8', #VIP
+                     'KLF5',#SST
+                     'LGI2',#PVALB
+                     'LAMP5')# LAMP5
+)
