@@ -3,6 +3,7 @@ library("SingleCellExperiment")
 library("scater")
 library("here")
 library("sessioninfo")
+library("DeconvoBuddies")
 
 load(here("processed-data","sce","sce_DLPFC.Rdata"), verbose = TRUE)
 
@@ -18,9 +19,20 @@ table(sce$cellType_hc)
 # 1601         23025          4732          4294          1940 
 
 colLabels(sce) <- sce$cellType_hc
-markers <- scran::findMarkers(sce, pval.type="all", direction="up")
 
-save(markers, file = here("processed-data", "03_build_sce","cell_type_markers.Rdata"))
+message("Running 1vALL findMarkers")
+Sys.time()
+markers_1vALL <- scran::findMarkers(sce, pval.type="all", direction="up")
+message("Done - ", Sys.time())
+Sys.time()
+
+## Run mean Ratio markers
+
+markers_mean_ratio <- get_mean_ratio2(sce, cellType_col = "cellType_hc")
+markers_mean_ratio_broad <- get_mean_ratio2(sce, cellType_col = "cellType_broad_hc")
+
+save(markers_1vALL, markers_mean_ratio, markers_mean_ratio_broad, file = here("processed-data", "03_build_sce","cell_type_markers.Rdata"))
+
 
 # sgejobs::job_single('09_find_markers', create_shell = TRUE, queue= 'bluejay', memory = '20G', command = "Rscript 09_find_markers.R")
 
@@ -30,3 +42,4 @@ Sys.time()
 proc.time()
 options(width = 120)
 session_info()
+
