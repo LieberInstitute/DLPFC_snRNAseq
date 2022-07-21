@@ -356,6 +356,7 @@ as.data.frame(prop_k) %>% full_join(as.data.frame(prop_hc) %>% rename(Freq_HC = 
 # 7.0       21.3       14.1        0.1        3.5        0.2       48.7        5.1        0.1 
 
 save(sce, file = here("processed-data", "sce","sce_DLPFC.Rdata"))
+# load(here("processed-data", "sce","sce_DLPFC.Rdata"), verbose = TRUE)
 
 #### Replot with Annotations ####
 (ct <- sort(unique(as.character(c(sce$cellType_k,sce$cellType_hc)))))
@@ -651,4 +652,22 @@ my_plotMarkers(sce = sce,
                fill_colors = cell_type_colors,
                pdf_fn = here(plot_dir, "mb_kmeans_29_mathys_markers_ct.pdf"))
 
+## Inhib sub-types
+markers.Inhib_subtypes = list(
+  'inhib_markers pg1' = c("HTR3A", "VIP", "CCK", "NPY", "CRHBP", "CALB2", "PNOC"),
+  'inhib_Zhaung2022' = c('SP8', #VIP
+                       'KLF5',#SST
+                       'LGI2',#PVALB
+                       'LAMP5')# LAMP5
+)
 
+my_plotMarkers(sce = sce[,grep("Inhib",sce$cellType_hc)], 
+               marker_list = markers.Inhib_subtypes,
+               cat = "cellType_hc",
+               fill_colors = cell_type_colors,
+               pdf_fn = here(plot_dir, "HC_inhib_markers_ct.pdf"))
+
+sce_inhib <- sce[,grep("Inhib",sce$cellType_hc)]
+sce_inhib$cellType_hc <- droplevels(sce_inhib$cellType_hc)
+sce_inhib$collapsedCluster <- droplevels(sce_inhib$collapsedCluster)
+table(sce_inhib$cellType_hc, sce_inhib$collapsedCluster)
