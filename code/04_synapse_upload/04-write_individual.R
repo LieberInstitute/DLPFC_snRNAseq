@@ -21,6 +21,9 @@ pd$sex[pd$sex == "M"] <- "male"
 pd$sex[pd$sex == "F"] <- "female"
 pd$diagnosis[pd$diagnosis == "Control"] <- "control"
 
+#   Take only one row per subject
+pd = pd[match(unique(pd$subject), pd$subject),]
+
 meta_df <- data.frame(
     "individualID" = pd$subject,
     "individualIdSource" = "LIBD",
