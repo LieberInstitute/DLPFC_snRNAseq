@@ -34,7 +34,9 @@ num_fastq = length(fastq_naming$new_path)
 #  Populate a data frame
 meta_df = data.frame(
     'path' = paths,
-    'parent' = NA, # need to ask this
+    'parent' = c(
+        rep('syn32383331', num_metadata), rep('syn32383329', num_fastq)
+    ),
     'individualID' = c(
         rep(NA, num_metadata),
         pd$subject[match(fastq_naming$sample_id, pd$Sample)]
@@ -54,8 +56,8 @@ meta_df = data.frame(
         rep('csv', num_metadata), rep('fastq', num_fastq)
     ),
     'consortium' = 'PEC',
-    'study' = "LIBD_U01_DLPFC_snRNAseq",
-    'grant' = NA, # need to ask this
+    'study' = "LIBD_U01_DLPFC",
+    'grant' = NA, # TODO: need to provide this
     'resourceType' = 'experimentalData',
     'dataType' = NA,
     'dataSubtype' = c(
