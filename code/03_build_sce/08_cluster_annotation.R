@@ -671,3 +671,31 @@ sce_inhib <- sce[,grep("Inhib",sce$cellType_hc)]
 sce_inhib$cellType_hc <- droplevels(sce_inhib$cellType_hc)
 sce_inhib$collapsedCluster <- droplevels(sce_inhib$collapsedCluster)
 table(sce_inhib$cellType_hc, sce_inhib$collapsedCluster)
+
+
+#### Check out sub-clusters of Excit_13 with Astro-like expression
+table(unfactor(sce$prelimCluster)[sce$cellType_hc == "Excit_13"])
+# 133 149 210 236 255  28 291 295 
+# 446 249  58 162  28 462 121  41
+
+prelimCluster.medianDoublet[c(28, 133, 149, 210, 236, 255, 291, 295)]
+
+## questionable
+prelimCluster.medianDoublet[c(133, 210, 236)]
+
+my_plotMarkers(sce = sce[,sce$cellType_hc == "Excit_13"], 
+               marker_list =  markers.mathys.tran[c("astrocyte","excit_neuron")],
+               cat = "prelimCluster",
+               pdf_fn = here(plot_dir, "Excit_13_check.pdf"))
+
+dbs_excit13 <- ggcells(sce[,sce$cellType_hc == "Excit_13"], 
+                    mapping=aes(x=prelimCluster, y=doubletScore, fill=prelimCluster)) +
+  geom_boxplot()+
+  geom_hline(yintercept = 5, color = "red", linetype = "dashed")+
+  theme_bw() +
+  theme(legend.position = "None",axis.title.x=element_blank(),
+        axis.text.x=element_text(angle=90,hjust=1))
+
+ggsave(dbs_excit13,filename = here(plot_dir, "Excit_13_doublet_scores.png"))
+
+
