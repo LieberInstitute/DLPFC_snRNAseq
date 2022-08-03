@@ -1,12 +1,28 @@
 library("SingleCellExperiment")
 # library("scater")
+library("tidyverse")
 library("here")
 library("sessioninfo")
 
+#### Load data ####
 load(here("processed-data","sce","sce_DLPFC.Rdata"), verbose = TRUE)
 load(here("processed-data", "03_build_sce","cell_type_markers.Rdata"), verbose = TRUE)
+# markers_1vALL
+# markers_mean_ratio
+# markers_mean_ratio_broad
 
-sapply(markers, function(x) sum(x$FDR < 0.05))
+#### set up plotting ####
+source(here("code", "03_build_sce", "my_plotExpression.R"))
+
+plot_dir <- here("plots", "05_explore_sce","03_explore_markers")
+if(!dir.exists(plot_dir)) dir.create(plot_dir)
+
+load(here("processed-data","03_build_sce","cell_type_colors.Rdata"), verbose = TRUE)
+# cell_type_colors_broad
+# cell_type_colors
+
+#### 1vALL markers ####
+sapply(markers_1vALL, function(x) sum(x$FDR < 0.05))
 # Astro Endo.Mural_01 Endo.Mural_02      Excit_01      Excit_02      Excit_03      Excit_04      Excit_05 
 # 482           914            13            53            21            81            42             0 
 # Excit_06      Excit_07      Excit_08      Excit_09      Excit_10      Excit_11      Excit_12      Excit_13 
@@ -16,7 +32,7 @@ sapply(markers, function(x) sum(x$FDR < 0.05))
 # Micro      Oligo_01      Oligo_02      Oligo_03           OPC 
 # 1016            13           889             0           277 
 
-sapply(markers, function(x) rownames(x[1:10,]))
+(markers_1vALL_top10 <- sapply(markers_1vALL, function(x) rownames(x[1:10,])))
 #       Astro        Endo.Mural_01 Endo.Mural_02 Excit_01     Excit_02     Excit_03     Excit_04     Excit_05    
 # [1,] "AC012405.1" "ATP10A"      "COL6A3"      "AC095050.1" "AC011754.2" "AL450352.1" "CNGB3"      "AL121929.1"
 # [2,] "ITGB4"      "ABCB1"       "TAGLN"       "AL157944.1" "LINC01435"  "COL22A1"    "AP003066.1" "AC026474.1"
@@ -62,11 +78,65 @@ sapply(markers, function(x) rownames(x[1:10,]))
 # [9,] "MT-ATP6"   "LRP2"        "SLC26A9"    "AL445250.1"
 # [10,] "MT-ND4"    "LINC01170"   "AC090503.1" "CACNG4"   
 
-markers$Astro["GFAP",]
+#### Plot 1vALL markers ####
+markers_1vALL_top10 <- as.list(as.data.frame(markers_1vALL_top10))
+
+my_plotMarkers(sce = sce, 
+               marker_list = markers_1vALL_top10,
+               cat = "cellType_hc",
+               fill_colors = cell_type_colors,
+               pdf_fn = here(plot_dir, "markers_1vALL_top10.pdf"))
+
+#### Mean Ratio Markers ####
+
+markers_mean_ratio_top10 <- markers_mean_ratio |>
+  group_by(cellType.target) |>
+  slice(1:10) |>
+  select(gene, cellType.target) |>
+  unstack() |>
+  as.list()
 
 
-## Try Mean Ratio
-library("DeconvoBuddies")
-mean_ratio <- get_mean_ratio2(sce, cellType_col = "cellType_hc")
-mean_ratio_broad <- get_mean_ratio2(sce, cellType_col = "cellType_braod_hc")
+my_plotMarkers(sce = sce, 
+               marker_list = markers_mean_ratio_top10,
+               cat = "cellType_hc",
+               fill_colors = cell_type_colors,
+               pdf_fn = here(plot_dir, "markers_mean_ratio_top10.pdf"))
+
+
+markers_mean_ratio_broad_top10 <- markers_mean_ratio_broad |>
+  group_by(cellType.target) |>
+  slice(1:10) |>
+  select(gene, cellType.target) |>
+  unstack() |>
+  as.list()
+
+my_plotMarkers(sce = sce, 
+               marker_list = markers_mean_ratio_broad_top10,
+               cat = "cellType_hc",
+               fill_colors = cell_type_colors,
+               pdf_fn = here(plot_dir, "markers_mean_ratio_broad_top10.pdf"))
+
+my_plotMarkers(sce = sce, 
+               marker_list = markers_mean_ratio_broad_top10,
+               cat = "cellType_broad_hc",
+               fill_colors = cell_type_colors_broad,
+               pdf_fn = here(plot_dir, "markers_mean_ratio_broad_broad_top10.pdf"))
+
+
+markers_mean_ratio |> filter(gene == "MALAT1", rank_ratio <= 25)
+markers_mean_ratio |> filter(gene == "MALAT1", rank_ratio <= 25)
+
+## hm - problem cell types?
+markers_mean_ratio |> filter(ratio < 1, rank_ratio <= 25) |> count(cellType.target)
+# # A tibble: 7 × 2
+# cellType.target     n
+# <fct>           <int>
+#   1 Endo.Mural_02      24
+# 2 Excit_05           25
+# 3 Excit_09           21
+# 4 Excit_15           24
+# 5 Inhib_03           19
+# 6 Oligo_01           12
+# 7 Oligo_03           25
 
