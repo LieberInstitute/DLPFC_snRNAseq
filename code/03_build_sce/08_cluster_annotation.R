@@ -12,9 +12,11 @@ library("numform")
 my_theme <- theme_bw() +
   theme(text = element_text(size=15))
 
-plot_dir = here("plots","03_build_sce","cluster")
+plot_dir = here("plots","03_build_sce","08_cluster_annotation")
 
 if(!dir.exists(plot_dir)) dir.create(plot_dir)
+
+load(here("processed-data", "03_build_sce","cell_type_colors.Rdata"), verbose = TRUE)
 
 ## Load sce object
 load(here("processed-data", "03_build_sce","sce_harmony_Sample.Rdata"), verbose = TRUE)
@@ -129,11 +131,7 @@ if(any(clust.treeCut[order.dendrogram(dend)] == 0)){
   
 }
 
-## Define color pallet
-# cluster_colors <- unique(tableau20[clust.treeCut[order.dendrogram(dend)]])
-# names(cluster_colors) <- unique(clust.treeCut[order.dendrogram(dend)])
-
-## too many groups for tableau (>20)
+## Define HC color pallet 
 names(clust.treeCut) <- paste0("HC", numform::f_pad_zero(names(clust.treeCut)))
 cluster_colors <- DeconvoBuddies::create_cell_colors(cell_types = sort(unique(names(clust.treeCut))), pallet = "gg")
 
@@ -196,9 +194,6 @@ table(sce$kmeans)
 
 
 #### Load data ####
-load(here("processed-data", "03_build_sce","cell_type_colors.Rdata"), verbose = TRUE)
-# cell_type_colors_broad
-# cell_type_colors
 # load(here("processed-data", "sce","sce_DLPFC.Rdata"), verbose = TRUE)
 
 
@@ -386,6 +381,27 @@ ggsave(TSNE_HC_cellTypes +
        filename = here(plot_dir, "TSNE_HC_broad_cellType.png"), width = 10)
 
 
+## UMAP
+UMAP_HC_cellTypes <- ggcells(sce, mapping=aes(x=UMAP.1, y=UMAP.2, colour=cellType_hc)) +
+  geom_point(size = 0.2, alpha = 0.3) +
+  scale_color_manual(values = cell_type_colors[levels(sce$cellType_hc)], drop = TRUE) +
+  my_theme +
+  coord_equal()
+
+ggsave(UMAP_HC_cellTypes + 
+         guides(colour = guide_legend(override.aes = list(size=2, alpha = 1))),
+       filename = here(plot_dir, "UMAP_HC_cellType.png"), width = 10)
+
+
+UMAP_HC_cellTypes <- ggcells(sce, mapping=aes(x=UMAP.1, y=UMAP.2)) +
+  geom_point(aes(colour=cellType_broad_hc), size = 0.2, alpha = 0.3) +
+  scale_color_manual(values = cell_type_colors[levels(sce$cellType_broad_hc)], drop = TRUE) +
+  my_theme +
+  coord_equal()
+
+ggsave(UMAP_HC_cellTypes + 
+         guides(colour = guide_legend(override.aes = list(size=2, alpha = 1))),
+       filename = here(plot_dir, "UMAP_HC_broad_cellType.png"), width = 10)
 
 TSNE_km_cellTypes <- ggcells(sce, mapping=aes(x=TSNE.1, y=TSNE.2, colour=cellType_k)) +
   geom_point(size = 0.2, alpha = 0.3) +
@@ -605,6 +621,28 @@ sapply(cellType.idx, function(x){quantile(sce$sum[x])})[ ,order(sapply(cellType.
 # 75%   47549.5  51601.5  53335.0    51649  65244.0
 # 100% 179194.0 203794.0 188090.0   152333 296099.0
 
+#### Explore Mito rate ####
+mito_ct_hc <- ggcells(sce, mapping=aes(x=reorder(cellType_hc, subsets_Mito_percent, FUN = median),
+                                       y=subsets_Mito_percent, fill=cellType_hc)) +
+  geom_boxplot()+
+  scale_fill_manual(values = cell_type_colors) +
+  my_theme +
+  theme(legend.position = "None",axis.title.x=element_blank(),
+        axis.text.x=element_text(angle=90,hjust=1))
+
+ggsave(mito_ct_hc,filename = here(plot_dir, "mitoRate_HC_cellType.png"), width = 10)
+
+library(scales)
+UMAP_mito <- ggcells(sce, mapping=aes(x=UMAP.1, y=UMAP.2)) +
+  geom_point(aes(colour=subsets_Mito_percent), size = 0.2, alpha = 0.3) +
+  scale_color_continuous(type = "viridis") +
+  my_theme +
+  coord_equal()
+
+ggsave(UMAP_mito, filename = here(plot_dir, "UMAP_Mito.png"), width = 10)
+
+
+
 #### Explore layer markers ####
 load("/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/processed-data/rdata/spe/07_spatial_registration/t_cor_plot_top_genes_k7.rda", verbose = TRUE)
 # dat_small
@@ -674,6 +712,25 @@ table(sce_inhib$cellType_hc, sce_inhib$collapsedCluster)
 
 
 #### Check out sub-clusters of Excit_13 with Astro-like expression
+sce_Excit13 <- sce[,sce$cellType_hc == "Excit_13"]
+
+sce_Excit13$prelimCluster <- droplevels(sce_Excit13$prelimCluster)
+
+table(sce_Excit13$subject, sce_Excit13$prelimCluster)
+#         28 133 149 210 236 255 291 295
+# Br2720  12   7  98   3   0   0   0  41
+# Br2743   2   5   5   0   0   0   0   0
+# Br3942 347   2  43   0   0   1   0   0
+# Br6423  11 422  72  53 157   1   0   0
+# Br6432   0   0   1   0   0   0   0   0
+# Br6471   1   2   1   0   0   0   0   0
+# Br6522   2   2   3   0   0   0   0   0
+# Br8492  73   2  25   0   0   0   0   0
+# Br8667  14   4   1   2   5  26 121   0
+
+table(sce_Excit13$Sample[sce_Excit13$prelimCluster %in% c(133, 210, 236)])
+table(sce_Excit13$subject[sce_Excit13$prelimCluster %in% c(133, 210, 236)])
+
 table(unfactor(sce$prelimCluster)[sce$cellType_hc == "Excit_13"])
 # 133 149 210 236 255  28 291 295 
 # 446 249  58 162  28 462 121  41
