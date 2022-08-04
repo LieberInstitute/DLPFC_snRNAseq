@@ -87,8 +87,40 @@ my_plotMarkers(sce = sce,
                fill_colors = cell_type_colors,
                pdf_fn = here(plot_dir, "markers_1vALL_top10.pdf"))
 
-#### Mean Ratio Markers ####
+## volcano plots
+library(EnhancedVolcano)
 
+pdf(here(plot_dir, "markers_1vALL_volcano.pdf"), width = 10, height = 10)
+for(n in names(markers_1vALL)){
+  message(n)
+  
+  markers <- markers_1vALL[[n]]
+  st <- paste0("n nuc=", sum(sce$cellType_hc == n), ", n genes FDR<0.05=", sum(markers$FDR<0.05))
+  message(st)
+  print(EnhancedVolcano(markers,
+                  lab = rownames(markers),
+                  x = 'summary.logFC',
+                  y = 'FDR',
+                  pCutoff = 0.05,
+                  xlab = bquote(~Log[2] ~ "summary fold change"),
+                  ylab = bquote(~-Log[10] ~ italic(FDR)),
+                  title = n,
+                  subtitle = st))
+}
+dev.off()
+
+## full tab
+
+## TODO fix Endo.Mural bug :(
+markers_1vALL_df <- do.call("rbind",
+                            lapply(markers_1vALL, function(x) as.data.frame(x[,c("p.value","FDR","summary.logFC")]))) |>
+  rename_with(.fn = ~ paste0(.x,"_1vALL")) |> 
+  rownames_to_column("ct_gene") |>
+  separate(ct_gene, into = c("cellType.target","gene"), extra = "merge", sep = "\\.")
+
+markers_1vALL_df |> count(cellType.target) 
+
+#### Mean Ratio Markers ####
 markers_mean_ratio_top10 <- markers_mean_ratio |>
   group_by(cellType.target) |>
   slice(1:10) |>
@@ -140,3 +172,41 @@ markers_mean_ratio |> filter(ratio < 1, rank_ratio <= 25) |> count(cellType.targ
 # 6 Oligo_01           12
 # 7 Oligo_03           25
 
+head(markers_1vALL_df)
+
+markers_all <- markers_mean_ratio |> 
+  left_join(markers_1vALL_df) |>
+  mutate(cellType.target = factor(cellType.target))
+
+markers_all |> count(cellType.target)
+
+## hmmm funky because of summary.logFC? 
+ratio_vs_stdFC <- markers_all |>
+  ggplot(aes(x = ratio, y = summary.logFC_1vALL)) +
+  geom_point() +
+  facet_wrap(~cellType.target, scales = "free_x") +
+  theme_bw()
+
+ggsave(ratio_vs_stdFC, filename = here(plot_dir, "ratio_vs_stdFC.png"), height = 12, width = 12)
+
+## volcano plots
+pdf(here(plot_dir, "markers_mean_ratio_volcano.pdf"), width = 10, height = 10)
+for(n in levels(markers_all$cellType.target)[1:3]){
+ 
+
+  markers <- markers_all |> filter(cellType.target == n)
+  message(n, nrow(markers))
+  st <- paste0("n nuc=", sum(sce$cellType_hc == n), ", n genes FDR<0.05=", sum(markers$FDR_1vALL<0.05))
+  message(st)
+  
+  # print(EnhancedVolcano(markers,
+  #                       lab = rownames(markers),
+  #                       x = 'ratio',
+  #                       y = 'FDR_1vALL',
+  #                       pCutoff = 0.05,
+  #                       xlab = "Mean Ratio",
+  #                       ylab = bquote(~-Log[10] ~ italic(FDR)),
+  #                       title = n,
+  #                       subtitle = st))
+}
+dev.off()
