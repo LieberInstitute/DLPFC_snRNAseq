@@ -7,25 +7,31 @@ library("here")
 library("rtracklayer")
 library("lobstr")
 library("sessioninfo")
+library("dplyr")
 
 ## Define some info for the samples
 tmp <- read.table(here("raw-data", "sample_libs_round0-5.tsv"), header = FALSE)
 
 sample_info <- data.frame(
-    file_id = tmp$V1,
-    region_short = tolower(gsub("DLPFC_", "", tmp$V2)),
-    subject = tmp$V3,
+    SAMPLE_ID = tmp$V1,
+    pos = gsub("st","s",tolower(gsub("DLPFC_", "", tmp$V2))),
+    BrNum = tmp$V3,
     round = tmp$V5
 )
-rm(tmp)
-sample_info$region <- gsub("mid", "middle", sample_info$region_short)
-sample_info$region[sample_info$region != "middle"] <- paste0(sample_info$region[sample_info$region != "middle"], "erior")
-sample_info$Sample <- with(sample_info, paste0(subject, "_", region_short))
+
+position_codes <- data.frame(pos = c("ant","mid","pos"),
+                             Position = factor(c("Anterior","Middle","Posterior")))
+
+## Build Sample Info compatible with other DLPFC data
+sample_info <- sample_info |> 
+  left_join(position_codes) |>
+  mutate(Sample = paste0(BrNum,"_",pos))
+
 stopifnot(all(!duplicated(sample_info$Sample)))
 
 sample_info$sample_path <- file.path(
     here::here("processed-data", "cellranger"),
-    sample_info$file_id,
+    sample_info$SAMPLE_ID,
     "outs",
     "raw_feature_bc_matrix"
 )
@@ -33,24 +39,23 @@ stopifnot(all(file.exists(sample_info$sample_path)))
 
 ## Get the rest of the donor info from the spatialDLPFC SPE object
 ## Load SPE data
-load("/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/code/deploy_app/spe_merged_final_nocounts.Rdata", verbose = TRUE)
-m <- match(sample_info$subject, spe$subject)
+# load("/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/code/deploy_app/spe_merged_final_nocounts.Rdata", verbose = TRUE)
+load("/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/code/deploy_app/spe_subset.Rdata", verbose = TRUE)
+m <- match(sample_info$BrNum, spe$subject)
 sample_info$age <- spe$age[m]
 sample_info$sex <- spe$sex[m]
 sample_info$diagnosis <- spe$diagnosis[m]
 rm(m, spe)
 
 ## Build basic SCE
-Sys.time()
+message("Read 10x data and create sce - ", Sys.time())
 sce <- read10xCounts(
     sample_info$sample_path,
     sample_info$Sample,
     type = "sparse",
     col.names = TRUE
 )
-Sys.time()
-# [1] "2021-11-30 10:25:04 EST"
-# [1] "2021-11-30 10:40:51 EST"
+message("RDone - ", Sys.time())
 
 ## Use key similar to spe objects
 sce$key <- paste0(sce$Barcode, "_", sce$Sample)
@@ -100,12 +105,14 @@ sce
 ## Note that no empty droplets have been filtered out yet!
 
 ## Save for later
-dir.create(here::here("processed-data", "sce"), showWarnings = FALSE)
-save(sce, file = here::here("processed-data", "sce", "sce_raw.Rdata"))
+if(!dir.exists(here("processed-data", "sce"))) dir.create(here("processed-data", "sce"))
+save(sce, file = here("processed-data", "sce", "sce_raw.Rdata"))
 
 ## Size in Gb
 lobstr::obj_size(sce) 
 # 15.52167
+
+# sgejobs::job_single('01_build_basic_sce', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript 01_build_basic_sce.R")
 
 ## Reproducibility information
 print("Reproducibility information:")
