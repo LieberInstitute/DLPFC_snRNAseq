@@ -1,5 +1,5 @@
 ﻿cluster,cell_type_mathys,note_mathys,MR,MR_note,broad
-mbk01,Endo,Mural,Mural,,Endo.Mural
+mbk01,Endo,Mural,Mural,,EndoMural
 mbk02,Excit,,,,Excit
 mbk03,Excit/Inhib,,Excit,,Excit
 mbk04,Oligo,"Micro, Oligo",,,Oligo
@@ -14,7 +14,7 @@ mbk12,Inhib,MSN,Inhib,,Inhib
 mbk13,Excit,,Excit,,Excit
 mbk14,Inhib,OPC,Excit,,Excit
 mbk15,Excit,,Excit,,Excit
-mbk16,Micro,Astro/Micro,Oligo,"Micro, macro",Micro.Oligo
+mbk16,Micro,Astro/Micro,Oligo,"Micro, macro",MicroOligo
 mbk17,,,Excit,,Excit
 mbk18,OPC,,Excit,,drop
 mbk19,Excit,,Excit,,Excit
