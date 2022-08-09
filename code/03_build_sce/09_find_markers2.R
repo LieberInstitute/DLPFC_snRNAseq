@@ -1,3 +1,4 @@
+BiocManager::install("lahuuki/DeconvoBuddies")
 
 library("SingleCellExperiment")
 library("scater")
@@ -31,7 +32,7 @@ markers_1vALL_sample <- findMarkers_1vAll(sce, assay_name = "logcounts", cellTyp
 message("Done - ", Sys.time())
 Sys.time()
 
-save(markers_1vALL_sample, markers_mean_ratio, markers_mean_ratio_broad, file = here("processed-data", "03_build_sce","cell_type_markers_1vALL_mod.Rdata"))
+save(markers_1vALL_sample, file = here("processed-data", "03_build_sce","cell_type_markers_1vALL_mod.Rdata"))
 
 
 # sgejobs::job_single('09_find_markers2', create_shell = TRUE, queue= 'bluejay', memory = '20G', command = "Rscript 09_find_markers2.R")
