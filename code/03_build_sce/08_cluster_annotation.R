@@ -7,6 +7,7 @@ library("here")
 library("sessioninfo")
 library("dplyr")
 library("numform")
+library("pheatmap")
 
 # Plotting set up 
 my_theme <- theme_bw() +
@@ -350,19 +351,59 @@ as.data.frame(prop_k) %>% full_join(as.data.frame(prop_hc) %>% rename(Freq_HC = 
 # Astro      Excit      Inhib Macrophage      Micro      Mural      Oligo        OPC      Tcell 
 # 7.0       21.3       14.1        0.1        3.5        0.2       48.7        5.1        0.1 
 
+## Export all cell types for ref
+(ct <- sort(unique(as.character(c(sce$cellType_k,sce$cellType_hc)))))
+cat(ct, file = here("processed-data","03_build_sce","cell_types.txt"), sep = "\n")
 
 #### Match colData to other DLPFC datasets ####
 
-table(sce$Sample)
-colnames(colData(sce))
+table(sce$Sample) # good!
+# Br2720_mid Br2720_post  Br2743_ant  Br2743_mid  Br3942_ant  Br3942_mid  Br6423_ant Br6423_post  Br6432_ant  Br6471_ant 
+# 3101        5911        2861        2723        5205        4282        3898        4067        3059        3212 
+# Br6471_mid  Br6522_mid Br6522_post  Br8325_ant  Br8325_mid  Br8492_mid Br8492_post  Br8667_ant  Br8667_mid 
+# 4724        4004        4275        4707        4020        4997        2661        5774        4123 
+table(sce$region) # need to swap to sentence case and change col name to "Position"
+# anterior    middle posterior 
+# 28716     31974     16914
+table(sce$region_short) # need to change colname to "pos"
+# ant   mid  post 
+# 28716 31974 16914 
+table(sce$file_id) # need to change colname to "SAMPLE_ID"
+# 10c_k  11c_k  12c_k  13c_k  14c_k  15c_k  16c_k  17c_k  18c_k   1c-k   2c-k   3c-k   4c_k   5c_k   6c_k   7c_k   8c_k 
+# 4997   5205   4067   4123   3898   4282   4707   4020   5774   3101   3059   3212   4004   4275   4724   2661   2861 
+# 9c_k round0 
+# 5911   2723 
 
+## Fix colnames 
+cn <- names(colData(sce))
+cn[match(c("subject", "region","region_short","file_id"),cn)] <- c("BrNum","Position","pos","SAMPLE_ID")
+names(colData(sce)) <- cn
+
+sce$Position <- tools::toTitleCase(sce$Position)
+
+table(sce$BrNum, sce$Position)
+# Anterior Middle Posterior
+# Br2720        0   3101      5911
+# Br2743     2861   2723         0
+# Br3942     5205   4282         0
+# Br6423     3898      0      4067
+# Br6432     3059      0         0
+# Br6471     3212   4724         0
+# Br6522        0   4004      4275
+# Br8325     4707   4020         0
+# Br8492        0   4997      2661
+# Br8667     5774   4123         0
+
+
+#### SAVE ANNOTATED SCE ####
+## add cell type colors as metadata
+metadata(sce)$cell_type_colors <- cell_type_colors
+metadata(sce)$cell_type_colors_broad <- cell_type_colors_broad
 
 save(sce, file = here("processed-data", "sce","sce_DLPFC.Rdata"))
 # load(here("processed-data", "sce","sce_DLPFC.Rdata"), verbose = TRUE)
 
 #### Replot with Annotations ####
-(ct <- sort(unique(as.character(c(sce$cellType_k,sce$cellType_hc)))))
-cat(ct, file = here("processed-data","03_build_sce","cell_types.txt"), sep = "\n")
 all(ct %in% names(cell_type_colors)) ## if not revisit cell_colors
 
 ## Plot clusters in TSNE
@@ -435,9 +476,7 @@ my_plotMarkers(sce = sce,
                pdf_fn = here(plot_dir, "mb_kmeans_29_mathys_markers_ct.pdf"))
 
 
-#### Compare annotaitons ####
-library("pheatmap")
-
+#### Compare annotations ####
 table(sce$kmeans)
 table(sce$collapsedCluster)
 
@@ -651,51 +690,39 @@ ggsave(UMAP_mito, filename = here(plot_dir, "UMAP_Mito.png"), width = 10)
 
 
 #### Explore layer markers ####
-load("/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/processed-data/rdata/spe/07_spatial_registration/t_cor_plot_top_genes_k7.rda", verbose = TRUE)
-# dat_small
-table(dat_small$Layer)
-# Layer1 Layer2 Layer3 Layer4 Layer5 Layer6     WM 
-# 91     87     65     80     78     83    100 
-
-dat_symb <- rownames(sce)[match(rownames(dat_small),rowData(sce)$gene_id)]
-any(is.na(dat_symb))
-
-layer_idx <- splitit(dat_small$Layer)
-layer_top4 <- purrr::map(layer_idx, ~dat_symb[.x][1:4])
-# $Layer1
-# [1] "MT1G"  "VIM"   "FABP7" "MT1F" 
+## may look at cluster marker genes instead 
+# load("/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/processed-data/rdata/spe/07_spatial_registration/t_cor_plot_top_genes_k7.rda", verbose = TRUE)
+# # dat_small
+# table(dat_small$Layer)
+# # Layer1 Layer2 Layer3 Layer4 Layer5 Layer6     WM 
+# # 91     87     65     80     78     83    100 
 # 
-# $Layer2
-# [1] "DACT1"   "STXBP6"  "SIPA1L1" "MAN1A1" 
+# dat_symb <- rownames(sce)[match(rownames(dat_small),rowData(sce)$gene_id)]
+# any(is.na(dat_symb))
 # 
-# $Layer3
-# [1] "CARTPT"    "BAIAP3"    "ADCYAP1"   "LINC01007"
-# 
-# $Layer4
-# [1] "VAMP1" "NEFH"  "SCN1B" "NGB"  
-# 
-# $Layer5
-# [1] "PCP4"    "CAMK2D"  "SMYD2"   "TRABD2A"
-# 
-# $Layer6
-# [1] "ISLR"  "NR4A2" "DACH1" "NTNG2"
-# 
-# $WM
-# [1] "NDRG1"  "PTP4A2" "AQP1"   "PAQR6"
+# layer_idx <- splitit(dat_small$Layer)
+# layer_top4 <- purrr::map(layer_idx, ~dat_symb[.x][1:4])
 
 
 ## markers
 my_plotMarkers(sce = sce, 
-               marker_list = layer_top4,
-               cat = "cellType_hc",
-               fill_colors = cell_type_colors,
-               pdf_fn = here(plot_dir, "HC_layer_markers_ct.pdf"))
-
-my_plotMarkers(sce = sce, 
                marker_list = markers.mathys.tran,
                cat = "cellType_k",
                fill_colors = cell_type_colors,
-               pdf_fn = here(plot_dir, "mb_kmeans_29_mathys_markers_ct.pdf"))
+               pdf_fn = here(plot_dir, "markers_mathys_ct_mb_kmeans_29.pdf"))
+
+my_plotMarkers(sce = sce, 
+               marker_list = markers.mathys.tran,
+               cat = "cellType_hc",
+               fill_colors = cell_type_colors,
+               pdf_fn = here(plot_dir, "markers_mathys_ct_hc_29.pdf"))
+
+# my_plotMarkers(sce = sce, 
+#                marker_list = layer_top4,
+#                cat = "cellType_hc",
+#                fill_colors = cell_type_colors,
+#                pdf_fn = here(plot_dir, "HC_layer_markers_ct.pdf"))
+
 
 ## Inhib sub-types
 markers.Inhib_subtypes = list(
