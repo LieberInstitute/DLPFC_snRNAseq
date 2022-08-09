@@ -263,8 +263,8 @@ dev.off()
 ## mbkm annotation
 anno_k <- read.csv(here("processed-data", "03_build_sce", "DLPFC_k29_anno.csv"))
 table(anno_k$broad)
-# Astro        drop  Endo.Mural       Excit       Inhib Micro.Oligo       Oligo         OPC 
-# 1           4           1          13           6           1           2           1 
+# Astro       drop  EndoMural      Excit      Inhib MicroOligo      Oligo        OPC 
+# 1          4          1         13          6          1          2          1 
 
 ## Add index to multiple cell types
 anno_k2 <- anno_k %>% 
@@ -280,7 +280,7 @@ anno_k2 %>% filter(n == 1)
 ## HC annotation 
 anno_hc <- read.csv(here("processed-data", "03_build_sce", "DLPFC_HC_anno.csv"))
 table(anno_hc$broad)
-# Astro Endo.Mural      Excit      Inhib      Micro      Oligo        OPC 
+# Astro EndoMural      Excit      Inhib      Micro      Oligo        OPC 
 # 1          2         15          6          1          3          1 
 
 
@@ -297,26 +297,26 @@ sce$cellType_broad_k <- factor(anno_k$broad[match(sce$kmeans, anno_k$cluster)])
 sce$cellType_k <- factor(anno_k2$cellType[match(sce$kmeans, anno_k2$cluster)])
 
 table(sce$cellType_broad_k)
-# Astro        drop  Endo.Mural       Excit       Inhib Micro.Oligo       Oligo         OPC 
-# 3557          23        1330       21233       10413        5541       33716        1791
+# Astro       drop  EndoMural      Excit      Inhib MicroOligo      Oligo        OPC 
+# 3557         23       1330      21233      10413       5541      33716       1791 
 
 table(sce$cellType_k)
-# Astro     drop_01     drop_02     drop_03     drop_04  Endo.Mural    Excit_01    Excit_02    Excit_03    Excit_04 
-# 3557          11           3           2           7        1330        5879        1058         548        1188 
-# Excit_05    Excit_06    Excit_07    Excit_08    Excit_09    Excit_10    Excit_11    Excit_12    Excit_13    Inhib_01 
-# 82         633        3198        2851         896        1581        1732        1292         295         132 
-# Inhib_02    Inhib_03    Inhib_04    Inhib_05    Inhib_06 Micro.Oligo    Oligo_01    Oligo_02         OPC 
-# 461        2242        6018        1311         249        5541       28085        5631        1791 
+# Astro    drop_01    drop_02    drop_03    drop_04  EndoMural   Excit_01   Excit_02   Excit_03   Excit_04 
+# 3557         11          3          2          7       1330       5879       1058        548       1188 
+# Excit_05   Excit_06   Excit_07   Excit_08   Excit_09   Excit_10   Excit_11   Excit_12   Excit_13   Inhib_01 
+# 82        633       3198       2851        896       1581       1732       1292        295        132 
+# Inhib_02   Inhib_03   Inhib_04   Inhib_05   Inhib_06 MicroOligo   Oligo_01   Oligo_02        OPC 
+# 461       2242       6018       1311        249       5541      28085       5631       1791 
 
 
 sce$cellType_broad_hc <- factor(anno_hc$broad[match(sce$collapsedCluster, anno_hc$cluster)])
 sce$cellType_hc <- factor(anno_hc2$cellType[match(sce$collapsedCluster, anno_hc2$cluster)])
 table(sce$cellType_broad_hc)
-# Astro Endo.Mural      Excit      Inhib      Micro      Oligo        OPC 
+# Astro EndoMural      Excit      Inhib      Micro      Oligo        OPC 
 # 3979       2157      24809      11067       1601      32051       1940 
 
 table(sce$cellType_hc)
-# Endo.Mural_01 Endo.Mural_02      Excit_01      Excit_02      Excit_03      Excit_04      Excit_05      Excit_06 
+# EndoMural_01 EndoMural_02      Excit_01      Excit_02      Excit_03      Excit_04      Excit_05      Excit_06 
 #           446          1711          7927          2487          1309          2171          2532           329 
 # Excit_07      Excit_08      Excit_09      Excit_10      Excit_11      Excit_12      Excit_13      Excit_14 
 #      334          1463          2561          3979          1079           482           420          1567 
@@ -327,21 +327,21 @@ table(sce$cellType_hc)
 
 ## Check out prop
 (prop_k <- 100*round(table(sce$cellType_broad_k)/ncol(sce),3))
-# Astro        drop  Endo.Mural       Excit       Inhib Micro.Oligo       Oligo         OPC 
+# Astro        drop  EndoMural       Excit       Inhib MicroOligo       Oligo         OPC 
 # 4.6         0.0         1.7        27.4        13.4         7.1        43.4         2.3 
 
 (prop_hc <- 100*round(table(sce$cellType_broad_hc)/ncol(sce),3))
-# Astro Endo.Mural      Excit      Inhib      Micro      Oligo        OPC 
+# Astro EndoMural      Excit      Inhib      Micro      Oligo        OPC 
 # 5.1        2.8       32.0       14.3        2.1       41.3        2.5 
 
 as.data.frame(prop_k) %>% full_join(as.data.frame(prop_hc) %>% rename(Freq_HC = Freq))
 #          Var1 Freq Freq_HC
 # 1       Astro  4.6     5.1
 # 2        drop  0.0      NA
-# 3  Endo.Mural  1.7     2.8
+# 3  EndoMural  1.7     2.8
 # 4       Excit 27.4    32.0
 # 5       Inhib 13.4    14.3
-# 6 Micro.Oligo  7.1      NA
+# 6 MicroOligo  7.1      NA
 # 7       Oligo 43.4    41.3
 # 8         OPC  2.3     2.5
 # 9       Micro   NA     2.1
@@ -349,6 +349,13 @@ as.data.frame(prop_k) %>% full_join(as.data.frame(prop_hc) %>% rename(Freq_HC = 
 ## Tran, Maynard DLPFC dataset for refrence
 # Astro      Excit      Inhib Macrophage      Micro      Mural      Oligo        OPC      Tcell 
 # 7.0       21.3       14.1        0.1        3.5        0.2       48.7        5.1        0.1 
+
+
+#### Match colData to other DLPFC datasets ####
+
+table(sce$Sample)
+colnames(colData(sce))
+
 
 save(sce, file = here("processed-data", "sce","sce_DLPFC.Rdata"))
 # load(here("processed-data", "sce","sce_DLPFC.Rdata"), verbose = TRUE)
@@ -582,13 +589,13 @@ cellType.idx <- splitit(sce$cellType_hc)
 #sapply(c("Excit", "Inhib", "MSN"), function(x){grep(x, names(cellType.idx))})
 
 sapply(cellType.idx, function(x){quantile(sce$doubletScore[x])})[ ,order(sapply(cellType.idx, function(x){quantile(sce$doubletScore[x])["50%"]}))]
-#       Excit_15    Micro  Oligo_03 Excit_09     Astro       OPC Excit_10   Oligo_02 Excit_13  Excit_11 Endo.Mural_02
+#       Excit_15    Micro  Oligo_03 Excit_09     Astro       OPC Excit_10   Oligo_02 Excit_13  Excit_11 EndoMural_02
 # 0%   0.0086180 0.000000  0.000000  0.00000  0.000000  0.000000 0.000000  0.0000000 0.000000  0.050708      0.000000
 # 25%  0.0348360 0.032112  0.042816  0.04134  0.057876  0.068640 0.077310  0.0811380 0.103416  0.144880      0.085632
 # 50%  0.0751140 0.099216  0.137040  0.13744  0.143964  0.166296 0.180978  0.1896200 0.197182  0.282516      0.300958
 # 75%  0.1874415 0.388596  0.568988  0.45220  0.345052  0.639158 0.426949  0.4642535 0.426949  0.476293      0.765917
 # 100% 4.4314060 6.411696 15.852624  6.83060 12.939216 10.329944 7.175700 16.9815360 8.621844 24.470232      8.387922
-#       Inhib_03  Excit_12 Inhib_02 Endo.Mural_01 Excit_03 Inhib_06 Inhib_05 Excit_05 Excit_04  Inhib_01 Oligo_01
+#       Inhib_03  Excit_12 Inhib_02 EndoMural_01 Excit_03 Inhib_06 Inhib_05 Excit_05 Excit_04  Inhib_01 Oligo_01
 # 0%    0.006864  0.074860 0.035706      0.011902 0.011902 0.074928 0.047608 0.000000 0.035706  0.000000  0.00000
 # 25%   0.239052  0.202122 0.255210      0.150456 0.253524 0.250351 0.279440 0.249900 0.368962  0.354956  0.20670
 # 50%   0.383932  0.396758 0.419160      0.422282 0.486492 0.489020 0.512789 0.524496 0.608780  0.688180  0.70438
@@ -602,13 +609,13 @@ sapply(cellType.idx, function(x){quantile(sce$doubletScore[x])})[ ,order(sapply(
 # 100% 13.872384 9.825768 8.841504 6.457070 8.640852 5.808176 4.430430
 
 sapply(cellType.idx, function(x){quantile(sce$sum[x])})[ ,order(sapply(cellType.idx, function(x){quantile(sce$sum[x])["50%"]}))]
-#      Excit_15 Oligo_01 Excit_09 Oligo_03 Micro Endo.Mural_02   Astro Excit_13 Oligo_02 Excit_10 Excit_05      OPC
+#      Excit_15 Oligo_01 Excit_09 Oligo_03 Micro EndoMural_02   Astro Excit_13 Oligo_02 Excit_10 Excit_05      OPC
 # 0%        678      220      462      359   350         407.0   276.0    648.0    968.0      533   292.00   397.00
 # 25%      1101     1232     1389     1464  1756        2020.5  1474.0   2447.5   3750.0     3298  3077.25  3933.25
 # 50%      1218     1907     2121     2211  2633        3140.0  3280.0   3445.0   5113.5     5489  5668.50  5951.00
 # 75%      1348     3147     3225     3410  4300        4546.0  7305.5   4680.5   7314.5     8100 10000.00  8510.00
 # 100%    15127    27828    50703    36108 15576       32302.0 61842.0  16113.0  49758.0    95913 65772.00 83867.00
-#      Excit_14 Endo.Mural_01 Inhib_03 Inhib_06  Inhib_05 Inhib_01 Inhib_04 Excit_11 Excit_12 Excit_03 Inhib_02  Excit_07
+#      Excit_14 EndoMural_01 Inhib_03 Inhib_06  Inhib_05 Inhib_01 Inhib_04 Excit_11 Excit_12 Excit_03 Inhib_02  Excit_07
 # 0%    2853.00       2040.00   641.00   1598.0   1402.00   317.00     1571  4585.00  1215.00     1651   4438.0   2691.00
 # 25%   5537.75       6102.75  7002.00   8979.5  10839.25 10929.00    12837 14424.25 13997.75    14598  16177.5  17929.75
 # 50%   7893.00       8219.50 12173.00  13173.0  15142.50 16488.00    18805 19989.50 20810.00    20879  23964.0  25357.50
