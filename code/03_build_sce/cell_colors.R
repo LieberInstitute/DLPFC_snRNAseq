@@ -50,11 +50,10 @@ cell_type_colors_broad <- c(
   Astro = "#3BB273", # Sea Green
     # Micro = "#4D2B70", #purple
   Micro = "#663894", #Rebecca purple
-  Endo.Mural = "#FF56AF", #pink
-  Micro.Oligo = "#AB0091", #magenta
+  EndoMural = "#FF56AF", #pink
+  MicroOligo = "#AB0091", #magenta
   drop = "black",
-  Multi = "#4E586A",
-  Other = "#90A583"
+  Other = "#4E586A"
 )
 
 
@@ -111,7 +110,17 @@ expand_cell_colors <- function(cell_colors, cell_types, split = "_"){
 ## All cell types
 cell_types <- readLines(here("processed-data", "03_build_sce","cell_types.txt"))
 cell_type_colors <- expand_cell_colors(cell_type_colors_broad, cell_types)
+
+
+## plot previews of pallets
+png(here("plots","cell_colors","cell_colors.png"), height = 800)
 preview_colors(cell_type_colors)
+dev.off()
+
+
+png(here("plots","cell_colors","cell_colors_broad.png"))
+preview_colors(cell_type_colors_broad)
+dev.off()
 
 save(cell_type_colors_broad, cell_type_colors, file = here("processed-data", "03_build_sce","cell_type_colors.Rdata"))
 
