@@ -1,16 +1,18 @@
+
 library("SingleCellExperiment")
 library("DeconvoBuddies")
 library("tidyverse")
 library("here")
 
 #### plot setup  ####
-plot_dir = here("plots","03_build_sce","explore")
-load(here("processed-data", "03_build_sce","cell_type_colors.Rdata"), verbose = TRUE)
+plot_dir = here("plots","05_explore_sce","02_cellType_prop")
+# load(here("processed-data", "03_build_sce","cell_type_colors.Rdata"), verbose = TRUE)
+# 
 
-cell_type_colors <- cell_type_colors[levels(sce$cellType_hc)]
 
 #### Load SCE ####
 load(here("processed-data","sce","sce_DLPFC.Rdata"), verbose = TRUE)
+cell_type_colors <- metadata(sce)$cell_type_colors[levels(sce$cellType_hc)]
 
 pd <- as.data.frame(colData(sce))
 
@@ -18,25 +20,38 @@ table(pd$cellType_broad_hc)
 # Astro Endo.Mural      Excit      Inhib      Micro      Oligo        OPC 
 # 3979       2157      24809      11067       1601      32051       1940
 
-n_nuc <- pd %>% 
-  group_by(Sample, subject, round, region, sex, age) %>% 
-  summarize(n_nuc = n()) %>%
+n_nuc <- pd |> 
+  group_by(Sample, BrNum, round, Position, sex, age) |> 
+  summarize(n_nuc = n()) |>
   ungroup()
 
-
-prop_all <- pd %>% 
-  count(Sample, cellType_hc) %>% 
-  left_join(n_nuc) %>%
+prop_all <- pd |> 
+  count(Sample, cellType_hc) |> 
+  left_join(n_nuc) |>
   mutate(prop = n/n_nuc)
 
-prop_broad <- pd %>% 
-  count(Sample, cellType_broad_hc) %>% 
-  left_join(n_nuc) %>%
+prop_broad <- pd |> 
+  count(Sample, cellType_broad_hc) |> 
+  left_join(n_nuc) |>
   mutate(prop = n/n_nuc)
 
+## n nuc bar plot
+barplot_n_nuc <- pd |> 
+  group_by(cellType_hc) |> 
+  summarize(n_nuc = n()) |>
+  ggplot(aes(x = cellType_hc, y = n_nuc, fill = cellType_hc)) +
+  geom_col() +
+  geom_text(aes(label = n_nuc), size = 2.5)+
+  scale_fill_manual(values = cell_type_colors) +
+  theme_bw() +
+  theme(legend.position = "None", axis.text.x = element_text(angle = 45, hjust=1), axis.title.x = element_blank()) +
+  labs(y = "Number of Nuclei")
+
+ggsave(barplot_n_nuc, filename = here(plot_dir, "barplot_n_nuc.png"), heigh = 3.5, width = 8)
+    
 
 
-prop_boxplots <- prop_broad %>%
+prop_boxplots <- prop_broad |>
   ggplot(aes(x = cellType_broad_hc, y  = prop, fill = cellType_broad_hc)) +
   geom_boxplot(alpha = 0.4, outlier.shape = NA) + 
   geom_jitter(width = 0.2, colour="black",pch=21) +
@@ -47,8 +62,8 @@ prop_boxplots <- prop_broad %>%
 
 ggsave(prop_boxplots, filename = here(plot_dir, "prop_boxplots.png"))
 
-prop_boxplot_position <- prop_broad %>%
-  separate(Sample, into = c("BrNum","Position")) %>%
+prop_boxplot_position <- prop_broad |>
+  separate(Sample, into = c("BrNum","Position")) |>
   ggplot(aes(x = Position, y  = prop, fill = cellType_broad_hc)) +
   geom_boxplot(alpha = 0.4, outlier.shape = NA) + 
   geom_jitter(width = 0.2, colour="black",pch=21) +
@@ -119,10 +134,10 @@ broad_prop_bar_round <- plot_composition_bar(prop_broad,
 
 ggsave(broad_prop_bar_round, filename = here(plot_dir, "prop_bar_broad_round.png"))
 
-## Position/region
+## Position/Position
 broad_prop_bar_pos <- plot_composition_bar(prop_broad,
                                              sample_col = "Sample",
-                                             x_col = "region",
+                                             x_col = "Position",
                                              ct_col = "cellType_broad_hc",
                                              min_prop_text = .02) +
   scale_fill_manual(values = cell_type_colors_broad) +
