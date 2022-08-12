@@ -1,19 +1,29 @@
 ######### Cell Annotation with Azimuth#####
-devtools::install_github("satijalab/seurat-data") # install SeuratData package
-devtools::install_github("satijalab/azimuth", ref = "release/0.4.5") # install Azimuth package
-
+# devtools::install_github("satijalab/seurat-data") # install SeuratData package
+# devtools::install_github("satijalab/azimuth", ref = "release/0.4.5") # install Azimuth package
+library("SingleCellExperiment")
 library("Seurat")
 library("Azimuth")
 library("SeuratData")
 library("patchwork")
+library("here")
+
+load(here("processed-data","sce","sce_DLPFC.Rdata"), verbose = TRUE)
 
 # transform reference dataset to a Seurat object compatible with Azimuth####
-reference.so <- CreateSeuratObject(counts = counts(reference), meta.data = data.frame(colData(reference))) # where reference is a SingleCellExperiment object
+
+## Only use top 2k deviant genes
+hdgs.hb <- rownames(sce)[order(rowData(sce)$binomial_deviance, decreasing=T)][1:2000]
+
+reference.so <- CreateSeuratObject(counts = as.matrix(counts(sce[hdgs.hb,])), meta.data = data.frame(colData(sce))) # where reference is a SingleCellExperiment object
+# reference.so <- CreateSeuratObject(counts = counts(reference), meta.data = data.frame(colData(reference))) # where reference is a SingleCellExperiment object
+
 reference.so <- SCTransform(reference.so,assay = "RNA", new.assay.name = "SCT", variable.features.n = 2000,
                             verbose = TRUE,conserve.memory=TRUE) # conserve.memory=TRUE for large dataset (no R crash)
 
 reference.so <- RunPCA(reference.so, assay = "SCT", npcs = 50, verbose = FALSE,
                        reduction.name = "PCA",return.model=TRUE) # npcs must be 50
+
 reference.so <- RunUMAP(reference.so, assay = "SCT", reduction = "PCA", dims = seq_len(50),
                         seed.use = 1, verbose = FALSE, reduction.name = "umap",return.model=TRUE) # reduction.name = "umap" to be able to create the object of interest
 
@@ -24,7 +34,8 @@ reference.azimuth <- AzimuthReference(reference.so, refUMAP = "umap",refDR = "PC
                                       metadata = c("subclass"), verbose = TRUE) # object compatible with Azimuth
 
 # save reference
-ref.dir <- "reference/"
+ref.dir <- here("processed-data","03_HALO","05_azimuth_validation")
+
 SaveAnnoyIndex(object = reference.azimuth[["refdr.annoy.neighbors"]], file = file.path(ref.dir, "idx.annoy"))
 saveRDS(object = reference.azimuth, file = file.path(ref.dir, "ref.Rds"))
 
@@ -59,3 +70,16 @@ seurat.obj.integrated <- RunTSNE(seurat.obj.integrated, assay = "integrated", re
 seurat.obj.integrated <- RunUMAP(seurat.obj.integrated, assay = "integrated", reduction = "PCA", dims = seq_len(20),
                                  seed.use = 1, do.fast = TRUE, verbose = FALSE,
                                  reduction.name = "UMAP")
+
+
+saveRDS(object = seurat.obj.integrate, file = file.path(ref.dir, "seurat.obj.integrate.Rds"))
+
+# sgejobs::job_single('05_azimuth_validation', create_shell = TRUE, queue= 'bluejay', memory = '75G', command = "Rscript 05_azimuth_validation.R")
+
+## Reproducibility information
+print('Reproducibility information:')
+Sys.time()
+proc.time()
+options(width = 120)
+session_info()
+
