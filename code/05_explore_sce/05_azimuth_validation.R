@@ -1,6 +1,7 @@
 ######### Cell Annotation with Azimuth#####
 # devtools::install_github("satijalab/seurat-data") # install SeuratData package
 # devtools::install_github("satijalab/azimuth", ref = "release/0.4.5") # install Azimuth package
+
 library("SingleCellExperiment")
 library("Seurat")
 library("Azimuth")
@@ -8,14 +9,19 @@ library("SeuratData")
 library("patchwork")
 library("here")
 
-load(here("processed-data","sce","sce_DLPFC.Rdata"), verbose = TRUE)
+
+## Use Neuron DLPFC as refrence?
+load("/dcl01/lieber/ajaffe/Matt/MNT_thesis/snRNAseq/10x_pilot_FINAL/rdas/revision/regionSpecific_DLPFC-n3_cleaned-combined_SCE_LAH2021.rda", verbose = TRUE)
 
 # transform reference dataset to a Seurat object compatible with Azimuth####
 
 ## Only use top 2k deviant genes
-hdgs.hb <- rownames(sce)[order(rowData(sce)$binomial_deviance, decreasing=T)][1:2000]
+# hdgs.hb <- rownames(sce)[order(rowData(sce)$binomial_deviance, decreasing=T)][1:2000]
 
-reference.so <- CreateSeuratObject(counts = as.matrix(counts(sce[hdgs.hb,])), meta.data = data.frame(colData(sce))) # where reference is a SingleCellExperiment object
+# reference <- LoadReference(path = "https://seurat.nygenome.org/azimuth/references/v1.0.0/human_motorcortex")
+
+reference.so <- CreateSeuratObject(counts = as.matrix(counts(sce.dlpfc)), meta.data = data.frame(colData(sce.dlpfc))) # where reference is a SingleCellExperiment object
+# reference.so <- CreateSeuratObject(counts = as.matrix(counts(sce[hdgs.hb,])), meta.data = data.frame(colData(sce))) # where reference is a SingleCellExperiment object
 # reference.so <- CreateSeuratObject(counts = counts(reference), meta.data = data.frame(colData(reference))) # where reference is a SingleCellExperiment object
 
 reference.so <- SCTransform(reference.so,assay = "RNA", new.assay.name = "SCT", variable.features.n = 2000,
@@ -27,32 +33,49 @@ reference.so <- RunPCA(reference.so, assay = "SCT", npcs = 50, verbose = FALSE,
 reference.so <- RunUMAP(reference.so, assay = "SCT", reduction = "PCA", dims = seq_len(50),
                         seed.use = 1, verbose = FALSE, reduction.name = "umap",return.model=TRUE) # reduction.name = "umap" to be able to create the object of interest
 
-reference.so$subclass <- as.factor(reference.so$subclass) 
+reference.so$subclass <- as.factor(reference.so$cellType) 
 Idents(object = reference.so) <- "subclass"
 
 reference.azimuth <- AzimuthReference(reference.so, refUMAP = "umap",refDR = "PCA",refAssay = "SCT",dims = 1:50,
                                       metadata = c("subclass"), verbose = TRUE) # object compatible with Azimuth
 
 # save reference
-ref.dir <- here("processed-data","03_HALO","05_azimuth_validation")
-
+ref.dir <- here("processed-data","05_explore_sce","05_azimuth_validation","reference")
 SaveAnnoyIndex(object = reference.azimuth[["refdr.annoy.neighbors"]], file = file.path(ref.dir, "idx.annoy"))
 saveRDS(object = reference.azimuth, file = file.path(ref.dir, "ref.Rds"))
 
 ## Cell Annotation with Azimuth for each sample ####
+## new data
+load(here("processed-data","sce","sce_DLPFC.Rdata"), verbose = TRUE)
+
 # create a Seurat object for each sample from SingleCellExperiment object
-query <- lapply(singlet.sce, function(sce)  CreateSeuratObject(counts = counts(sce), 
-                                                               meta.data = data.frame(colData(sce)),
-                                                               project = "SD"))
+# query <- lapply(singlet.sce, function(sce)  CreateSeuratObject(counts = counts(sce), 
+#                                                                meta.data = data.frame(colData(sce)),
+#                                                                project = "SD"))
+
+query <- CreateSeuratObject(counts = as.matrix(counts(sce)), 
+                            meta.data = data.frame(colData(sce)),
+                            project = "DLPFC")
+
+SeuratDisk::SaveH5Seurat(query, filename = here("processed-data","05_explore_sce","05_azimuth_validation","sce_DLPFC.h5Seurat"))
+saveRDS(query, file = here("processed-data","05_explore_sce","05_azimuth_validation","sce_DLPFC.rds"))
+
+query <- RunAzimuth(query, reference = ref.dir) ## Cell annotation with Azimuth
 
 query <- lapply(query, function(so) RunAzimuth(so, reference = "reference/")) ## Cell annotation with Azimuth
 # In predicted.subclass there are labels obtained from the annotation
 
 ## Integration####
-query <- lapply(query, NormalizeData, verbose = TRUE) # normalization for each sample
-query <- lapply(query, FindVariableFeatures, nfeatures = 2e3,
-                selection.method = "vst", verbose = TRUE) # find most variable features for each sample
-query <- lapply(query, ScaleData, verbose = TRUE) # scale the data, for each sample
+query <- NormalizeData(query, verbose = TRUE)
+# query <- lapply(query, NormalizeData, verbose = TRUE) # normalization for each sample
+
+query <- FindVariableFeatures(query, nfeatures = 2e3, selection.method = "vst", verbose = TRUE)
+
+# query <- lapply(query, FindVariableFeatures, nfeatures = 2e3,
+#                 selection.method = "vst", verbose = TRUE) # find most variable features for each sample
+
+query <- ScaleData(query, verbose = TRUE)
+# query <- lapply(query, ScaleData, verbose = TRUE) # scale the data, for each sample
 
 # find anchors & integrate
 as <- FindIntegrationAnchors(query, verbose = FALSE)
