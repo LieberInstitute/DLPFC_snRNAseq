@@ -83,8 +83,9 @@ pairwiseRand(query$cellType_k, query$predicted.subclass, mode="index")
 # [1] 0.2441774
 
 library(ggplot2)
-p1 <- DimPlot(query, group.by = "predicted.subclass", label = TRUE, label.size = 3, repel = TRUE) +
-  NoLegend()
+p1 <- DimPlot(query, group.by = "predicted.subclass", label = TRUE, label.size = 3, repel = TRUE) + labs(title = "DLPFC Data")
+# +
+#   NoLegend()
 p2 <- DimPlot(query, group.by = "cellType_hc", label = TRUE, label.size = 3, repel = TRUE) +
   NoLegend()
 p3 <- DimPlot(query, group.by = "cellType_broad_hc", label = TRUE, label.size = 3, repel = TRUE) +
@@ -93,42 +94,55 @@ p4 <- DimPlot(query, group.by = "Sample")
 
 ggsave((p1 + p2)/(p3 + p4), filename = here(plot_dir, "Azimuth_UMAP.png"), width = 13, height = 10)
 
-
-# query <- lapply(query, function(so) RunAzimuth(so, reference = "reference/")) ## Cell annotation with Azimuth
-
-# In predicted.subclass there are labels obtained from the annotation
-
-## Integration####
-query <- NormalizeData(query, verbose = TRUE)
-# query <- lapply(query, NormalizeData, verbose = TRUE) # normalization for each sample
-
-query <- FindVariableFeatures(query, nfeatures = 2e3, selection.method = "vst", verbose = TRUE)
-
-# query <- lapply(query, FindVariableFeatures, nfeatures = 2e3,
-#                 selection.method = "vst", verbose = TRUE) # find most variable features for each sample
-
-query <- ScaleData(query, verbose = TRUE)
-# query <- lapply(query, ScaleData, verbose = TRUE) # scale the data, for each sample
-
-# find anchors & integrate
-as <- FindIntegrationAnchors(query, verbose = FALSE)
-seurat.obj.integrated <- IntegrateData(anchorset = as, dims = seq_len(30), verbose = FALSE) # Seurat object
-
-DefaultAssay(seurat.obj.integrated) <- "integrated"
-# scale integrated data
-seurat.obj.integrated <- ScaleData(seurat.obj.integrated, verbose = FALSE) # rescaled 
-
-seurat.obj.integrated <- RunPCA(seurat.obj.integrated, assay = "integrated", npcs = 30, verbose = FALSE,
-                                reduction.name = "PCA")
-seurat.obj.integrated <- RunTSNE(seurat.obj.integrated, assay = "integrated", reduction = "PCA", dims = seq_len(20),
-                                 seed.use = 1, do.fast = TRUE, verbose = FALSE,
-                                 reduction.name = "TSNE")
-seurat.obj.integrated <- RunUMAP(seurat.obj.integrated, assay = "integrated", reduction = "PCA", dims = seq_len(20),
-                                 seed.use = 1, do.fast = TRUE, verbose = FALSE,
-                                 reduction.name = "UMAP")
+#### What does the refrence UMAP look like? ####
+reference <- LoadReference(path = "https://seurat.nygenome.org/azimuth/references/v1.0.0/human_motorcortex")
+ref_umap <- DimPlot(reference$map, group.by = "subclass", label = TRUE, label.size = 3, repel = TRUE) +labs(title = "Motor Cortex Reference")
+ggsave(ref_umap + p1, filename = here(plot_dir, "UMAP_Azimuth_reference.png"), width = 14)
 
 
-saveRDS(object = seurat.obj.integrate, file = file.path(ref.dir, "seurat.obj.integrate.Rds"))
+
+#### OUR UMAP space ####
+sce$azimuth_cellType <- query$predicted.subclass
+
+library(scater)
+
+UMAP_azi_cellTypes <- ggcells(sce, mapping=aes(x=UMAP.1, y=UMAP.2, colour=azimuth_cellType)) +
+  geom_point(size = 0.2, alpha = 0.3) +
+  # scale_color_manual(values = cell_type_colors[levels(sce$cellType_hc)], drop = TRUE) +
+  theme_bw() +
+  coord_equal()
+
+ggsave(UMAP_azi_cellTypes + 
+         guides(colour = guide_legend(override.aes = list(size=2, alpha = 1))) +
+         labs(title = "DLPFC UMAP - Azimuth Annotation"),
+       filename = here(plot_dir, "UMAP_azi_cellType.png"), width = 10)
+
+ggsave(UMAP_azi_cellTypes + theme(legend.position = "None") + labs(title = "DLPFC UMAP - Azimuth Annotation") + 
+         UMAP_azi_cellTypes + theme(legend.position = "None") + facet_wrap(~azimuth_cellType),
+       filename = here(plot_dir, "UMAP_azi_cellType_facet.png"), width = 12)
+
+
+UMAP_hc_cellTypes <- ggcells(sce, mapping=aes(x=UMAP.1, y=UMAP.2, colour=cellType_hc)) +
+  geom_point(size = 0.2, alpha = 0.3) +
+  scale_color_manual(values =  metadata(sce)$cell_type_colors[levels(sce$cellType_hc)], drop = TRUE) +
+  theme_bw() +
+  coord_equal()
+
+ggsave(UMAP_hc_cellTypes + theme(legend.position = "None") + labs(title = "DLPFC UMAP - Hierarchical Cluster") + 
+         UMAP_hc_cellTypes + theme(legend.position = "None") + facet_wrap(~cellType_hc),
+       filename = here(plot_dir, "UMAP_hc_cellType_facet.png"), width = 12)
+
+#### Marker Plots ####
+load(here("processed-data", "03_build_sce", "markers.mathys.tran.Rdata"), verbose = TRUE)
+
+
+source(here("code", "03_build_sce","my_plotExpression.R"))
+
+my_plotMarkers(sce = sce, 
+               marker_list = markers.mathys.tran,
+               cat = "azimuth_basic",
+               pdf_fn = here(plot_dir, "Azimuth_basic_mathys_markers.pdf"))
+
 
 # sgejobs::job_single('05_azimuth_validation', create_shell = TRUE, queue= 'bluejay', memory = '75G', command = "Rscript 05_azimuth_validation.R")
 
