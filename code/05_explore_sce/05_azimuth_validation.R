@@ -8,17 +8,21 @@ library("Azimuth")
 library("SeuratData")
 library("patchwork")
 library("here")
+library("pheatmap")
+
+
+#### Plotting ####
+plot_dir = here("plots","05_explore_sce","05_azimuth_validation")
+if(!dir.exists(plot_dir)) dir.create(plot_dir)
 
 
 ## Use Neuron DLPFC as refrence?
-load("/dcl01/lieber/ajaffe/Matt/MNT_thesis/snRNAseq/10x_pilot_FINAL/rdas/revision/regionSpecific_DLPFC-n3_cleaned-combined_SCE_LAH2021.rda", verbose = TRUE)
+# load("/dcl01/lieber/ajaffe/Matt/MNT_thesis/snRNAseq/10x_pilot_FINAL/rdas/revision/regionSpecific_DLPFC-n3_cleaned-combined_SCE_LAH2021.rda", verbose = TRUE)
 
 # transform reference dataset to a Seurat object compatible with Azimuth####
 
 ## Only use top 2k deviant genes
 # hdgs.hb <- rownames(sce)[order(rowData(sce)$binomial_deviance, decreasing=T)][1:2000]
-
-# reference <- LoadReference(path = "https://seurat.nygenome.org/azimuth/references/v1.0.0/human_motorcortex")
 
 reference.so <- CreateSeuratObject(counts = as.matrix(counts(sce.dlpfc)), meta.data = data.frame(colData(sce.dlpfc))) # where reference is a SingleCellExperiment object
 # reference.so <- CreateSeuratObject(counts = as.matrix(counts(sce[hdgs.hb,])), meta.data = data.frame(colData(sce))) # where reference is a SingleCellExperiment object
@@ -44,7 +48,10 @@ ref.dir <- here("processed-data","05_explore_sce","05_azimuth_validation","refer
 SaveAnnoyIndex(object = reference.azimuth[["refdr.annoy.neighbors"]], file = file.path(ref.dir, "idx.annoy"))
 saveRDS(object = reference.azimuth, file = file.path(ref.dir, "ref.Rds"))
 
+
 ## Cell Annotation with Azimuth for each sample ####
+
+## Use Azimuth Refrence ##
 ## new data
 load(here("processed-data","sce","sce_DLPFC.Rdata"), verbose = TRUE)
 
@@ -57,12 +64,55 @@ query <- CreateSeuratObject(counts = as.matrix(counts(sce)),
                             meta.data = data.frame(colData(sce)),
                             project = "DLPFC")
 
-SeuratDisk::SaveH5Seurat(query, filename = here("processed-data","05_explore_sce","05_azimuth_validation","sce_DLPFC.h5Seurat"))
-saveRDS(query, file = here("processed-data","05_explore_sce","05_azimuth_validation","sce_DLPFC.rds"))
+rm(sce)
 
-query <- RunAzimuth(query, reference = ref.dir) ## Cell annotation with Azimuth
+## Save 
+# SeuratDisk::SaveH5Seurat(query, filename = here("processed-data","05_explore_sce","05_azimuth_validation","sce_DLPFC.h5Seurat"))
 
-query <- lapply(query, function(so) RunAzimuth(so, reference = "reference/")) ## Cell annotation with Azimuth
+# query <- RunAzimuth(query, reference = ref.dir) ## Cell annotation with Azimuth
+
+query <- RunAzimuth(query, reference = "humancortexref") ## Cell annotation with Azimuth
+
+table(query$predicted.subclass)
+# Astro       Endo    L2/3 IT      L5 ET      L5 IT    L5/6 NP      L6 CT      L6 IT L6 IT Car3        L6b 
+# 6744       9888      21440        109       6775        345       1158       1155        332        875 
+# Lamp5  Micro-PVM      Oligo        OPC      Pvalb       Sncg        Sst  Sst Chodl        Vip       VLMC 
+# 802       2507      11384       1836       1513        243       4689         87       4178       1544 
+
+ct_annos <- table(query$cellType_hc, query$predicted.subclass)
+
+
+ct_annos_prop <- sweep(ct_annos,1,rowSums(ct_annos),`/`)
+rowSums(ct_annos_prop)
+
+ct_max <- apply(ct_annos_prop, 1, max)
+table(ct_max  > 0.7)
+
+sum(ct_annos_prop > .90)
+
+png(here(plot_dir, "azimuth_v_hc.png"),height = 800, width = 800)
+pheatmap(ct_annos_prop
+         # ,
+         # annotation_col= hc_anno,
+         # annotation_row = km_anno,
+         # annotation_colors = list(broad = temp_pallet)
+)
+dev.off()
+
+library(ggplot2)
+p1 <- DimPlot(query, group.by = "predicted.subclass", label = TRUE, label.size = 3, repel = TRUE) +
+  NoLegend()
+p2 <- DimPlot(query, group.by = "cellType_hc", label = TRUE, label.size = 3, repel = TRUE) +
+  NoLegend()
+p3 <- DimPlot(query, group.by = "cellType_broad_hc", label = TRUE, label.size = 3, repel = TRUE) +
+  NoLegend()
+p4 <- DimPlot(query, group.by = "Sample")
+
+ggsave((p1 + p2)/(p3 + p4), filename = here(plot_dir, "Azimuth_UMAP.png"), width = 13, height = 10)
+
+
+# query <- lapply(query, function(so) RunAzimuth(so, reference = "reference/")) ## Cell annotation with Azimuth
+
 # In predicted.subclass there are labels obtained from the annotation
 
 ## Integration####
