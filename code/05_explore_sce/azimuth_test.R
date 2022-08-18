@@ -4,7 +4,7 @@ library(SeuratData)
 library(patchwork)
 
 # Install the PBMC systematic comparative analyis (pmbcsca) dataset
-InstallData("pbmcsca")
+# InstallData("pbmcsca")
 
 # returns a Seurat object named pbmcsca
 LoadData("pbmcsca")
@@ -13,7 +13,7 @@ LoadData("pbmcsca")
 pbmcsca <- RunAzimuth(pbmcsca, reference = "pbmcref")
 
 
-set.seed(30220818)
+set.seed(20220818)
 # query <- RunAzimuth(query, reference = "humancortexref") ## Cell annotation with Azimuth
 pbmcsca <- RunAzimuth(pbmcsca, reference = "pbmcref")
 
