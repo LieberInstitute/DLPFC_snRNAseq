@@ -1,0 +1,280 @@
+Adding LIBD modules
+Loading git
+Loading LIBD module for git-status-size/github
+Loading LIBD module for git-lfs/2.8.0
+Loading LIBD module for rmate/1.5.9
+Loading LIBD module for ruby/2.6.4p104
+Loading conda_R/devel
+**** Job starts ****
+Fri Aug  5 15:17:21 EDT 2022
+**** JHPCE info ****
+User: lhuuki
+Job id: 1534509
+Job name: build_basic_sge
+Hostname: compute-095.cm.cluster
+Task id: undefined
+Unloading conda_R/devel
+Loading conda_R/4.1.x
+
+The following have been reloaded with a version change:
+  1) conda_R/devel => conda_R/4.1.x
+
+
+Currently Loaded Modules:
+  1) matlab/R2019a     6) COMMUNITY_CENTOS7_DEFAULT_ENV  11) ruby/2.6.4p104
+  2) stata/17          7) JHPCE_CENTOS7_DEFAULT_ENV      12) rmate/1.5.9
+  3) JHPCE_tools/1.0   8) git-status-size/github         13) conda/3-4.6.14
+  4) sge/8.1.9         9) git/2.28.0                     14) conda_R/4.1.x
+  5) gcc/4.4.7        10) git-lfs/2.8.0
+
+ 
+
+Loading required package: SummarizedExperiment
+Loading required package: MatrixGenerics
+Loading required package: matrixStats
+
+Attaching package: ‘MatrixGenerics’
+
+The following objects are masked from ‘package:matrixStats’:
+
+    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
+    colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+    colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
+    colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
+    colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+    colWeightedMeans, colWeightedMedians, colWeightedSds,
+    colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+    rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+    rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+    rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
+    rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+    rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
+    rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+    rowWeightedSds, rowWeightedVars
+
+Loading required package: GenomicRanges
+Loading required package: stats4
+Loading required package: BiocGenerics
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, append, as.data.frame, basename, cbind, colnames,
+    dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,
+    grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,
+    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
+    rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,
+    union, unique, unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+
+Attaching package: ‘S4Vectors’
+
+The following objects are masked from ‘package:base’:
+
+    expand.grid, I, unname
+
+Loading required package: IRanges
+Loading required package: GenomeInfoDb
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+
+Attaching package: ‘Biobase’
+
+The following object is masked from ‘package:MatrixGenerics’:
+
+    rowMedians
+
+The following objects are masked from ‘package:matrixStats’:
+
+    anyMissing, rowMedians
+
+here() starts at /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq
+
+Attaching package: ‘dplyr’
+
+The following object is masked from ‘package:Biobase’:
+
+    combine
+
+The following objects are masked from ‘package:GenomicRanges’:
+
+    intersect, setdiff, union
+
+The following object is masked from ‘package:GenomeInfoDb’:
+
+    intersect
+
+The following objects are masked from ‘package:IRanges’:
+
+    collapse, desc, intersect, setdiff, slice, union
+
+The following objects are masked from ‘package:S4Vectors’:
+
+    first, intersect, rename, setdiff, setequal, union
+
+The following objects are masked from ‘package:BiocGenerics’:
+
+    combine, intersect, setdiff, union
+
+The following object is masked from ‘package:matrixStats’:
+
+    count
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Joining, by = "pos"
+   SAMPLE_ID pos  BrNum  round  Position     Sample
+1       1c-k mid Br2720 round1    Middle Br2720_mid
+2       2c-k ant Br6432 round1  Anterior Br6432_ant
+3       3c-k ant Br6471 round1  Anterior Br6471_ant
+4       4c_k mid Br6522 round2    Middle Br6522_mid
+5       5c_k pos Br6522 round2 Posterior Br6522_pos
+6       6c_k mid Br6471 round2    Middle Br6471_mid
+7       7c_k pos Br8492 round2 Posterior Br8492_pos
+8       8c_k ant Br2743 round3  Anterior Br2743_ant
+9       9c_k pos Br2720 round3 Posterior Br2720_pos
+10     10c_k mid Br8492 round3    Middle Br8492_mid
+11     11c_k ant Br3942 round3  Anterior Br3942_ant
+12     12c_k pos Br6423 round4 Posterior Br6423_pos
+13     13c_k mid Br8667 round4    Middle Br8667_mid
+14     14c_k ant Br6423 round4  Anterior Br6423_ant
+15     15c_k mid Br3942 round4    Middle Br3942_mid
+16     16c_k ant Br8325 round5  Anterior Br8325_ant
+17     17c_k mid Br8325 round5    Middle Br8325_mid
+18     18c_k ant Br8667 round5  Anterior Br8667_ant
+19    round0 mid Br2743 round0    Middle Br2743_mid
+Loading objects:
+  spe
+[1] "2022-08-05 15:18:08 EDT"
+[1] "2022-08-05 15:35:22 EDT"
+class: SingleCellExperiment 
+dim: 36601 26605806 
+metadata(1): Samples
+assays(1): counts
+rownames(36601): ENSG00000243485 ENSG00000237613 ... ENSG00000278817
+  ENSG00000277196
+rowData names(6): source type ... gene_name gene_type
+colnames(26605806): 1_AAACCCAAGAAACACT-1 1_AAACCCAAGAAACCAT-1 ...
+  19_TTTGTTGTCTTTGGCT-1 19_TTTGTTGTCTTTGTCG-1
+colData names(11): Sample Barcode ... sex diagnosis
+reducedDimNames(0):
+mainExpName: NULL
+altExpNames(0):
+16.56 GB
+[1] "Reproducibility information:"
+[1] "2022-08-05 16:05:23 EDT"
+    user   system  elapsed 
+2755.844  108.959 2880.623 
+─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.1.2 Patched (2021-11-04 r81138)
+ os       CentOS Linux 7 (Core)
+ system   x86_64, linux-gnu
+ ui       X11
+ language (EN)
+ collate  en_US.UTF-8
+ ctype    en_US.UTF-8
+ tz       US/Eastern
+ date     2022-08-05
+ pandoc   2.13 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1.x/bin/pandoc
+
+─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+ package              * version   date (UTC) lib source
+ assertthat             0.2.1     2019-03-21 [2] CRAN (R 4.1.0)
+ beachmat               2.10.0    2021-10-26 [2] Bioconductor
+ Biobase              * 2.54.0    2021-10-26 [2] Bioconductor
+ BiocGenerics         * 0.40.0    2021-10-26 [2] Bioconductor
+ BiocIO                 1.4.0     2021-10-26 [2] Bioconductor
+ BiocParallel           1.28.3    2021-12-09 [2] Bioconductor
+ Biostrings             2.62.0    2021-10-26 [2] Bioconductor
+ bitops                 1.0-7     2021-04-24 [2] CRAN (R 4.1.0)
+ cli                    3.3.0     2022-04-25 [2] CRAN (R 4.1.2)
+ crayon                 1.5.1     2022-03-26 [2] CRAN (R 4.1.2)
+ DBI                    1.1.3     2022-06-18 [2] CRAN (R 4.1.2)
+ DelayedArray           0.20.0    2021-10-26 [2] Bioconductor
+ DelayedMatrixStats     1.16.0    2021-10-26 [2] Bioconductor
+ dplyr                * 1.0.9     2022-04-28 [2] CRAN (R 4.1.2)
+ dqrng                  0.3.0     2021-05-01 [2] CRAN (R 4.1.2)
+ DropletUtils         * 1.14.2    2022-01-09 [2] Bioconductor
+ edgeR                  3.36.0    2021-10-26 [2] Bioconductor
+ ellipsis               0.3.2     2021-04-29 [2] CRAN (R 4.1.0)
+ fansi                  1.0.3     2022-03-24 [2] CRAN (R 4.1.2)
+ generics               0.1.3     2022-07-05 [2] CRAN (R 4.1.2)
+ GenomeInfoDb         * 1.30.1    2022-01-30 [2] Bioconductor
+ GenomeInfoDbData       1.2.7     2021-11-01 [2] Bioconductor
+ GenomicAlignments      1.30.0    2021-10-26 [2] Bioconductor
+ GenomicRanges        * 1.46.1    2021-11-18 [2] Bioconductor
+ glue                   1.6.2     2022-02-24 [2] CRAN (R 4.1.2)
+ HDF5Array              1.22.1    2021-11-14 [2] Bioconductor
+ here                 * 1.0.1     2020-12-13 [2] CRAN (R 4.1.2)
+ IRanges              * 2.28.0    2021-10-26 [2] Bioconductor
+ lattice                0.20-45   2021-09-22 [3] CRAN (R 4.1.2)
+ lifecycle              1.0.1     2021-09-24 [1] CRAN (R 4.1.1)
+ limma                  3.50.3    2022-04-07 [2] Bioconductor
+ lobstr               * 1.1.2     2022-06-22 [2] CRAN (R 4.1.2)
+ locfit                 1.5-9.6   2022-07-11 [2] CRAN (R 4.1.2)
+ magick                 2.7.3     2021-08-18 [2] CRAN (R 4.1.2)
+ magrittr               2.0.3     2022-03-30 [2] CRAN (R 4.1.2)
+ Matrix                 1.4-1     2022-03-23 [3] CRAN (R 4.1.2)
+ MatrixGenerics       * 1.6.0     2021-10-26 [2] Bioconductor
+ matrixStats          * 0.62.0    2022-04-19 [2] CRAN (R 4.1.2)
+ pillar                 1.7.0     2022-02-01 [1] CRAN (R 4.1.2)
+ pkgconfig              2.0.3     2019-09-22 [2] CRAN (R 4.1.0)
+ prettyunits            1.1.1     2020-01-24 [2] CRAN (R 4.1.0)
+ purrr                  0.3.4     2020-04-17 [2] CRAN (R 4.1.0)
+ R.methodsS3            1.8.2     2022-06-13 [2] CRAN (R 4.1.2)
+ R.oo                   1.25.0    2022-06-12 [2] CRAN (R 4.1.2)
+ R.utils                2.12.0    2022-06-28 [2] CRAN (R 4.1.2)
+ R6                     2.5.1     2021-08-19 [1] CRAN (R 4.1.1)
+ Rcpp                   1.0.9     2022-07-08 [2] CRAN (R 4.1.2)
+ RCurl                  1.98-1.8  2022-07-30 [2] CRAN (R 4.1.2)
+ restfulr               0.0.15    2022-06-16 [2] CRAN (R 4.1.2)
+ rhdf5                  2.38.1    2022-03-10 [2] Bioconductor
+ rhdf5filters           1.6.0     2021-10-26 [2] Bioconductor
+ Rhdf5lib               1.16.0    2021-10-26 [2] Bioconductor
+ rjson                  0.2.21    2022-01-09 [2] CRAN (R 4.1.2)
+ rlang                  1.0.4     2022-07-12 [2] CRAN (R 4.1.2)
+ rprojroot              2.0.3     2022-04-02 [2] CRAN (R 4.1.2)
+ Rsamtools              2.10.0    2021-10-26 [2] Bioconductor
+ rtracklayer          * 1.54.0    2021-10-26 [2] Bioconductor
+ S4Vectors            * 0.32.4    2022-03-24 [2] Bioconductor
+ scuttle                1.4.0     2021-10-26 [2] Bioconductor
+ sessioninfo          * 1.2.2     2021-12-06 [2] CRAN (R 4.1.2)
+ SingleCellExperiment * 1.16.0    2021-10-26 [2] Bioconductor
+ sparseMatrixStats      1.6.0     2021-10-26 [2] Bioconductor
+ SpatialExperiment    * 1.4.0     2021-10-26 [2] Bioconductor
+ SummarizedExperiment * 1.24.0    2021-10-26 [2] Bioconductor
+ tibble                 3.1.8     2022-07-22 [2] CRAN (R 4.1.2)
+ tidyselect             1.1.2     2022-02-21 [2] CRAN (R 4.1.2)
+ utf8                   1.2.2     2021-07-24 [2] CRAN (R 4.1.0)
+ vctrs                  0.4.1     2022-04-13 [2] CRAN (R 4.1.2)
+ XML                    3.99-0.10 2022-06-09 [2] CRAN (R 4.1.2)
+ XVector                0.34.0    2021-10-26 [2] Bioconductor
+ yaml                   2.3.5     2022-02-21 [2] CRAN (R 4.1.2)
+ zlibbioc               1.40.0    2021-10-26 [2] Bioconductor
+
+ [1] /users/lhuuki/R/4.1.x
+ [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1.x/R/4.1.x/lib64/R/site-library
+ [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1.x/R/4.1.x/lib64/R/library
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+**** Job ends ****
+Fri Aug  5 16:05:26 EDT 2022
