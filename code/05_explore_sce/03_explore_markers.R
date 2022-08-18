@@ -1,6 +1,7 @@
 library("SingleCellExperiment")
 # library("scater")
 library("tidyverse")
+library("EnhancedVolcano")
 library("here")
 library("sessioninfo")
 
@@ -11,15 +12,17 @@ load(here("processed-data", "03_build_sce","cell_type_markers.Rdata"), verbose =
 # markers_mean_ratio
 # markers_mean_ratio_broad
 
+load(here("processed-data", "03_build_sce","cell_type_markers_1vALL_mod.Rdata"), verbose = TRUE)
+# markers_1vALL_sample
+
 #### set up plotting ####
 source(here("code", "03_build_sce", "my_plotExpression.R"))
 
 plot_dir <- here("plots", "05_explore_sce","03_explore_markers")
 if(!dir.exists(plot_dir)) dir.create(plot_dir)
 
-load(here("processed-data","03_build_sce","cell_type_colors.Rdata"), verbose = TRUE)
 # cell_type_colors_broad
-# cell_type_colors
+cell_type_colors <- metadata(sce)$cell_type_colors[levels(sce$cellType_hc)]
 
 #### 1vALL markers ####
 sapply(markers_1vALL, function(x) sum(x$FDR < 0.05))
@@ -78,6 +81,8 @@ sapply(markers_1vALL, function(x) sum(x$FDR < 0.05))
 # [9,] "MT-ATP6"   "LRP2"        "SLC26A9"    "AL445250.1"
 # [10,] "MT-ND4"    "LINC01170"   "AC090503.1" "CACNG4"   
 
+sapply(markers_1vALL, function(x) sum(x$FDR < 0.05) == 0)
+
 #### Plot 1vALL markers ####
 markers_1vALL_top10 <- as.list(as.data.frame(markers_1vALL_top10))
 
@@ -88,8 +93,6 @@ my_plotMarkers(sce = sce,
                pdf_fn = here(plot_dir, "markers_1vALL_top10.pdf"))
 
 ## volcano plots
-library(EnhancedVolcano)
-
 pdf(here(plot_dir, "markers_1vALL_volcano.pdf"), width = 10, height = 10)
 for(n in names(markers_1vALL)){
   message(n)
@@ -109,16 +112,37 @@ for(n in names(markers_1vALL)){
 }
 dev.off()
 
-## full tab
-
-## TODO fix Endo.Mural bug :(
+#### Bind in to one big table ####
 markers_1vALL_df <- do.call("rbind",
                             lapply(markers_1vALL, function(x) as.data.frame(x[,c("p.value","FDR","summary.logFC")]))) |>
   rename_with(.fn = ~ paste0(.x,"_1vALL")) |> 
   rownames_to_column("ct_gene") |>
+  mutate(ct_gene = gsub("Endo.Mural","EndoMural",ct_gene)) |>
   separate(ct_gene, into = c("cellType.target","gene"), extra = "merge", sep = "\\.")
 
+head(markers_1vALL_df)
+#   cellType.target       gene p.value_1vALL     FDR_1vALL summary.logFC_1vALL
+# 1           Astro AC012405.1 2.229583e-118 8.160497e-114           0.4273925
+# 2           Astro      ITGB4 2.015016e-110 3.687580e-106           0.2189336
+# 3           Astro    SLC16A9  1.148270e-81  1.400928e-77           0.2557755
+# 4           Astro     RNF182  1.981230e-81  1.812875e-77           0.1530592
+# 5           Astro        TNC  1.329933e-61  9.735377e-58           0.2517694
+# 6           Astro AL136366.1  3.721927e-61  2.270438e-57           0.1070652
+
+## should have 36601 gens for each cell type
 markers_1vALL_df |> count(cellType.target) 
+
+markers_1vALL_df |>
+  group_by(cellType.target) |>
+  summarize(n_markers = sum(FDR_1vALL < 0.05)) |>
+  arrange(n_markers)
+
+#   cellType.target n_markers
+# 1 Excit_05                0
+# 2 Excit_09                0
+# 3 Excit_14                0
+# 4 Excit_15                0
+# 5 Oligo_03                0
 
 #### Mean Ratio Markers ####
 markers_mean_ratio_top10 <- markers_mean_ratio |>
@@ -128,6 +152,20 @@ markers_mean_ratio_top10 <- markers_mean_ratio |>
   unstack() |>
   as.list()
 
+## Cell types with out good markers
+markers_mean_ratio |>
+  group_by(cellType.target) |>
+  summarize(n_markers = sum(ratio > 1)) |>
+  arrange(n_markers)
+
+# cellType.target n_markers
+# <fct>               <int>
+# 1 Excit_05                0 *
+# 2 Oligo_03                0 *
+# 3 Endo.Mural_02           1
+# 4 Excit_15                1 *
+# 5 Excit_09                4 *
+# 6 Inhib_03                6
 
 my_plotMarkers(sce = sce, 
                marker_list = markers_mean_ratio_top10,
@@ -156,8 +194,16 @@ my_plotMarkers(sce = sce,
                pdf_fn = here(plot_dir, "markers_mean_ratio_broad_broad_top10.pdf"))
 
 
-markers_mean_ratio |> filter(gene == "MALAT1", rank_ratio <= 25)
-markers_mean_ratio |> filter(gene == "MALAT1", rank_ratio <= 25)
+markers_mean_ratio |> 
+  filter(gene == "MALAT1", rank_ratio <= 25) |>
+  select(gene, cellType.target, ratio, rank_ratio)
+
+# gene   cellType.target ratio rank_ratio
+# <chr>  <fct>           <dbl>      <int>
+# 1 MALAT1 Excit_05        0.837          4 * poor markers for 1vALL and MR
+# 2 MALAT1 Endo.Mural_02   0.965          2
+# 3 MALAT1 Oligo_03        0.846         14 *
+# 4 MALAT1 Excit_15        0.829          4
 
 ## hm - problem cell types?
 markers_mean_ratio |> filter(ratio < 1, rank_ratio <= 25) |> count(cellType.target)
@@ -210,3 +256,120 @@ for(n in levels(markers_all$cellType.target)[1:3]){
   #                       subtitle = st))
 }
 dev.off()
+
+#### Explore 1vALL control for Sample ####
+markers_1vALL_sample|>
+  filter(log.FDR < log(0.05)) |> 
+  count(cellType.target) |>
+  arrange(n)
+
+pdf(here(plot_dir, "Volcano_markers_1vALL_Sample.pdf"), width = 10, height = 10)
+for(n in levels(markers_1vALL_sample$cellType.target)){
+  message(n)
+  
+  markers <- markers_1vALL_sample |> 
+    filter(cellType.target == n) |>
+    mutate(FDR = exp(log.FDR))
+  
+  st <- paste0("n nuc=", sum(sce$cellType_hc == n), ", n genes FDR<0.05=", sum(markers$FDR<0.05))
+  
+  message(st)
+  print(EnhancedVolcano(markers,
+                        lab = markers$gene,
+                        x = 'logFC',
+                        y = 'FDR',
+                        pCutoff = 0.05,
+                        xlab = bquote(~Log[2] ~ "summary fold change"),
+                        ylab = bquote(~-Log[10] ~ italic(FDR)),
+                        title = n,
+                        subtitle = st))
+}
+dev.off()
+
+## How does custom 1vALL compare to standard 1vALL? ###
+
+## cell types with poor markers
+markers_1vALL_sample |>
+  group_by(cellType.target)|>
+  summarize(n_markers = sum(log.FDR < log10(0.05))) |>
+  arrange(n_markers)
+
+# cellType.target n_markers ## looks better than standard 1vALL?
+# <fct>               <int>
+#   1 Excit_14             1058
+# 2 Excit_15             1348
+# 3 Excit_11             1973
+# 4 Excit_12             2865
+# 5 Oligo_01             2928
+
+markers_1vALL_sample |>
+  group_by(cellType.target)|>
+  summarize(n_markers = sum(logFC > 0)) |>
+  arrange(n_markers)
+
+
+markers_1vALL_sample_top10 <- markers_1vALL_sample |>
+  group_by(cellType.target) |>
+  slice(1:10) |>
+  select(gene, cellType.target) |>
+  unstack() |>
+  as.list()
+
+map2(markers_1vALL_sample_top10, markers_1vALL_top10, intersect)
+
+
+my_plotMarkers(sce = sce, 
+               marker_list = markers_1vALL_sample_top10,
+               cat = "cellType_hc",
+               fill_colors = cell_type_colors,
+               pdf_fn = here(plot_dir, "markers_mean_ratio_top10.pdf"))
+
+
+compare_1vALL <- markers_1vALL_sample |>
+  select(gene, cellType.target, logFC_Sample = logFC, std.logFC_Sample = std.logFC, log.FDR_Sample = log.FDR) |> 
+  mutate(FDR_Sample = exp(log.FDR_Sample)) |>
+  inner_join(markers_1vALL_df) |>
+  mutate(signif = case_when(FDR_1vALL < 0.05 & log.FDR_Sample < log(0.05) ~"Signif_both",
+                            FDR_1vALL < 0.05  ~ "Signif_1vALL",
+                            log.FDR_Sample < log(0.05) ~"Signif_Sample",
+                            TRUE ~ "None"
+                            ))
+
+compare_1vALL |> count(signif)
+
+scatter_logFC_1vALL <- compare_1vALL |>
+  ggplot(aes(x = summary.logFC_1vALL, y = logFC_Sample, color = signif)) +
+  geom_point(size = 1, alpha = .3) +
+  facet_wrap(~cellType.target)
+
+ggsave(scatter_logFC_1vALL, filename = here(plot_dir, "scatter_logFC_1vALL.png"), height = 12, width = 12)
+
+
+scatter_FDR_1vALL <- compare_1vALL |>
+  ggplot(aes(x = log(FDR_1vALL), y = log.FDR_Sample, color = signif)) +
+  geom_point(size = 1, alpha = .3) +
+  facet_wrap(~cellType.target)
+
+ggsave(scatter_FDR_1vALL, filename = here(plot_dir, "scatter_FDR_1vALL.png"), height = 12, width = 12)
+
+#### Compare to mean ratio ####
+markers_all_sample <- markers_mean_ratio |> 
+  left_join(markers_1vALL_sample) 
+
+markers_all_sample |> count(cellType.target)
+
+## hmmm funky because of summary.logFC? 
+ratio_vs_stdFC_sample <- markers_all_sample |>
+  ggplot(aes(x = ratio, y = std.logFC)) +
+  geom_point(size = 0.5, alpha = 0.5) +
+  facet_wrap(~cellType.target) +
+  theme_bw() +
+  xlim(0 , 25) ## cuts off nice points, but need to zoom
+
+ggsave(ratio_vs_stdFC_sample, filename = here(plot_dir, "ratio_vs_stdFC_Sample.png"), height = 12, width = 12)
+
+
+
+#### Heat Maps ####
+
+
