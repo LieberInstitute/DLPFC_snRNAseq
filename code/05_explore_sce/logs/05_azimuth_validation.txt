@@ -1,0 +1,222 @@
+Adding LIBD modules
+Loading git
+Loading LIBD module for git-status-size/github
+Loading LIBD module for git-lfs/2.8.0
+Loading LIBD module for rmate/1.5.9
+Loading LIBD module for ruby/2.6.4p104
+Loading conda_R/devel
+**** Job starts ****
+Thu Aug 18 15:59:39 EDT 2022
+**** JHPCE info ****
+User: lhuuki
+Job id: 1583017
+Job name: azimuth_validation
+Hostname: compute-099.cm.cluster
+Task id: undefined
+Unloading conda_R/devel
+Loading conda_R/4.1.x
+
+The following have been reloaded with a version change:
+  1) conda_R/devel => conda_R/4.1.x
+
+
+Currently Loaded Modules:
+  1) matlab/R2019a     6) COMMUNITY_CENTOS7_DEFAULT_ENV  11) ruby/2.6.4p104
+  2) stata/17          7) JHPCE_CENTOS7_DEFAULT_ENV      12) rmate/1.5.9
+  3) JHPCE_tools/1.0   8) git-status-size/github         13) conda/3-4.6.14
+  4) sge/8.1.9         9) git/2.28.0                     14) conda_R/4.1.x
+  5) gcc/4.4.7        10) git-lfs/2.8.0
+
+ 
+
+Loading required package: SummarizedExperiment
+Loading required package: MatrixGenerics
+Loading required package: matrixStats
+
+Attaching package: ‘MatrixGenerics’
+
+The following objects are masked from ‘package:matrixStats’:
+
+    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
+    colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+    colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
+    colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
+    colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+    colWeightedMeans, colWeightedMedians, colWeightedSds,
+    colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+    rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+    rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+    rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
+    rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+    rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
+    rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+    rowWeightedSds, rowWeightedVars
+
+Loading required package: GenomicRanges
+Loading required package: stats4
+Loading required package: BiocGenerics
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, append, as.data.frame, basename, cbind, colnames,
+    dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,
+    grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,
+    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
+    rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,
+    union, unique, unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+
+Attaching package: ‘S4Vectors’
+
+The following objects are masked from ‘package:base’:
+
+    expand.grid, I, unname
+
+Loading required package: IRanges
+Loading required package: GenomeInfoDb
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+
+Attaching package: ‘Biobase’
+
+The following object is masked from ‘package:MatrixGenerics’:
+
+    rowMedians
+
+The following objects are masked from ‘package:matrixStats’:
+
+    anyMissing, rowMedians
+
+Attaching SeuratObject
+Attaching sp
+
+Attaching package: ‘Seurat’
+
+The following object is masked from ‘package:SummarizedExperiment’:
+
+    Assays
+
+Registered S3 method overwritten by 'SeuratDisk':
+  method            from  
+  as.sparse.H5Group Seurat
+Attaching shinyBS
+── Installed datasets ───────────────────────────────────── SeuratData v0.2.2 ──
+✔ pbmcref 1.0.0                         ✔ pbmcsca 3.0.0
+
+────────────────────────────────────── Key ─────────────────────────────────────
+✔ Dataset loaded successfully
+❯ Dataset built with a newer version of Seurat than installed
+❓ Unknown version of Seurat installed
+
+here() starts at /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq
+Loading objects:
+  sce
+Loading required package: HDF5Array
+Loading required package: DelayedArray
+Loading required package: Matrix
+
+Attaching package: ‘Matrix’
+
+The following object is masked from ‘package:S4Vectors’:
+
+    expand
+
+
+Attaching package: ‘DelayedArray’
+
+The following objects are masked from ‘package:base’:
+
+    aperm, apply, rowsum, scale, sweep
+
+Loading required package: rhdf5
+
+Attaching package: ‘HDF5Array’
+
+The following object is masked from ‘package:rhdf5’:
+
+    h5ls
+
+Warning: Non-unique features (rownames) present in the input matrix, making unique
+Installing package into ‘/users/lhuuki/R/4.1.x’
+(as ‘lib’ is unspecified)
+trying URL 'http://seurat.nygenome.org/src/contrib/humancortexref.SeuratData_1.0.0.tar.gz'
+Content type 'application/octet-stream' length 38770891 bytes (37.0 MB)
+==================================================
+downloaded 37.0 MB
+
+* installing *source* package ‘humancortexref.SeuratData’ ...
+** using staged installation
+** R
+** inst
+** byte-compile and prepare package for lazy loading
+** help
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded from temporary location
+** testing if installed package can be loaded from final location
+** testing if installed package keeps a record of temporary installation path
+* DONE (humancortexref.SeuratData)
+
+The downloaded source packages are in
+	‘/scratch/temp/1583017.1.bluejay.q/RtmpDoQci3/downloaded_packages’
+An AzimuthData object - reference version: 1.0.0 
+Contains 4 meta.data field(s) to transfer.detected inputs from HUMAN with id type Gene.name
+reference rownames detected HUMAN with id type Gene.name
+Using reference SCTModel to calculate pearson residuals
+Determine variable features
+Setting min_variance to:  -Inf
+Calculating residuals of type pearson for 2217 genes
+  |                                                                              |                                                                      |   0%  |                                                                              |========                                                              |  11%  |                                                                              |================                                                      |  22%  |                                                                              |=======================                                               |  33%  |                                                                              |===============================                                       |  44%  |                                                                              |=======================================                               |  56%  |                                                                              |===============================================                       |  67%  |                                                                              |======================================================                |  78%  |                                                                              |==============================================================        |  89%  |                                                                              |======================================================================| 100%
+  |                                                                              |                                                                      |   0%  |                                                                              |=======================                                               |  33%  |                                                                              |===============================================                       |  67%  |                                                                              |======================================================================| 100%
+Set default assay to refAssay
+Normalizing query using reference SCT model
+Projecting cell embeddings
+Finding query neighbors
+Finding neighborhoods
+Finding anchors
+	Found 16729 anchors
+Finding integration vectors
+Finding integration vector weights
+0%   10   20   30   40   50   60   70   80   90   100%
+[----|----|----|----|----|----|----|----|----|----|
+**************************************************|
+Predicting cell labels
+Predicting cell labels
+Predicting cell labels
+Predicting cell labels
+Warning: Feature names cannot have underscores ('_'), replacing with dashes ('-')
+Warning: Keys should be one or more alphanumeric characters followed by an underscore, setting key from predictionscorecross_species_cluster_ to predictionscorecrossspeciescluster_
+
+Integrating dataset 2 with reference dataset
+Finding integration vectors
+Integrating data
+Warning: Keys should be one or more alphanumeric characters followed by an underscore, setting key from integrated_dr_ to integrateddr_
+Warning: Keys should be one or more alphanumeric characters followed by an underscore, setting key from integrated_dr_ to integrateddr_
+Warning: All keys should be one or more alphanumeric characters followed by an underscore '_', setting key to integrateddr_
+Computing nearest neighbors
+Warning: The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric
+To use Python UMAP via reticulate, set umap.method to 'umap-learn' and metric to 'correlation'
+This message will be shown once per session
+Running UMAP projection
+Error in if (num_precomputed_nns == 1 && nn_is_single(nn_method)) { : 
+  missing value where TRUE/FALSE needed
+Calls: RunAzimuth ... RunUMAP.Neighbor -> RunUMAP -> RunUMAP.default -> umap_transform
+In addition: Warning message:
+In RunUMAP.default(object = neighborlist, reduction.model = reduction.model,  :
+  Number of neighbors between query and reference is not equal to the number of neighbros within reference
+Execution halted
+**** Job ends ****
+Thu Aug 18 16:10:49 EDT 2022
