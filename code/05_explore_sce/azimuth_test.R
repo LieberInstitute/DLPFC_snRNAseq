@@ -1,3 +1,9 @@
+
+## need to use old version of uwot!!
+# install.packages("https://cran.r-project.org/src/contrib/Archive/uwot/uwot_0.1.11.tar.gz")
+
+
+
 library(Seurat)
 library(Azimuth)
 library(SeuratData)
