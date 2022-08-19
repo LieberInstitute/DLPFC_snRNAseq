@@ -17,36 +17,16 @@ plot_dir = here("plots","05_explore_sce","05_azimuth_validation")
 if(!dir.exists(plot_dir)) dir.create(plot_dir)
 
 #### Cell Annotation with RunAzimuth ####
-
-## Use Azimuth Refrence ##
 load(here("processed-data","sce","sce_DLPFC.Rdata"), verbose = TRUE)
 
 query <- CreateSeuratObject(counts = as.matrix(counts(sce)), 
                             meta.data = data.frame(colData(sce)),
                             project = "DLPFC")
 
+## Use Azimuth Refrence ##
 set.seed(20220818)
 query <- RunAzimuth(query, reference = "humancortexref") ## Cell annotation with Azimuth
 
-# Error in if (num_precomputed_nns == 1 && nn_is_single(nn_method)) { : 
-#     missing value where TRUE/FALSE needed
-# In addition: Warning message:
-#   In RunUMAP.default(object = neighborlist, reduction.model = reduction.model,  :
-#                        Number of neighbors between query and reference is not equal to the number of neighbros within reference
-
-traceback()
-# 7: umap_transform(X = NULL, nn_method = object, model = model, n_threads = nbrOfWorkers(), 
-#                   n_epochs = n.epochs, verbose = verbose)
-# 6: RunUMAP.default(object = neighborlist, reduction.model = reduction.model, 
-#                    ...)
-# 5: RunUMAP(object = neighborlist, reduction.model = reduction.model, 
-#            ...)
-# 4: RunUMAP.Neighbor(object = query[["query_ref.nn"]], reduction.model = reference[["refUMAP"]], 
-#                     reduction.key = "UMAP_", verbose = verbose)
-# 3: RunUMAP(object = query[["query_ref.nn"]], reduction.model = reference[["refUMAP"]], 
-#            reduction.key = "UMAP_", verbose = verbose)
-# 2: RunAzimuth.Seurat(query, reference = "humancortexref")
-# 1: RunAzimuth(query, reference = "humancortexref")
 
 sce$cellType_azimuth <- query$predicted.subclass
 table(query$predicted.subclass)

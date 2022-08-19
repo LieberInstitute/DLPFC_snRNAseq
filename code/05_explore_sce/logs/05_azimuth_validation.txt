@@ -6,25 +6,21 @@ Loading LIBD module for rmate/1.5.9
 Loading LIBD module for ruby/2.6.4p104
 Loading conda_R/devel
 **** Job starts ****
-Thu Aug 18 15:59:39 EDT 2022
+Fri Aug 19 14:43:24 EDT 2022
 **** JHPCE info ****
 User: lhuuki
-Job id: 1583017
+Job id: 1587199
 Job name: azimuth_validation
-Hostname: compute-099.cm.cluster
+Hostname: compute-127.cm.cluster
 Task id: undefined
 Unloading conda_R/devel
-Loading conda_R/4.1.x
-
-The following have been reloaded with a version change:
-  1) conda_R/devel => conda_R/4.1.x
-
+Loading conda_R/devel
 
 Currently Loaded Modules:
   1) matlab/R2019a     6) COMMUNITY_CENTOS7_DEFAULT_ENV  11) ruby/2.6.4p104
   2) stata/17          7) JHPCE_CENTOS7_DEFAULT_ENV      12) rmate/1.5.9
   3) JHPCE_tools/1.0   8) git-status-size/github         13) conda/3-4.6.14
-  4) sge/8.1.9         9) git/2.28.0                     14) conda_R/4.1.x
+  4) sge/8.1.9         9) git/2.28.0                     14) conda_R/devel
   5) gcc/4.4.7        10) git-lfs/2.8.0
 
  
@@ -114,7 +110,8 @@ Registered S3 method overwritten by 'SeuratDisk':
   as.sparse.H5Group Seurat
 Attaching shinyBS
 ── Installed datasets ───────────────────────────────────── SeuratData v0.2.2 ──
-✔ pbmcref 1.0.0                         ✔ pbmcsca 3.0.0
+✔ humancortexref 1.0.0                  ✔ pbmcsca        3.0.0
+✔ pbmcref        1.0.0                  
 
 ────────────────────────────────────── Key ─────────────────────────────────────
 ✔ Dataset loaded successfully
@@ -150,28 +147,6 @@ The following object is masked from ‘package:rhdf5’:
     h5ls
 
 Warning: Non-unique features (rownames) present in the input matrix, making unique
-Installing package into ‘/users/lhuuki/R/4.1.x’
-(as ‘lib’ is unspecified)
-trying URL 'http://seurat.nygenome.org/src/contrib/humancortexref.SeuratData_1.0.0.tar.gz'
-Content type 'application/octet-stream' length 38770891 bytes (37.0 MB)
-==================================================
-downloaded 37.0 MB
-
-* installing *source* package ‘humancortexref.SeuratData’ ...
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-** help
-*** installing help indices
-** building package indices
-** testing if installed package can be loaded from temporary location
-** testing if installed package can be loaded from final location
-** testing if installed package keeps a record of temporary installation path
-* DONE (humancortexref.SeuratData)
-
-The downloaded source packages are in
-	‘/scratch/temp/1583017.1.bluejay.q/RtmpDoQci3/downloaded_packages’
 An AzimuthData object - reference version: 1.0.0 
 Contains 4 meta.data field(s) to transfer.detected inputs from HUMAN with id type Gene.name
 reference rownames detected HUMAN with id type Gene.name
@@ -211,12 +186,256 @@ Warning: The default method for RunUMAP has changed from calling Python UMAP via
 To use Python UMAP via reticulate, set umap.method to 'umap-learn' and metric to 'correlation'
 This message will be shown once per session
 Running UMAP projection
-Error in if (num_precomputed_nns == 1 && nn_is_single(nn_method)) { : 
-  missing value where TRUE/FALSE needed
-Calls: RunAzimuth ... RunUMAP.Neighbor -> RunUMAP -> RunUMAP.default -> umap_transform
-In addition: Warning message:
-In RunUMAP.default(object = neighborlist, reduction.model = reduction.model,  :
-  Number of neighbors between query and reference is not equal to the number of neighbros within reference
-Execution halted
+14:49:06 Read 77604 rows
+14:49:06 Processing block 1 of 1
+14:49:06 Commencing smooth kNN distance calibration using 1 thread
+14:49:06 Initializing by weighted average of neighbor coordinates using 1 thread
+14:49:07 Commencing optimization for 67 epochs, with 1552080 positive edges
+0%   10   20   30   40   50   60   70   80   90   100%
+[----|----|----|----|----|----|----|----|----|----|
+**************************************************|
+14:49:30 Finished
+Warning: No assay specified, setting assay as RNA by default.
+Projecting reference PCA onto query
+Finding integration vector weights
+0%   10   20   30   40   50   60   70   80   90   100%
+[----|----|----|----|----|----|----|----|----|----|
+**************************************************|
+Projecting back the query cells into original PCA space
+Finding integration vector weights
+0%   10   20   30   40   50   60   70   80   90   100%
+[----|----|----|----|----|----|----|----|----|----|
+**************************************************|
+Computing scores:
+    Finding neighbors of original query cells
+    Finding neighbors of transformed query cells
+    Computing query SNN
+    Determining bandwidth and computing transition probabilities
+0%   10   20   30   40   50   60   70   80   90   100%
+[----|----|----|----|----|----|----|----|----|----|
+**************************************************|
+Total elapsed time: 1.17940431833267
+
+     Astro       Endo    L2/3 IT      L5 ET      L5 IT    L5/6 NP      L6 CT 
+      6744       9888      21440        109       6775        345       1158 
+     L6 IT L6 IT Car3        L6b      Lamp5  Micro-PVM      Oligo        OPC 
+      1155        332        875        802       2507      11384       1836 
+     Pvalb       Sncg        Sst  Sst Chodl        Vip       VLMC 
+      1513        243       4689         87       4178       1544 
+Warning: Overwriting previous file /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/processed-data/05_explore_sce/05_azimuth_validation/sce_DLPFC.h5Seurat
+Creating h5Seurat file for version 3.1.5.9900
+Adding counts for RNA
+Adding data for RNA
+No variable features found for RNA
+No feature-level metadata found for RNA
+Adding counts for refAssay
+Adding data for refAssay
+Adding scale.data for refAssay
+Adding variable features for refAssay
+No feature-level metadata found for refAssay
+Writing out SCTModel.list for refAssay
+Adding data for prediction.score.class
+No variable features found for prediction.score.class
+No feature-level metadata found for prediction.score.class
+Adding data for prediction.score.cluster
+No variable features found for prediction.score.cluster
+No feature-level metadata found for prediction.score.cluster
+Adding data for prediction.score.subclass
+No variable features found for prediction.score.subclass
+No feature-level metadata found for prediction.score.subclass
+Adding data for prediction.score.cross_species_cluster
+No variable features found for prediction.score.cross_species_cluster
+No feature-level metadata found for prediction.score.cross_species_cluster
+Adding cell embeddings for integrated_dr
+No loadings for integrated_dr
+No projected loadings for integrated_dr
+No standard deviations for integrated_dr
+No JackStraw data for integrated_dr
+Adding cell embeddings for ref.umap
+No loadings for ref.umap
+No projected loadings for ref.umap
+No standard deviations for ref.umap
+No JackStraw data for ref.umap
+[1] "Reproducibility information:"
+[1] "2022-08-19 14:55:50 EDT"
+   user  system elapsed 
+663.244  67.087 745.058 
+─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+ setting  value
+ version  R Under development (unstable) (2021-11-06 r81149)
+ os       CentOS Linux 7 (Core)
+ system   x86_64, linux-gnu
+ ui       X11
+ language (EN)
+ collate  en_US.UTF-8
+ ctype    en_US.UTF-8
+ tz       US/Eastern
+ date     2022-08-19
+ pandoc   2.11.0.4 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-devel/bin/pandoc
+
+─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+ package                   * version    date (UTC) lib source
+ abind                       1.4-5      2016-07-21 [2] CRAN (R 4.1.0)
+ assertthat                  0.2.1      2019-03-21 [2] CRAN (R 4.1.0)
+ Azimuth                   * 0.4.5      2022-08-12 [1] Github (satijalab/azimuth@b16e181)
+ beachmat                    2.12.0     2022-04-26 [2] Bioconductor
+ Biobase                   * 2.56.0     2022-04-26 [2] Bioconductor
+ BiocGenerics              * 0.42.0     2022-04-26 [2] Bioconductor
+ BiocParallel                1.30.3     2022-06-05 [2] Bioconductor
+ BiocSingular                1.12.0     2022-04-26 [2] Bioconductor
+ bit                         4.0.4      2020-08-04 [2] CRAN (R 4.1.0)
+ bit64                       4.0.5      2020-08-30 [2] CRAN (R 4.1.0)
+ bitops                      1.0-7      2021-04-24 [2] CRAN (R 4.2.0)
+ cellranger                  1.1.0      2016-07-27 [2] CRAN (R 4.1.0)
+ cli                         3.3.0      2022-04-25 [2] CRAN (R 4.2.0)
+ cluster                     2.1.3      2022-03-28 [3] CRAN (R 4.2.0)
+ codetools                   0.2-18     2020-11-04 [3] CRAN (R 4.2.0)
+ colorspace                  2.0-3      2022-02-21 [2] CRAN (R 4.2.0)
+ cowplot                     1.1.1      2020-12-30 [2] CRAN (R 4.2.0)
+ crayon                      1.5.1      2022-03-26 [2] CRAN (R 4.2.0)
+ curl                        4.3.2      2021-06-23 [2] CRAN (R 4.2.0)
+ data.table                  1.14.2     2021-09-27 [2] CRAN (R 4.2.0)
+ DBI                         1.1.3      2022-06-18 [2] CRAN (R 4.2.0)
+ DelayedArray              * 0.22.0     2022-04-26 [2] Bioconductor
+ DelayedMatrixStats          1.18.0     2022-04-26 [2] Bioconductor
+ deldir                      1.0-6      2021-10-23 [1] CRAN (R 4.2.0)
+ digest                      0.6.29     2021-12-01 [2] CRAN (R 4.2.0)
+ dplyr                       1.0.9      2022-04-28 [2] CRAN (R 4.2.0)
+ DT                          0.24       2022-08-09 [2] CRAN (R 4.2.0)
+ ellipsis                    0.3.2      2021-04-29 [2] CRAN (R 4.2.0)
+ fansi                       1.0.3      2022-03-24 [2] CRAN (R 4.2.0)
+ fastmap                     1.1.0      2021-01-25 [2] CRAN (R 4.1.0)
+ fitdistrplus                1.1-8      2022-03-10 [1] CRAN (R 4.2.0)
+ fs                          1.5.2      2021-12-08 [2] CRAN (R 4.2.0)
+ future                      1.27.0     2022-07-22 [2] CRAN (R 4.2.0)
+ future.apply                1.9.0      2022-04-25 [2] CRAN (R 4.2.0)
+ gargle                      1.2.0      2021-07-02 [2] CRAN (R 4.2.0)
+ generics                    0.1.3      2022-07-05 [2] CRAN (R 4.2.0)
+ GenomeInfoDb              * 1.32.3     2022-08-09 [2] Bioconductor
+ GenomeInfoDbData            1.2.8      2022-04-16 [2] Bioconductor
+ GenomicRanges             * 1.48.0     2022-04-26 [2] Bioconductor
+ ggplot2                     3.3.6      2022-05-03 [2] CRAN (R 4.2.0)
+ ggrepel                     0.9.1      2021-01-15 [2] CRAN (R 4.1.0)
+ ggridges                    0.5.3      2021-01-08 [2] CRAN (R 4.1.0)
+ globals                     0.16.0     2022-08-05 [2] CRAN (R 4.2.0)
+ glue                        1.6.2      2022-02-24 [2] CRAN (R 4.2.0)
+ goftest                     1.2-3      2021-10-07 [1] CRAN (R 4.2.0)
+ googledrive                 2.0.0      2021-07-08 [2] CRAN (R 4.2.0)
+ googlesheets4               1.0.1      2022-08-13 [2] CRAN (R 4.2.0)
+ gridExtra                   2.3        2017-09-09 [2] CRAN (R 4.1.0)
+ gtable                      0.3.0      2019-03-25 [2] CRAN (R 4.1.0)
+ HDF5Array                 * 1.24.2     2022-08-02 [2] Bioconductor
+ hdf5r                       1.3.5      2021-11-15 [2] CRAN (R 4.2.0)
+ here                      * 1.0.1      2020-12-13 [1] CRAN (R 4.2.0)
+ htmltools                   0.5.3      2022-07-18 [1] CRAN (R 4.2.0)
+ htmlwidgets                 1.5.4      2021-09-08 [2] CRAN (R 4.2.0)
+ httpuv                      1.6.5      2022-01-05 [2] CRAN (R 4.2.0)
+ httr                        1.4.4      2022-08-17 [2] CRAN (R 4.2.0)
+ humancortexref.SeuratData * 1.0.0      2022-08-16 [1] local
+ ica                         1.0-3      2022-07-08 [1] CRAN (R 4.2.0)
+ igraph                      1.3.4      2022-07-19 [2] CRAN (R 4.2.0)
+ IRanges                   * 2.30.0     2022-04-26 [2] Bioconductor
+ irlba                       2.3.5      2021-12-06 [2] CRAN (R 4.2.0)
+ jsonlite                    1.8.0      2022-02-22 [2] CRAN (R 4.2.0)
+ KernSmooth                  2.23-20    2021-05-03 [3] CRAN (R 4.2.0)
+ later                       1.3.0      2021-08-18 [2] CRAN (R 4.2.0)
+ lattice                     0.20-45    2021-09-22 [3] CRAN (R 4.2.0)
+ lazyeval                    0.2.2      2019-03-15 [2] CRAN (R 4.1.0)
+ leiden                      0.4.2      2022-05-09 [1] CRAN (R 4.2.0)
+ lifecycle                   1.0.1      2021-09-24 [2] CRAN (R 4.2.0)
+ listenv                     0.8.0      2019-12-05 [2] CRAN (R 4.1.0)
+ lmtest                      0.9-40     2022-03-21 [2] CRAN (R 4.2.0)
+ magrittr                    2.0.3      2022-03-30 [2] CRAN (R 4.2.0)
+ MASS                        7.3-58.1   2022-08-03 [3] CRAN (R 4.2.0)
+ Matrix                    * 1.4-1      2022-03-23 [3] CRAN (R 4.2.0)
+ MatrixGenerics            * 1.8.1      2022-06-26 [2] Bioconductor
+ matrixStats               * 0.62.0     2022-04-19 [2] CRAN (R 4.2.0)
+ mgcv                        1.8-40     2022-03-29 [3] CRAN (R 4.2.0)
+ mime                        0.12       2021-09-28 [2] CRAN (R 4.2.0)
+ miniUI                      0.1.1.1    2018-05-18 [2] CRAN (R 4.1.0)
+ munsell                     0.5.0      2018-06-12 [2] CRAN (R 4.1.0)
+ nlme                        3.1-159    2022-08-09 [3] CRAN (R 4.2.0)
+ parallelly                  1.32.1     2022-07-21 [2] CRAN (R 4.2.0)
+ patchwork                 * 1.1.2      2022-08-19 [2] CRAN (R 4.2.0)
+ pbapply                     1.5-0      2021-09-16 [1] CRAN (R 4.2.0)
+ pbmcref.SeuratData        * 1.0.0      2022-08-18 [1] local
+ pbmcsca.SeuratData        * 3.0.0      2022-08-18 [1] local
+ pillar                      1.8.0      2022-07-18 [1] CRAN (R 4.2.0)
+ pkgconfig                   2.0.3      2019-09-22 [2] CRAN (R 4.1.0)
+ plotly                      4.10.0     2021-10-09 [2] CRAN (R 4.2.0)
+ plyr                        1.8.7      2022-03-24 [2] CRAN (R 4.2.0)
+ png                         0.1-7      2013-12-03 [2] CRAN (R 4.1.0)
+ polyclip                    1.10-0     2019-03-14 [2] CRAN (R 4.1.0)
+ presto                      1.0.0      2022-08-12 [1] Github (immunogenomics/presto@052085d)
+ progressr                   0.10.1     2022-06-03 [2] CRAN (R 4.2.0)
+ promises                    1.2.0.1    2021-02-11 [2] CRAN (R 4.1.0)
+ purrr                       0.3.4      2020-04-17 [2] CRAN (R 4.1.0)
+ R6                          2.5.1      2021-08-19 [2] CRAN (R 4.2.0)
+ RANN                        2.6.1      2019-01-08 [2] CRAN (R 4.1.0)
+ rappdirs                    0.3.3      2021-01-31 [2] CRAN (R 4.1.0)
+ RColorBrewer                1.1-3      2022-04-03 [2] CRAN (R 4.2.0)
+ Rcpp                        1.0.9      2022-07-08 [2] CRAN (R 4.2.0)
+ RcppAnnoy                   0.0.19     2021-07-30 [2] CRAN (R 4.2.0)
+ RCurl                       1.98-1.8   2022-07-30 [2] CRAN (R 4.2.0)
+ reshape2                    1.4.4      2020-04-09 [2] CRAN (R 4.1.0)
+ reticulate                  1.25       2022-05-11 [1] CRAN (R 4.2.0)
+ rgeos                       0.5-9      2021-12-15 [1] CRAN (R 4.2.0)
+ rhdf5                     * 2.40.0     2022-04-26 [2] Bioconductor
+ rhdf5filters                1.8.0      2022-04-26 [2] Bioconductor
+ Rhdf5lib                    1.18.2     2022-05-15 [2] Bioconductor
+ rlang                       1.0.4      2022-07-12 [2] CRAN (R 4.2.0)
+ ROCR                        1.0-11     2020-05-02 [2] CRAN (R 4.1.0)
+ rpart                       4.1.16     2022-01-24 [3] CRAN (R 4.2.0)
+ rprojroot                   2.0.3      2022-04-02 [2] CRAN (R 4.2.0)
+ rsvd                        1.0.5      2021-04-16 [2] CRAN (R 4.2.0)
+ Rtsne                       0.16       2022-04-17 [2] CRAN (R 4.2.0)
+ S4Vectors                 * 0.34.0     2022-04-26 [2] Bioconductor
+ ScaledMatrix                1.4.0      2022-04-26 [2] Bioconductor
+ scales                      1.2.0      2022-04-13 [2] CRAN (R 4.2.0)
+ scattermore                 0.8        2022-02-14 [1] CRAN (R 4.2.0)
+ scry                        1.8.0      2022-04-26 [2] Bioconductor
+ sctransform                 0.3.3      2022-01-13 [1] CRAN (R 4.2.0)
+ scuttle                     1.6.2      2022-05-15 [2] Bioconductor
+ sessioninfo               * 1.2.2      2021-12-06 [2] CRAN (R 4.2.0)
+ Seurat                    * 4.1.1      2022-05-02 [1] CRAN (R 4.2.0)
+ SeuratData                * 0.2.2      2022-08-12 [1] Github (satijalab/seurat-data@d6a8ce6)
+ SeuratDisk                  0.0.0.9020 2022-08-12 [1] Github (mojaveazure/seurat-disk@9b89970)
+ SeuratObject              * 4.1.0      2022-05-01 [1] CRAN (R 4.2.0)
+ shiny                       1.7.2      2022-07-19 [2] CRAN (R 4.2.0)
+ shinyBS                   * 0.61.1     2022-04-17 [1] CRAN (R 4.2.0)
+ shinydashboard              0.7.2      2021-09-30 [2] CRAN (R 4.2.0)
+ shinyjs                     2.1.0      2021-12-23 [2] CRAN (R 4.2.0)
+ SingleCellExperiment      * 1.18.0     2022-04-26 [2] Bioconductor
+ sp                        * 1.5-0      2022-06-05 [2] CRAN (R 4.2.0)
+ sparseMatrixStats           1.8.0      2022-04-26 [2] Bioconductor
+ spatstat.core               2.4-4      2022-05-18 [1] CRAN (R 4.2.0)
+ spatstat.data               2.2-0      2022-04-18 [1] CRAN (R 4.2.0)
+ spatstat.geom               2.4-0      2022-03-29 [1] CRAN (R 4.2.0)
+ spatstat.random             2.2-0      2022-03-30 [1] CRAN (R 4.2.0)
+ spatstat.sparse             2.1-1      2022-04-18 [1] CRAN (R 4.2.0)
+ spatstat.utils              2.3-1      2022-05-06 [1] CRAN (R 4.2.0)
+ stringi                     1.7.8      2022-07-11 [2] CRAN (R 4.2.0)
+ stringr                     1.4.0      2019-02-10 [2] CRAN (R 4.1.0)
+ SummarizedExperiment      * 1.26.1     2022-04-29 [2] Bioconductor
+ survival                    3.4-0      2022-08-09 [3] CRAN (R 4.2.0)
+ tensor                      1.5        2012-05-05 [1] CRAN (R 4.2.0)
+ tibble                      3.1.8      2022-07-22 [2] CRAN (R 4.2.0)
+ tidyr                       1.2.0      2022-02-01 [2] CRAN (R 4.2.0)
+ tidyselect                  1.1.2      2022-02-21 [2] CRAN (R 4.2.0)
+ utf8                        1.2.2      2021-07-24 [2] CRAN (R 4.2.0)
+ uwot                        0.1.11     2021-12-02 [1] CRAN (R 4.2.0)
+ vctrs                       0.4.1      2022-04-13 [2] CRAN (R 4.2.0)
+ viridisLite                 0.4.0      2021-04-13 [2] CRAN (R 4.2.0)
+ withr                       2.5.0      2022-03-03 [2] CRAN (R 4.2.0)
+ xtable                      1.8-4      2019-04-21 [2] CRAN (R 4.1.0)
+ XVector                     0.36.0     2022-04-26 [2] Bioconductor
+ zlibbioc                    1.42.0     2022-04-26 [2] Bioconductor
+ zoo                         1.8-10     2022-04-15 [2] CRAN (R 4.2.0)
+
+ [1] /users/lhuuki/R/devel
+ [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-devel/R/devel/lib64/R/site-library
+ [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-devel/R/devel/lib64/R/library
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Thu Aug 18 16:10:49 EDT 2022
+Fri Aug 19 14:55:53 EDT 2022

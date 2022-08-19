@@ -1,6 +1,6 @@
 #!/bin/bash
 #$ -cwd
-#$ -l bluejay,mem_free=75G,h_vmem=75G,h_fsize=100G
+#$ -l mem_free=100G,h_vmem=100G,h_fsize=100G
 #$ -N azimuth_validation
 #$ -o logs/05_azimuth_validation.txt
 #$ -e logs/05_azimuth_validation.txt
@@ -17,7 +17,7 @@ echo "Hostname: ${HOSTNAME}"
 echo "Task id: ${SGE_TASK_ID}"
 
 ## Load the R module (absent since the JHPCE upgrade to CentOS v7)
-module load conda_R
+module load conda_R/devel
 
 ## List current modules for reproducibility
 module list
