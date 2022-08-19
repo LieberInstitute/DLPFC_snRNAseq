@@ -369,7 +369,19 @@ ratio_vs_stdFC_sample <- markers_all_sample |>
 ggsave(ratio_vs_stdFC_sample, filename = here(plot_dir, "ratio_vs_stdFC_Sample.png"), height = 12, width = 12)
 
 
+#### subtype Markers ####
+library(purrr)
+sapply(markers_1vALL, function(x) sum(x$FDR < 0.05))
 
-#### Heat Maps ####
+names(subtype_markers$Excit)
+names(subtype_markers)
 
+subtype_markers <- transpose(subtype_markers)
+
+load(here("processed-data", "03_build_sce","subtype_markers.Rdata"), verbose = TRUE)
+
+map(subtype_markers$all, ~sapply(.x, function(x) sum(x$FDR < 0.05)))
+map(subtype_markers$any, ~sapply(.x, function(x) sum(x$FDR < 0.05)))
+
+subtype_markers$any$Excit
 
