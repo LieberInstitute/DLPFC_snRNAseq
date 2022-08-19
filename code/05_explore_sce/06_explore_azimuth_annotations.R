@@ -1,22 +1,24 @@
 library("SingleCellExperiment")
-library("Seurat")
-library("Azimuth")
-library("SeuratData")
+# library("SeuratData")
 library("patchwork")
 library("here")
-# library("pheatmap")
-# library("scater")
+library("pheatmap")
+library("scater")
+library("bluster")
 library("sessioninfo")
 
-## load this data
-LoadH5Seurat(query, filename = here("processed-data","05_explore_sce","05_azimuth_validation","sce_DLPFC.h5Seurat"),
-                         overwrite = TRUE)
 
-load( here("processed-data","sce","sce_DLPFC.Rdata"))
+#### Plot Setup ####
+plot_dir = here("plots","05_explore_sce","06_explore_azimuth_annotations")
+if(!dir.exists(plot_dir)) dir.create(plot_dir)
 
+## load data
+load(here("processed-data","sce","sce_DLPFC.Rdata"), verbose = TRUE)
+
+colData(sce)
 
 #### Compare to HC annotations 
-ct_annos <- table(query$cellType_hc, query$predicted.subclass)
+ct_annos <- table(sce$cellType_hc, sce$cellType_azimuth)
 
 png(here(plot_dir, "azimuth_v_hc.png"),height = 800, width = 800)
 pheatmap(ct_annos,
@@ -29,9 +31,6 @@ dev.off()
 ct_annos_prop <- sweep(ct_annos,1,rowSums(ct_annos),`/`)
 
 ct_max <- apply(ct_annos_prop, 1, max)
-table(ct_max  > 0.7)
-
-sum(ct_annos_prop > .90)
 
 png(here(plot_dir, "azimuth_v_hc-prop.png"),height = 800, width = 800)
 pheatmap(ct_annos_prop,
@@ -45,38 +44,41 @@ pheatmap(ct_annos_prop,
          main = "Number of Nuclei")
 dev.off()
 
-library(bluster)
-jacc.mat <- linkClustersMatrix(query$cellType_hc, query$predicted.subclass)
+## How do clusters correspond?
+jacc.mat <- linkClustersMatrix(sce$cellType_hc, sce$cellType_azimuth)
 
 png(here(plot_dir, "azimuth_v_hc-jacc.png"),height = 800, width = 800)
 pheatmap(jacc.mat,
          main = "Strength of the correspondence between Azimuth & HC")
 dev.off()
 
-pairwiseRand(query$cellType_hc, query$predicted.subclass, mode="index")
+## Rand Index
+pairwiseRand(sce$cellType_hc, sce$cellType_azimuth, mode="index")
 # [1] 0.3094603
-pairwiseRand(query$cellType_broad_hc, query$predicted.subclass, mode="index")
+pairwiseRand(sce$cellType_k, sce$cellType_azimuth, mode="index")
 # [1] 0.2558036
-pairwiseRand(query$cellType_k, query$predicted.subclass, mode="index")
+pairwiseRand(sce$cellType_hc, sce$cellType_azimuth, mode="index")
 # [1] 0.2441774
 
 library(ggplot2)
-p1 <- DimPlot(query, group.by = "predicted.subclass", label = TRUE, label.size = 3, repel = TRUE) + labs(title = "DLPFC Data")
-# +
+
+## load the query
+# p1 <- DimPlot(query, group.by = "predicted.subclass", label = TRUE, label.size = 3, repel = TRUE) + labs(title = "DLPFC Data")
+# # +
+# #   NoLegend()
+# p2 <- DimPlot(query, group.by = "cellType_hc", label = TRUE, label.size = 3, repel = TRUE) +
 #   NoLegend()
-p2 <- DimPlot(query, group.by = "cellType_hc", label = TRUE, label.size = 3, repel = TRUE) +
-  NoLegend()
-p3 <- DimPlot(query, group.by = "cellType_broad_hc", label = TRUE, label.size = 3, repel = TRUE) +
-  NoLegend()
-p4 <- DimPlot(query, group.by = "Sample")
-
-ggsave((p1 + p2)/(p3 + p4), filename = here(plot_dir, "Azimuth_UMAP.png"), width = 13, height = 10)
-
-#### What does the refrence UMAP look like? ####
-reference <- LoadReference(path = "https://seurat.nygenome.org/azimuth/references/v1.0.0/human_motorcortex")
-ref_umap <- DimPlot(reference$map, group.by = "subclass", label = TRUE, label.size = 3, repel = TRUE) +labs(title = "Motor Cortex Reference")
-ggsave(ref_umap + p1, filename = here(plot_dir, "UMAP_Azimuth_reference.png"), width = 14)
-
+# p3 <- DimPlot(query, group.by = "cellType_broad_hc", label = TRUE, label.size = 3, repel = TRUE) +
+#   NoLegend()
+# p4 <- DimPlot(query, group.by = "Sample")
+# 
+# ggsave((p1 + p2)/(p3 + p4), filename = here(plot_dir, "Azimuth_UMAP.png"), width = 13, height = 10)
+# 
+# #### What does the refrence UMAP look like? ####
+# reference <- LoadReference(path = "https://seurat.nygenome.org/azimuth/references/v1.0.0/human_motorcortex")
+# ref_umap <- DimPlot(reference$map, group.by = "subclass", label = TRUE, label.size = 3, repel = TRUE) +labs(title = "Motor Cortex Reference")
+# ggsave(ref_umap + p1, filename = here(plot_dir, "UMAP_Azimuth_reference.png"), width = 14)
+# 
 
 
 #### OUR UMAP space ####
@@ -120,6 +122,38 @@ my_plotMarkers(sce = sce,
                marker_list = markers.mathys.tran,
                cat = "azimuth_basic",
                pdf_fn = here(plot_dir, "Azimuth_basic_mathys_markers.pdf"))
+
+
+#### Annotate the Heatmap ####
+library(viridis)
+jacc.mat[1:5, 1:5]
+
+## Number of markers
+load(here("processed-data", "03_build_sce","cell_type_markers.Rdata"), verbose = TRUE)
+n_markers <- sapply(markers_1vALL, function(x) sum(x$FDR < 0.05))
+
+## Spatial Registration
+load(here("processed-data","05_explore_sce","07_sptatial_registration","layer_cor.Rdata"), verbose = TRUE)
+max_cor <- apply(cor, 1, max)
+max_layer <- colnames(cor)[apply(cor,1,which.max)[names(n_markers)]]
+
+## build annotation df
+hc_anno <- data.frame(n_markers = n_markers,
+                      max_cor = max_cor[names(n_markers)],
+                      max_layer = max_layer)
+
+## Annotation for Azimuth cell types
+azimuth_anno <- data.frame(n_markers = n_markers)
+
+png(here(plot_dir, "azimuth_v_hc_annotation.png"),height = 800, width = 800)
+pheatmap(jacc.mat,
+         color= inferno(100),
+         annotation_row = hc_anno,
+         main = "Strength of the correspondence between Azimuth & HC")
+dev.off()
+
+
+
 
 
 # sgejobs::job_single('05_azimuth_validation', create_shell = TRUE, queue= 'bluejay', memory = '75G', command = "Rscript 05_azimuth_validation.R")
