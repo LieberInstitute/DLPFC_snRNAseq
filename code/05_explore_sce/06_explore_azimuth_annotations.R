@@ -6,7 +6,7 @@ library("pheatmap")
 library("scater")
 library("bluster")
 library("sessioninfo")
-
+library(dplyr)
 
 #### Plot Setup ####
 plot_dir = here("plots","05_explore_sce","06_explore_azimuth_annotations")
@@ -15,7 +15,15 @@ if(!dir.exists(plot_dir)) dir.create(plot_dir)
 ## load data
 load(here("processed-data","sce","sce_DLPFC.Rdata"), verbose = TRUE)
 
-colData(sce)
+pd <- as.data.frame(colData(sce))
+
+cell_type_colors <- metadata(sce)$cell_type_colors[levels(sce$cellType_hc)]
+
+#### Azimuth Cell Types ####
+
+azimuth_cellType_notes <- data.frame(azimuth = unique(sce$cellType_azimuth),
+                                     cell_type = c("Inhib"," Oligo", "OPC", "Inhib", NA, NA, "EndoMural","Astro","EndoMural",NA, 
+                                                   "Micro", NA, NA, "Inhib", "Inhib",NA,NA,NA,NA,NA))
 
 #### Compare to HC annotations 
 ct_annos <- table(sce$cellType_hc, sce$cellType_azimuth)
@@ -50,6 +58,28 @@ jacc.mat <- linkClustersMatrix(sce$cellType_hc, sce$cellType_azimuth)
 png(here(plot_dir, "azimuth_v_hc-jacc.png"),height = 800, width = 800)
 pheatmap(jacc.mat,
          main = "Strength of the correspondence between Azimuth & HC")
+dev.off()
+
+## Prop of prelim annotations
+
+prelim_anno <- pd |> group_by(prelimCluster, cellType_hc) |> count() |> column_to_rownames("prelimCluster")
+
+prelim_anno_n <- table(sce$prelimCluster, sce$cellType_hc)
+prelim_anno_n <- table(sce$prelimCluster, sce$cellType_azimuth)
+prelim_anno_prop <- sweep(prelim_anno_n,1,rowSums(prelim_anno_n),`/`)
+
+table(sce$prelimCluster, sce$cellType_hc)
+ct_max <- apply(ct_annos_prop, 1, max)
+
+
+png(here(plot_dir, "azimuth_v_prelim.png"),height = 1000, width = 800)
+pheatmap(prelim_anno_prop,
+         annotation_row = prelim_anno,
+         annotation_colors =list(cellType_hc = cell_type_colors)
+         # main = "Proportion of HC Cluster",
+         # cluster_rows = FALSE,
+         # cluster_cols = FALSE
+         )
 dev.off()
 
 ## Rand Index
