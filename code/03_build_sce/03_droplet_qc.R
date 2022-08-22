@@ -15,6 +15,8 @@ library("HDF5Array")
 my_theme <- theme_bw() +
     theme(text = element_text(size = 15))
 
+plot_dir <- here(plot_dir, "03_droplet_qc")
+if(!dir.exists(plot_dir)) dir.create(plot_dir)
 
 ## Load raw data
 load(here("processed-data", "sce", "sce_raw.Rdata"), verbose = TRUE)
@@ -28,17 +30,17 @@ droplet_score_fn <- list.files(here("processed-data", "03_build_sce", "droplet_s
     full.names = TRUE
 )
 
-names(droplet_score_fn) <- gsub("droplet_scores_|.Rdata", "", basename(droplet_score_fn))
+names(droplet_score_fn) <- gsub("st", "s", gsub("droplet_scores_|.Rdata", "", basename(droplet_score_fn)))
 
 e.out <- lapply(droplet_score_fn, function(x) get(load(x)))
 
 #### Compile drop empty info ####
 ## What were the cutoffs? 
-log_fn <- list.files(here("code", "03_build_sce", "logs"), pattern = "get_droplet_scores*", full.names = TRUE)
+log_fn <- list.files(here("code", "03_build_sce", "logs"), pattern = "get_droplet_scores.[0-9]", full.names = TRUE)
 logs <- map(log_fn, readLines)
 
 knee_lower <- map_dbl(logs, ~parse_number(.x[grepl("knee_lower =", .x)]))
-names(knee_lower) <- map_chr(logs, ~ss(.x[grepl("Running Sample: ", .x)]," ",3))
+names(knee_lower) <- gsub("st", "s", map_chr(logs, ~ss(.x[grepl("Running Sample: ", .x)]," ",3)))
 
 ## check out n empty with boxplot
 
@@ -99,7 +101,7 @@ drop_barplot <- drop_summary %>%
     my_theme +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-ggsave(drop_barplot, filename = here("plots", "03_build_sce", "drop_barplot.png"), width = 9)
+ggsave(drop_barplot, filename = here(plot_dir, "drop_barplot.png"), width = 9)
 
 
 drop_v_cutoff <- drop_summary %>%
@@ -108,7 +110,7 @@ drop_v_cutoff <- drop_summary %>%
     geom_point() +
     my_theme
 
-ggsave(drop_v_cutoff, filename = here("plots", "03_build_sce", "droplet_qc", "drop_v_cutoff.png"))
+ggsave(drop_v_cutoff, filename = here(plot_dir, "drop_v_cutoff.png"))
 
 ## Check empty droplet results
 map(e.out, ~ addmargins(table(Signif = .x$FDR <= FDR_cutoff, Limited = .x$Limited, useNA = "ifany")))
@@ -217,7 +219,7 @@ round(100 * sweep(qc_t, 1, qc_t[, 3], "/"), 1)
 # Sum          91.6   8.4 100.0
 
 #### QC plots ####
-pdf(here("plots", "03_build_sce", "QC_outliers.pdf"), width = 21)
+pdf(here(plot_dir, "QC_outliers.pdf"), width = 21)
 ## Mito rate
 plotColData(sce, x = "Sample", y = "subsets_Mito_percent", colour_by = "high_mito") +
     ggtitle("Mito Precent") +
@@ -290,7 +292,7 @@ dbl_box_plot <- dbl_df %>%
     coord_flip() +
     my_theme
 
-ggsave(dbl_box_plot, filename = here("plots", "03_build_sce", "doublet_scores_boxplot.png"))
+ggsave(dbl_box_plot, filename = here(plot_dir, "doublet_scores_boxplot.png"))
 
 dbl_density_plot <- dbl_df %>%
     ggplot(aes(x = doubletScore)) +
@@ -299,7 +301,7 @@ dbl_density_plot <- dbl_df %>%
     facet_grid(Sample ~ .) +
     theme_bw()
 
-ggsave(dbl_density_plot, filename = here("plots", "03_build_sce", "doublet_scores_desnity.png"), height = 17)
+ggsave(dbl_density_plot, filename = here(plot_dir, "doublet_scores_desnity.png"), height = 17)
 
 dbl_df %>%
     group_by(Sample) %>%
@@ -363,7 +365,7 @@ n_boxplot <- sample_info %>%
     my_theme +
     theme(legend.position = "None")
 
-ggsave(n_boxplot, filename = here("plots", "03_build_sce", "droplet_qc", "n_nuclei_boxplot.png"))
+ggsave(n_boxplot, filename = here(plot_dir, "n_nuclei_boxplot.png"))
 
 #### Save clean data as HDF5 file  ####
 load(here("processed-data", "sce", "sce_no_empty_droplets.Rdata"))
@@ -377,7 +379,7 @@ saveHDF5SummarizedExperiment(sce, dir=here("processed-data", "03_build_sce", "hd
                              chunkdim=NULL, level=NULL, as.sparse=TRUE,
                              verbose=TRUE)
 
-# sgejobs::job_single('droplet_qc', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript droplet_qc.R")
+# sgejobs::job_single('03_droplet_qc', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript 03_droplet_qc.R")
 
 ## Reproducibility information
 print("Reproducibility information:")

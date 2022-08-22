@@ -2,8 +2,8 @@
 #$ -cwd
 #$ -l bluejay,mem_free=50G,h_vmem=50G,h_fsize=100G
 #$ -N droplet_qc
-#$ -o logs/droplet_qc.txt
-#$ -e logs/droplet_qc.txt
+#$ -o logs/03_droplet_qc.txt
+#$ -e logs/03_droplet_qc.txt
 #$ -m e
 
 echo "**** Job starts ****"
@@ -23,7 +23,7 @@ module load conda_R
 module list
 
 ## Edit with your job command
-Rscript droplet_qc.R
+Rscript 03_droplet_qc.R
 
 echo "**** Job ends ****"
 date
