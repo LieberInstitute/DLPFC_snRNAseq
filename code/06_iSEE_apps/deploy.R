@@ -4,9 +4,9 @@ source("token.R")
 
 options(repos = BiocManager::repositories())
 rsconnect::deployApp(
-    appFiles = c("app.R", "sce_for_iSEE_LS.rda", "initial.R"),
-    appName = "LS_mm_2022",
+    appFiles = c("app.R", "sce_DLPFC_annotated/", "initial.R"),
+    appName = "DLPFC_snRNA-seq_2022",
     account = "libd",
     server = "shinyapps.io"
 )
-Footer
+

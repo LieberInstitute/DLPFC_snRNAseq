@@ -2,8 +2,10 @@ library("SingleCellExperiment")
 library("iSEE")
 library("shiny")
 library("paletteer")
+library("HDF5Array")
 
-load("sce_DLPFC.Rdata", verbose = TRUE)
+#load("sce_DLPFC.Rdata", verbose = TRUE)
+sce <- loadHDF5SummarizedExperiment("sce_DLPFC_annotated/")
 
 cell_type_colors <- metadata(sce)$cell_type_colors[levels(sce$cellType_hc)]
 stopifnot(all(unique(sce$cellType_hc) %in% names(cell_type_colors)))
@@ -24,22 +26,23 @@ colData(sce) <- cbind(
 sce$Sample <- as.factor(sce$Sample)
 
 sce <- registerAppOptions(sce, color.maxlevels = length(cell_type_colors))
+
 iSEE(
     sce,
-    appTitle = "DLPFC_2022"#,
-    #initial = initial,
-    # colormap = ExperimentColorMap(colData = list(
-    #     Sample = function(n) {
-    #         cols <- paletteer::paletteer_d(
-    #             palette = "RColorBrewer::Dark2",
-    #             n = length(unique(sce$Sample))
-    #         )
-    #         cols <- as.vector(cols)
-    #         names(cols) <- levels(sce$Sample)
-    #         return(cols)
-    #     },
-        # cellType_hc = function(n) {
-        #     return(cell_type_colors)
-        # }
-    #))
+    appTitle = "DLPFC_2022",
+    initial = initial,
+    colormap = ExperimentColorMap(colData = list(
+        # Sample = function(n) {
+        #     cols <- paletteer::paletteer_d(
+        #         palette = "RColorBrewer::Dark2",
+        #         n = length(unique(sce$Sample))
+        #     )
+        #     cols <- as.vector(cols)
+        #     names(cols) <- levels(sce$Sample)
+        #     return(cols)
+        # },
+    cellType_hc = function(n) {
+        return(cell_type_colors)
+    }
+    ))
 )
