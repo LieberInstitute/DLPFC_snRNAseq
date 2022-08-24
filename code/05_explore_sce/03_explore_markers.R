@@ -7,13 +7,19 @@ library("sessioninfo")
 
 #### Load data ####
 load(here("processed-data","sce","sce_DLPFC.Rdata"), verbose = TRUE)
+
+## markers data
 load(here("processed-data", "03_build_sce","cell_type_markers.Rdata"), verbose = TRUE)
-# markers_1vALL
-# markers_mean_ratio
+# markers_1vALL ## findMarkers - all cell types
+# markers_mean_ratio ## Mean ration - all cell types
 # markers_mean_ratio_broad
 
 load(here("processed-data", "03_build_sce","cell_type_markers_1vALL_mod.Rdata"), verbose = TRUE)
-# markers_1vALL_sample
+# markers_1vALL_sample ## enrichment - all cell types
+# Missing enrichment - cell subtype - TODO
+
+load(here("processed-data", "03_build_sce","subtype_markers.Rdata"), verbose = TRUE)
+# subtype_markers ## findMarkers - cell subtype - 'All' and "Any' settings
 
 #### set up plotting ####
 source(here("code", "03_build_sce", "my_plotExpression.R"))
@@ -378,10 +384,52 @@ names(subtype_markers)
 
 subtype_markers <- transpose(subtype_markers)
 
-load(here("processed-data", "03_build_sce","subtype_markers.Rdata"), verbose = TRUE)
+n_markers_all <- map(subtype_markers$all, ~sapply(.x, function(x) sum(x$FDR < 0.05)))
+map(n_markers_all,~.x[!is.na(.x)])
+# $EndoMural
+# EndoMural_01 EndoMural_02 
+# 3107         1853 
+# 
+# $Excit
+# Excit_01 Excit_02 Excit_03 Excit_04 Excit_05 Excit_06 Excit_07 Excit_08 Excit_09 Excit_10 Excit_11 Excit_12 Excit_13 
+# 79       35      144       65        2      391      368      179        1      834      264      421      843 
+# Excit_14 Excit_15 
+# 0        0 
+# 
+# $Inhib
+# Inhib_01 Inhib_02 Inhib_03 Inhib_04 Inhib_05 Inhib_06 
+# 1258     1429      413      909      774      491 
+# 
+# $Oligo
+# Oligo_01 Oligo_02 Oligo_03 
+# 9268     5296       83 
 
-map(subtype_markers$all, ~sapply(.x, function(x) sum(x$FDR < 0.05)))
-map(subtype_markers$any, ~sapply(.x, function(x) sum(x$FDR < 0.05)))
+n_markers_any <- map(subtype_markers$any, ~sapply(.x, function(x) sum(x$FDR < 0.05)))
+# map(n_markers_any,~.x[!is.na(.x)])
+# $EndoMural
+# EndoMural_01 EndoMural_02 
+# 3107         1853 
+# 
+# $Excit
+# Excit_01 Excit_02 Excit_03 Excit_04 Excit_05 Excit_06 Excit_07 Excit_08 Excit_09 Excit_10 Excit_11 Excit_12 Excit_13 
+# 29758    25857    21597    26083    18577    13982    14395    22227    11218     9565    12606    12215    15609 
+# Excit_14 Excit_15 
+# 3559      270 
+# 
+# $Inhib
+# Inhib_01 Inhib_02 Inhib_03 Inhib_04 Inhib_05 Inhib_06 
+# 6772    14122    11326    10240    13736    12297 
+# 
+# $Oligo
+# Oligo_01 Oligo_02 Oligo_03 
+# 13169     8438     9270 
 
-subtype_markers$any$Excit
 
+subtype_markers$all$Excit
+
+subtype_markers$all$Excit$Excit_04
+subtype_markers$all$Excit$Excit_05
+subtype_markers$all$Excit$Excit_09
+subtype_markers$all$Excit$Excit_14
+
+sum(subtype_markers$all$Excit$Excit_15$FDR < 0.05)
