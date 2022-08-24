@@ -72,10 +72,11 @@ ggsave(medianDoublet_histo, filename = here(plot_dir, "medianDoublet_histogram.p
 (doublet_clust <- prelimCluster.medianDoublet[prelimCluster.medianDoublet > 2])
 # 25      156      166      199      247      258      264 
 # 3.024884 8.395549 2.338546 2.330919 2.034900 2.159430 2.094400 
+
+## Over 5 but does not drive clustering 
 (doublet_clust <- prelimCluster.medianDoublet[prelimCluster.medianDoublet > 5])
 # 156 
 # 8.395549 
-
 summary(sce$doubletScore[sce$prelimCluster == 156])
 # Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
 # 0.3844  1.6301  8.3955  7.9715 13.7577 18.0338 
@@ -788,5 +789,41 @@ dbs_excit13 <- ggcells(sce[,sce$cellType_hc == "Excit_13"],
         axis.text.x=element_text(angle=90,hjust=1))
 
 ggsave(dbs_excit13,filename = here(plot_dir, "Excit_13_doublet_scores.png"))
+
+
+#### Explore Prelim clusters ####
+
+prelim_mito <- ggcells(sce, mapping=aes(x=reorder(prelimCluster, subsets_Mito_percent, FUN = median),
+                                       y=subsets_Mito_percent, color=cellType_hc)) +
+  geom_boxplot()+
+  scale_color_manual(values = cell_type_colors) + 
+  theme_bw() +
+  theme(legend.position = "None",axis.title.x=element_blank(),
+        axis.text.x=element_text(angle=90,hjust=1)) 
+
+ggsave(prelim_mito,filename = here(plot_dir, "prelim_mitoRate.png"), width = 30)
+
+
+prelim_UMI <- ggcells(sce, mapping=aes(x=reorder(prelimCluster, sum, FUN = median),
+                                       y=sum, color=cellType_hc)) +
+  geom_boxplot()+
+  scale_color_manual(values = cell_type_colors) + 
+  theme_bw() +
+  theme(legend.position = "None",axis.title.x=element_blank(),
+        axis.text.x=element_text(angle=90,hjust=1)) 
+
+ggsave(mito_ct_hc,filename = here(plot_dir, "prelim_UMI.png"), width = 30)
+
+prelim_doublets <- ggcells(sce, mapping=aes(x=reorder(prelimCluster, doubletScore, FUN = median),
+                                            y=doubletScore, color=cellType_hc)) +
+  geom_boxplot()+
+  scale_color_manual(values = cell_type_colors) + 
+  theme_bw() +
+  theme(legend.position = "None",axis.title.x=element_blank(),
+        axis.text.x=element_text(angle=90,hjust=1))
+
+ggsave(prelim_doublets,filename = here(plot_dir, "prelim_doublets.png"), width = 30)
+
+
 
 
