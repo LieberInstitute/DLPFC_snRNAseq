@@ -1,20 +1,23 @@
-library(SpatialExperiment)
-library(here)
-library(spatialLIBD)
-library(rafalib)
-library(scuttle)
+library("SpatialExperiment")
+library("spatialLIBD")
+library("HDF5Array")
+# library("rafalib")
+# library("scuttle")
 # library(limma)
-library(RColorBrewer)
+# library("RColorBrewer")
 # library(lattice)
 # library(edgeR)
+library("here")
+library("sessioninfo")
 
 source("utils.R")
 
 # load sc data
-load(file = "/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/processed-data/sce/sce_DLPFC.Rdata")
+# load(file = "/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/processed-data/sce/sce_DLPFC.Rdata")
+sce <- loadHDF5SummarizedExperiment(here("processed-data","sce","sce_DLPFC_annotated"))
 
-var_oi <- "cellType_hc"
-covars <- c("region", "age", "sex")
+# var_oi <- "cellType_hc"
+# covars <- c("Position", "age", "sex")
 
 rownames(sce) <- rowData(sce)$gene_id # have to make row names of object the ensembl id instead of gene names
 colData(sce)$Position <- as.factor(colData(sce)$Position)
@@ -24,7 +27,16 @@ colnames(colData(sce))[1] <- "sample_id"
 
 colData(sce)
 
-# results_specificity <- computeEnrichment(sce, var_oi = "cellType_hc", covars = c("Position", "age", "sex"))
+spe_pseudo <- scuttle::aggregateAcrossCells(
+  sce,
+  DataFrame(
+    BayesSpace = colData(sce)[["cellType_hc"]],
+    sample_id = sce$sample_id
+  )
+)
+
+results_specificity <- computeEnrichment(sce, var_oi = "cellType_hc", covars = c("Position", "age", "sex"))
+
 # save(results_specificity, file = "/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/processed-data/rdata/spe/12_spatial_registration_sc/results_specificity.RDS")
 
 load("/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/processed-data/rdata/spe/12_spatial_registration_sc/results_specificity.RDS")
