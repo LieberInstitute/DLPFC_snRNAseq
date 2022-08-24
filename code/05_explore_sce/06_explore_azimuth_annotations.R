@@ -12,6 +12,11 @@ library(dplyr)
 plot_dir = here("plots","05_explore_sce","06_explore_azimuth_annotations")
 if(!dir.exists(plot_dir)) dir.create(plot_dir)
 
+load(here("processed-data", "03_build_sce", "markers.mathys.tran.Rdata"), verbose = TRUE)
+
+
+source(here("code", "03_build_sce","my_plotExpression.R"))
+
 ## load data
 load(here("processed-data","sce","sce_DLPFC.Rdata"), verbose = TRUE)
 
@@ -19,11 +24,53 @@ pd <- as.data.frame(colData(sce))
 
 cell_type_colors <- metadata(sce)$cell_type_colors[levels(sce$cellType_hc)]
 
+#### prop breakdown ####
+
+ct_counts <- pd |> 
+  group_by(cellType_hc, cellType_azimuth) |>
+  summarize(n_cell = n())
+
+azimuth_prop <- pd |>
+  count(cellType_azimuth) |> 
+  left_join(ct_counts) |>
+  mutate(prop = n_cell/n)
+
+azimuth_prop_bar <- azimuth_prop |>
+  ggplot(aes(x = cellType_azimuth, y = prop, fill = cellType_hc)) +
+  geom_col() +
+  scale_fill_manual(values = cell_type_colors) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+ggsave(azimuth_prop_bar, filename = here(plot_dir, "prop_bar_azimuth.png"))
+
+azimuth_count_bar <- azimuth_prop |>
+  ggplot(aes(x = cellType_azimuth, y = n_cell, fill = cellType_hc)) +
+  geom_col() +
+  scale_fill_manual(values = cell_type_colors) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+ggsave(azimuth_count_bar, filename = here(plot_dir, "count_bar_azimuth.png"))
+
+library(patchwork)
+ggsave(azimuth_prop_bar + theme(legend.position = "None") + azimuth_count_bar, filename = here(plot_dir, "count-prop_bar_azimuth.png"), width = 12)
+
 #### Azimuth Cell Types ####
 
-azimuth_cellType_notes <- data.frame(azimuth = unique(sce$cellType_azimuth),
-                                     cell_type = c("Inhib"," Oligo", "OPC", "Inhib", NA, NA, "EndoMural","Astro","EndoMural",NA, 
-                                                   "Micro", NA, NA, "Inhib", "Inhib",NA,NA,NA,NA,NA))
+az <- unique(sce$cellType_azimuth)
+gsub("(L[1-6]).*", "\\1", az)
+# [1] "Sst"       "Oligo"     "OPC"       "Vip"       "L6"        "L5"        "VLMC"      "Astro"     "Endo"     
+# [10] "L2"        "Micro-PVM" "L6"        "Sst Chodl" "Lamp5"     "Pvalb"     "Sncg"      "L6"        "L6"       
+# [19] "L5"        "L5"
+
+azimuth_cellType_notes <- data.frame(azimuth = az,
+                                     cell_type = c("Inhib"," Oligo", "OPC", "Inhib","Excit", 
+                                                   "Excit", "EndoMural","Astro","EndoMural",
+                                                   "Excit", "Micro", "Excit", "Excit", "Inhib", 
+                                                   "Inhib","Excit","Excit","Excit","Excit","Excit")) |>
+  mutate(Layer = ifelse(grepl("L[1-6]", azimuth), gsub("(L[1-6]|L[1-6]/[1-6]).*", "\\1", azimuth), NA))
+
 
 #### Compare to HC annotations 
 ct_annos <- table(sce$cellType_hc, sce$cellType_azimuth)
@@ -81,6 +128,42 @@ pheatmap(prelim_anno_prop,
          # cluster_cols = FALSE
          )
 dev.off()
+
+## Just Oligo_1
+
+sce_oligo1 <- sce[,sce$cellType_hc == "Oligo_01"]
+sce_oligo1$cellType_hc <- droplevels(sce_oligo1$cellType_hc)
+sce_oligo1$prelimCluster <- droplevels(sce_oligo1$prelimCluster)
+
+table(sce_oligo1$prelimCluster)
+table(sce_oligo1$prelimCluster, sce_oligo1$Sample)
+# 22   32   36   65  180  229  247 
+# 356  662 7720 1512 8757 2765 1253 
+
+prelim_anno_Oligo01 <- table(sce_oligo1$prelimCluster, sce_oligo1$cellType_azimuth)
+prelim_anno_Oligo01_prop <- sweep(prelim_anno_Oligo01,1,rowSums(prelim_anno_Oligo01),`/`)
+
+table(sce$prelimCluster)
+ct_max <- apply(ct_annos_prop, 1, max)
+
+
+png(here(plot_dir, "azimuth_v_prelim_Oligo01.png"),height = 500, width = 800)
+pheatmap(prelim_anno_Oligo01_prop
+         # ,
+         # annotation_row = prelim_anno,
+         # annotation_colors =list(cellType_hc = cell_type_colors)
+         # main = "Proportion of HC Cluster",
+         # cluster_rows = FALSE,
+         # cluster_cols = FALSE
+)
+dev.off()
+
+my_plotMarkers(sce = sce_oligo1, 
+               marker_list = markers.mathys.tran,
+               cat = "prelimCluster",
+               pdf_fn = here(plot_dir, "Oligo01_prelim_mathys_markers.pdf"))
+
+
 
 ## Rand Index
 pairwiseRand(sce$cellType_hc, sce$cellType_azimuth, mode="index")
@@ -143,10 +226,6 @@ ggsave(UMAP_hc_cellTypes + theme(legend.position = "None") + labs(title = "DLPFC
        filename = here(plot_dir, "UMAP_hc_cellType_facet.png"), width = 12)
 
 #### Marker Plots ####
-load(here("processed-data", "03_build_sce", "markers.mathys.tran.Rdata"), verbose = TRUE)
-
-
-source(here("code", "03_build_sce","my_plotExpression.R"))
 
 my_plotMarkers(sce = sce, 
                marker_list = markers.mathys.tran,
