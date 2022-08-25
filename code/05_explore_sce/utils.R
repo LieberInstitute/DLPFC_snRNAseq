@@ -5,8 +5,9 @@ computeEnrichment <- function(spe, var_oi, covars) {
   mat_formula <- eval(str2expression(paste("~", "0", "+", var_oi, "+", paste(covars, collapse = " + "))))
   
   ## Pseudo-bulk for our current BayesSpace cluster results
-  message("Make psuedobulk object")
-  spe_pseudo <- aggregateAcrossCells(
+  message("Make psuedobulk object - ", Sys.time())
+  ## I think this needs counts assay
+  spe_pseudo <- scuttle::aggregateAcrossCells(
     spe,
     DataFrame(
       BayesSpace = colData(spe)[[var_oi]],
@@ -15,12 +16,12 @@ computeEnrichment <- function(spe, var_oi, covars) {
   )
   
   ###############################
-  message("Filter lowly expressed genes")
+  message("Filter lowly expressed genes - ", Sys.time())
   rowData(spe_pseudo)$filter_expr <- filterByExpr(spe_pseudo)
   summary(rowData(spe_pseudo)$filter_expr)
   spe_pseudo <- spe_pseudo[which(rowData(spe_pseudo)$filter_expr), ]
   
-  message("Normalize expression")
+  message("Normalize expression - ", Sys.time())
   x <- edgeR::cpm(edgeR::calcNormFactors(spe_pseudo), log = TRUE, prior.count = 1)
   ## Verify that the gene order hasn't changed
   stopifnot(identical(rownames(x), rownames(spe_pseudo)))
@@ -47,13 +48,13 @@ computeEnrichment <- function(spe, var_oi, covars) {
   }
   
   # create matrix where the rownames are the sample:clusters and the columns are the other variables (spatial.cluster + region + age + sex)
-  message("Create model matrix")
+  message("Create model matrix - ", Sys.time())
   mod <- model.matrix(mat_formula,
                       data = colData(spe_pseudo)
   ) # binarizes factors
   
   ## get duplicate correlation #http://web.mit.edu/~r/current/arch/i386_linux26/lib/R/library/limma/html/dupcor.html
-  message("Run dupllicateCorrelation()")
+  message("Run dupllicateCorrelation() - ", Sys.time())
   corfit <- duplicateCorrelation(mat_filter, mod,
                                  block = spe_pseudo$sample_id
   )
@@ -61,7 +62,7 @@ computeEnrichment <- function(spe, var_oi, covars) {
   ## Next for each layer test that layer vs the rest
   cluster_idx <- splitit(colData(spe_pseudo)[, var_oi])
   
-  message("Run enrichment statistics")
+  message("Run enrichment statistics - ", Sys.time())
   eb0_list_cluster <- lapply(cluster_idx, function(x) {
     res <- rep(0, ncol(spe_pseudo))
     res[x] <- 1
@@ -84,7 +85,7 @@ computeEnrichment <- function(spe, var_oi, covars) {
   })
   
   
-  message("extract and reformat enrichment results")
+  message("extract and reformat enrichment results - ", Sys.time())
   ##########
   ## Extract the p-values
   pvals0_contrasts_cluster <- sapply(eb0_list_cluster, function(x) {
