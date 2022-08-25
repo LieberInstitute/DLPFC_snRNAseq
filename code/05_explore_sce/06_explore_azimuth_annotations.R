@@ -5,6 +5,7 @@ library("here")
 library("pheatmap")
 library("scater")
 library("bluster")
+library("tidyverse")
 library("sessioninfo")
 library(dplyr)
 
@@ -23,6 +24,7 @@ load(here("processed-data","sce","sce_DLPFC.Rdata"), verbose = TRUE)
 pd <- as.data.frame(colData(sce))
 
 cell_type_colors <- metadata(sce)$cell_type_colors[levels(sce$cellType_hc)]
+cell_type_colors_broad <- metadata(sce)$cell_type_colors_broad[levels(sce$cellType_broad_hc)]
 
 #### prop breakdown ####
 
@@ -65,7 +67,7 @@ gsub("(L[1-6]).*", "\\1", az)
 # [19] "L5"        "L5"
 
 azimuth_cellType_notes <- data.frame(azimuth = az,
-                                     cell_type = c("Inhib"," Oligo", "OPC", "Inhib","Excit", 
+                                     cellType_broad = c("Inhib","Oligo", "OPC", "Inhib","Excit", 
                                                    "Excit", "EndoMural","Astro","EndoMural",
                                                    "Excit", "Micro", "Excit", "Excit", "Inhib", 
                                                    "Inhib","Excit","Excit","Excit","Excit","Excit")) |>
@@ -107,9 +109,56 @@ pheatmap(jacc.mat,
          main = "Strength of the correspondence between Azimuth & HC")
 dev.off()
 
+
+#### Annotate the Heatmap ####
+library(viridis)
+jacc.mat[1:5, 1:5]
+
+## Number of markers
+load(here("processed-data", "03_build_sce","cell_type_markers.Rdata"), verbose = TRUE)
+n_markers <- sapply(markers_1vALL, function(x) sum(x$FDR < 0.05))
+
+## Spatial Registration
+load(here("processed-data","05_explore_sce","07_sptatial_registration","layer_cor.Rdata"), verbose = TRUE)
+max_cor <- apply(cor, 1, max)
+max_layer <- colnames(cor)[apply(cor,1,which.max)[names(n_markers)]]
+
+## build annotation df
+hc_anno <- data.frame(cellType_broad = gsub("\\.|_[0-9]+","",names(n_markers)),
+                      n_markers = n_markers,
+                      max_cor = max_cor[names(n_markers)],
+                      Layer = gsub("ayer","",max_layer))
+
+rownames(hc_anno) <- gsub("\\.","",rownames(hc_anno))
+
+
+azimuth_anno <- azimuth_cellType_notes |> 
+  column_to_rownames("azimuth")
+
+layers <- c("WM", "L1", "L2", "L2/3", "L3","L4","L5","L5/6","L6")
+
+azimuth_anno$Layer <- factor(azimuth_anno$Layer, levels = layers)
+hc_anno$Layer <- factor(hc_anno$Layer, levels = layers)
+
+layer_colors <- viridis(length(layers))
+names(layer_colors) <- layers 
+
+png(here(plot_dir, "azimuth_v_hc_annotation.png"),height = 800, width = 800)
+pheatmap(jacc.mat,
+         color= inferno(100),
+         annotation_row = hc_anno,
+         annotation_col = azimuth_anno,
+         annotation_colors = list(Layer = layer_colors, cellType_broad = cell_type_colors_broad),
+         main = "Strength of the correspondence between Azimuth & HC")
+dev.off()
+
 ## Prop of prelim annotations
 
-prelim_anno <- pd |> group_by(prelimCluster, cellType_hc) |> count() |> column_to_rownames("prelimCluster")
+prelim_anno <- pd |> 
+  group_by(prelimCluster, cellType_hc) |> 
+  count() |>
+  column_to_rownames("prelimCluster") |>
+  arrange(cellType_hc)
 
 prelim_anno_n <- table(sce$prelimCluster, sce$cellType_hc)
 prelim_anno_n <- table(sce$prelimCluster, sce$cellType_azimuth)
@@ -119,18 +168,66 @@ table(sce$prelimCluster, sce$cellType_hc)
 ct_max <- apply(ct_annos_prop, 1, max)
 
 
-png(here(plot_dir, "azimuth_v_prelim.png"),height = 1000, width = 800)
-pheatmap(prelim_anno_prop,
+png(here(plot_dir, "azimuth_v_prelim.png"),height = 1200, width = 800)
+pheatmap(prelim_anno_prop[rownames(prelim_anno),],
          annotation_row = prelim_anno,
-         annotation_colors =list(cellType_hc = cell_type_colors)
+         annotation_col = azimuth_anno[,"cellType_broad",drop = FALSE],
+         annotation_colors =list(cellType_hc = cell_type_colors, cellType_broad = cell_type_colors_broad),
          # main = "Proportion of HC Cluster",
-         # cluster_rows = FALSE,
+         cluster_rows = FALSE
+         # ,
          # cluster_cols = FALSE
          )
 dev.off()
 
-## Just Oligo_1
+png(here(plot_dir, "azimuth_v_prelim_cluster.png"),height = 1200, width = 800)
+pheatmap(prelim_anno_prop[rownames(prelim_anno),],
+         annotation_row = prelim_anno,
+         annotation_col = azimuth_anno[,"cellType_broad",drop = FALSE],
+         annotation_colors =list(cellType_hc = cell_type_colors, cellType_broad = cell_type_colors_broad),
+         # main = "Proportion of HC Cluster",
+         # cluster_rows = FALSE
+         # ,
+         # cluster_cols = FALSE
+)
+dev.off()
 
+## Subset maybe split cell types
+
+## Excit_08
+
+heatmap_prelim <- function(cell_type){
+  sce_temp <- sce[,sce$cellType_hc == cell_type]
+  sce_temp$cellType_hc <- droplevels(sce_temp$cellType_hc)
+  sce_temp$prelimCluster <- droplevels(sce_temp$prelimCluster)
+  
+  n_nuc = table(sce_temp$prelimCluster)
+  row_anno = as.matrix(n_nuc)
+  colnames(row_anno) <- "n_nuc"
+  
+  print(row_anno)
+  # 22   32   36   65  180  229  247 
+  # 356  662 7720 1512 8757 2765 1253 
+  
+  prelim_anno <- table(sce_temp$prelimCluster, sce_temp$cellType_azimuth)
+  prelim_anno_prop <- sweep(prelim_anno,1,rowSums(prelim_anno),`/`)
+  
+  png(here(plot_dir, paste0("azimuth_v_prelim-",cell_type,".png")),height = 500, width = 800)
+  pheatmap(prelim_anno_prop 
+           # ,
+           # annotation_row = row_anno
+           # annotation_colors =list(cellType_hc = cell_type_colors)
+           # main = "Proportion of HC Cluster",
+           # cluster_rows = FALSE,
+           # cluster_cols = FALSE
+  )
+  dev.off()
+}
+
+split_cell_types <- c("Oligo_01","Excit_08","Inhib_01","Excit_02",'Inhib_05')
+map(split_cell_types[5], heatmap_prelim)
+
+## Oligo_1 Deep Dive
 sce_oligo1 <- sce[,sce$cellType_hc == "Oligo_01"]
 sce_oligo1$cellType_hc <- droplevels(sce_oligo1$cellType_hc)
 sce_oligo1$prelimCluster <- droplevels(sce_oligo1$prelimCluster)
@@ -143,14 +240,17 @@ table(sce_oligo1$prelimCluster, sce_oligo1$Sample)
 prelim_anno_Oligo01 <- table(sce_oligo1$prelimCluster, sce_oligo1$cellType_azimuth)
 prelim_anno_Oligo01_prop <- sweep(prelim_anno_Oligo01,1,rowSums(prelim_anno_Oligo01),`/`)
 
-table(sce$prelimCluster)
-ct_max <- apply(ct_annos_prop, 1, max)
+n_nuc = table(sce_oligo1$prelimCluster)
+row_anno = as.matrix(n_nuc)
+colnames(row_anno) <- "n_nuc"
+
+rownames(prelim_anno_Oligo01_prop) <- as.character(rownames(prelim_anno_Oligo01_prop))
+rownames(row_anno) <- as.character(rownames(row_anno))
 
 
 png(here(plot_dir, "azimuth_v_prelim_Oligo01.png"),height = 500, width = 800)
-pheatmap(prelim_anno_Oligo01_prop
-         # ,
-         # annotation_row = prelim_anno,
+pheatmap(prelim_anno_Oligo01_prop,
+         annotation_row = row_anno
          # annotation_colors =list(cellType_hc = cell_type_colors)
          # main = "Proportion of HC Cluster",
          # cluster_rows = FALSE,
@@ -231,38 +331,6 @@ my_plotMarkers(sce = sce,
                marker_list = markers.mathys.tran,
                cat = "azimuth_basic",
                pdf_fn = here(plot_dir, "Azimuth_basic_mathys_markers.pdf"))
-
-
-#### Annotate the Heatmap ####
-library(viridis)
-jacc.mat[1:5, 1:5]
-
-## Number of markers
-load(here("processed-data", "03_build_sce","cell_type_markers.Rdata"), verbose = TRUE)
-n_markers <- sapply(markers_1vALL, function(x) sum(x$FDR < 0.05))
-
-## Spatial Registration
-load(here("processed-data","05_explore_sce","07_sptatial_registration","layer_cor.Rdata"), verbose = TRUE)
-max_cor <- apply(cor, 1, max)
-max_layer <- colnames(cor)[apply(cor,1,which.max)[names(n_markers)]]
-
-## build annotation df
-hc_anno <- data.frame(n_markers = n_markers,
-                      max_cor = max_cor[names(n_markers)],
-                      max_layer = max_layer)
-
-## Annotation for Azimuth cell types
-azimuth_anno <- data.frame(n_markers = n_markers)
-
-png(here(plot_dir, "azimuth_v_hc_annotation.png"),height = 800, width = 800)
-pheatmap(jacc.mat,
-         color= inferno(100),
-         annotation_row = hc_anno,
-         main = "Strength of the correspondence between Azimuth & HC")
-dev.off()
-
-
-
 
 
 # sgejobs::job_single('05_azimuth_validation', create_shell = TRUE, queue= 'bluejay', memory = '75G', command = "Rscript 05_azimuth_validation.R")
