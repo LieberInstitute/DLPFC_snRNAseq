@@ -17,7 +17,7 @@ computeEnrichment <- function(spe, var_oi, covars) {
   
   ###############################
   message("Filter lowly expressed genes - ", Sys.time())
-  rowData(spe_pseudo)$filter_expr <- filterByExpr(spe_pseudo)
+  rowData(spe_pseudo)$filter_expr <- edgeR::filterByExpr(spe_pseudo)
   summary(rowData(spe_pseudo)$filter_expr)
   spe_pseudo <- spe_pseudo[which(rowData(spe_pseudo)$filter_expr), ]
   
@@ -55,12 +55,12 @@ computeEnrichment <- function(spe, var_oi, covars) {
   
   ## get duplicate correlation #http://web.mit.edu/~r/current/arch/i386_linux26/lib/R/library/limma/html/dupcor.html
   message("Run dupllicateCorrelation() - ", Sys.time())
-  corfit <- duplicateCorrelation(mat_filter, mod,
+  corfit <- limma::duplicateCorrelation(mat_filter, mod,
                                  block = spe_pseudo$sample_id
   )
   
   ## Next for each layer test that layer vs the rest
-  cluster_idx <- splitit(colData(spe_pseudo)[, var_oi])
+  cluster_idx <- rafalib::splitit(colData(spe_pseudo)[, var_oi])
   
   message("Run enrichment statistics - ", Sys.time())
   eb0_list_cluster <- lapply(cluster_idx, function(x) {
@@ -74,8 +74,8 @@ computeEnrichment <- function(spe, var_oi, covars) {
     
     # josh suggested use top table as a wrapper because it makes the output of eBayes nicer
     
-    eBayes(
-      lmFit(
+    limma::eBayes(
+      limma::lmFit(
         mat_filter,
         design = m,
         block = spe_pseudo$sample_id,
