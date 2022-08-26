@@ -180,7 +180,7 @@ hc_anno <- cbind(hc_anno, hc_layer[rownames(hc_anno),])
 
 
 
-write.csv(hc_anno, file = here("processed-data","05_explore_sce","hc_annotaion.csv"))
+write.csv(hc_anno, file = here("processed-data","05_explore_sce","hc_annotation.csv"))
 
 azimuth_anno <- azimuth_cellType_notes |> 
   column_to_rownames("azimuth") |>
