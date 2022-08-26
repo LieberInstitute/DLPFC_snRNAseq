@@ -92,6 +92,7 @@ hc_layer <- make_layer_tab(cor_hc_top100)
 excit_layer <- make_layer_tab(cor_excit_top100)
 
 library(tidyverse)
+source(here("code", "05_explore_sce", "annotate_registered_clusters.R"), echo = TRUE)
 make_layer_tab2 <- function(cor) {
     cor_long <- as.data.frame(cor) |>
         tibble::rownames_to_column("cell_type") |>
@@ -104,20 +105,27 @@ make_layer_tab2 <- function(cor) {
 
     layer2 <- cor_long |>
         filter(rank == 2) |>
-        select(cell_type, layer_rank2 = layer, cor_rank2 = cor)
+        select(cell_type, layer_rank2 = layer, cor_rank2 = cor) |>
+        mutate(cor_rank2 = ifelse(cor_rank2 > 0, cor_rank2, NA)) |>
+        mutate(layer_rank2 = ifelse(cor_rank2 > 0, layer_rank2, NA))
 
     layer_tab <- layer1 |>
         select(-rank) |>
         left_join(layer2, by = "cell_type") |>
-        mutate(layer_ratio = cor / cor_rank2) |>
+        mutate(cor_diff = cor - cor_rank2) |>
+        mutate(diff_cor2_ratio = cor_diff / cor_rank2) |>
         arrange(cell_type)
 
+    layer_tab <- layer_tab |>
+        left_join(annotate_registered_clusters(cor, cutoff_merge_ratio = 0.25), by = c("cell_type" = "cluster")) |>
+        mutate(layer_label = ifelse(layer_confidence == "good", layer_label, paste0(layer_label, "*")))
     return(layer_tab)
 }
 
 make_layer_tab2(cor_hc_top100)
 write.csv(make_layer_tab2(cor_hc_top100), file = here("processed-data", "05_explore_sce", "spatial_registration_cor_details_hc.csv"))
 write.csv(make_layer_tab2(cor_excit_top100), file = here("processed-data", "05_explore_sce", "spatial_registration_cor_details_hc-Excit.csv"))
+write.csv(make_layer_tab2(cor_azimuth_top100), file = here("processed-data", "05_explore_sce", "spatial_registration_cor_details_azimuth.csv"))
 
 make_layer_tab2(cor_excit_top100)
 
