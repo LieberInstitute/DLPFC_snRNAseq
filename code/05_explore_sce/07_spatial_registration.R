@@ -89,5 +89,5 @@ layer_stat_cor_plot(cor_azimuth_top100, max = max(cor_azimuth_top100))
 dev.off()
 
 ## Save correlations
-save(cor_hc_top100, cor_excit_top100,cor_azimuth_top100, file = here("processed-data","05_explore_sce","07_sptatial_registration","layer_cor.Rdata"))
+save(cor_hc_top100, cor_excit_top100,cor_azimuth_top100, file = here("processed-data","05_explore_sce","07_spatial_registration","layer_cor.Rdata"))
 

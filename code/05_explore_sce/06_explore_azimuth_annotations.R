@@ -72,7 +72,7 @@ azimuth_cellType_notes <- data.frame(azimuth = az,
   mutate(Layer = ifelse(grepl("L[1-6]", azimuth), gsub("(L[1-6]|L[1-6]/[1-6]).*", "\\1", azimuth), NA))
 
 #### Layer Data ####
-load(here("processed-data","05_explore_sce","07_sptatial_registration","layer_cor.Rdata"), verbose = TRUE)
+load(here("processed-data","05_explore_sce","07_spatial_registration","layer_cor.Rdata"), verbose = TRUE)
 
 ## HC Cor
 make_layer_tab <- function(cor){
