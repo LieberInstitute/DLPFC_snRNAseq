@@ -111,7 +111,7 @@ computeEnrichment <- function(spe, var_oi, covars) {
   )
   
   results_specificity <-
-    f_merge(p = pvals0_contrasts_cluster, fdr = fdrs0_contrasts_cluster, t = t0_contrasts_cluster)
+    f_merge(spe_pseudo, p = pvals0_contrasts_cluster, fdr = fdrs0_contrasts_cluster, t = t0_contrasts_cluster)
   head(results_specificity)
   
   # object to return
@@ -122,7 +122,7 @@ computeEnrichment <- function(spe, var_oi, covars) {
 }
 
 
-f_merge <- function(p, fdr, t) {
+f_merge <- function(spe_pseudo, p, fdr, t) {
   colnames(p) <- paste0("p_value_", colnames(p))
   colnames(fdr) <- paste0("fdr_", colnames(fdr))
   colnames(t) <- paste0("t_stat_", colnames(t))
