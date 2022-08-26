@@ -11,7 +11,7 @@ load(here("processed-data","sce","sce_DLPFC.Rdata"), verbose = TRUE)
 ## markers data
 load(here("processed-data", "03_build_sce","cell_type_markers.Rdata"), verbose = TRUE)
 # markers_1vALL ## findMarkers - all cell types
-# markers_mean_ratio ## Mean ration - all cell types
+# markers_mean_ratio ## Mean ratio - all cell types
 # markers_mean_ratio_broad
 
 load(here("processed-data", "03_build_sce","cell_type_markers_1vALL_mod.Rdata"), verbose = TRUE)
@@ -172,6 +172,8 @@ markers_mean_ratio |>
 # 4 Excit_15                1 *
 # 5 Excit_09                4 *
 # 6 Inhib_03                6
+
+markers_mean_ratio |>filter(cellType.target == "Excit_09") 
 
 my_plotMarkers(sce = sce, 
                marker_list = markers_mean_ratio_top10,
@@ -431,5 +433,8 @@ subtype_markers$all$Excit$Excit_04
 subtype_markers$all$Excit$Excit_05
 subtype_markers$all$Excit$Excit_09
 subtype_markers$all$Excit$Excit_14
+
+sapply(subtype_markers$all$Excit, function(x) rownames(x[is.na(x$FDR)])[[1]])
+
 
 sum(subtype_markers$all$Excit$Excit_15$FDR < 0.05)
