@@ -1,10 +1,10 @@
 **** Job starts ****
-Wed Aug  3 14:18:19 EDT 2022
+Wed Aug  3 14:49:27 EDT 2022
 **** JHPCE info ****
 User: neagles
-Job id: 1529776
+Job id: 1529794
 Job name: write_biospecimen
-Hostname: compute-103.cm.cluster
+Hostname: compute-107.cm.cluster
 Loading conda_R/devel
 here() starts at /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq
 ─ Session info ───────────────────────────────────────────────────────────────
@@ -45,4 +45,4 @@ here() starts at /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq
 
 ──────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Wed Aug  3 14:18:22 EDT 2022
+Wed Aug  3 14:49:29 EDT 2022
