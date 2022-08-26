@@ -54,7 +54,7 @@ computeEnrichment <- function(spe, var_oi, covars) {
   ) # binarizes factors
   
   ## get duplicate correlation #http://web.mit.edu/~r/current/arch/i386_linux26/lib/R/library/limma/html/dupcor.html
-  message("Run dupllicateCorrelation() - ", Sys.time())
+  message("Run duplicateCorrelation() - ", Sys.time())
   corfit <- limma::duplicateCorrelation(mat_filter, mod,
                                  block = spe_pseudo$sample_id
   )
@@ -133,7 +133,7 @@ f_merge <- function(p, fdr, t) {
     x = res, y = rowData(spe_pseudo)[, c("gene_id", "gene_name")], by.x = "ensembl",
     by.y = "gene_id"
   )
-  colnames(res)[11] <- "gene"
+  colnames(res)[ncol(res)] <- "gene"
   rownames(res) <- res$ensembl
   return(res)
 }
