@@ -87,6 +87,37 @@ make_layer_tab <- function(cor){
 hc_layer <- make_layer_tab(cor_hc_top100)
 excit_layer <- make_layer_tab(cor_excit_top100)
 
+library(tidyverse)
+make_layer_tab2 <- function(cor){
+  
+  cor_long <- as.data.frame(cor) |>
+    tibble::rownames_to_column("cell_type") |> 
+    pivot_longer(!cell_type, names_to = "layer", values_to = "cor") |>
+    group_by(cell_type)|>
+    mutate(rank = rank(-cor), layer = gsub("ayer","",layer)) 
+  
+  layer1 <- cor_long |>
+    filter(rank == 1)
+  
+  layer2 <- cor_long |>
+    filter(rank == 2) |>
+    select(cell_type, layer_rank2 = layer, cor_rank2 = cor)
+  
+  layer_tab <- layer1 |>
+    select(-rank) |>
+    left_join(layer2, by = "cell_type") |>
+    mutate(layer_ratio = cor/cor_rank2) |>
+    arrange(cell_type)
+  
+  return(layer_tab)
+}
+
+make_layer_tab2(cor_hc_top100)
+write.csv(make_layer_tab2(cor_hc_top100), file = here("processed-data","05_explore_sce","spatial_registration_cor_details_hc.csv"))
+write.csv(make_layer_tab2(cor_excit_top100), file = here("processed-data","05_explore_sce","spatial_registration_cor_details_hc-Excit.csv"))
+
+make_layer_tab2(cor_excit_top100)
+
 azimuth_layer <- make_layer_tab(cor_azimuth_top100)
 rownames(azimuth_layer) <- gsub("\\."," ",gsub("([0-9])\\.([0-9])","\\1/\\2",rownames(azimuth_layer)))
 rownames(azimuth_layer)[[7]] <- "Micro-PVM"
@@ -142,8 +173,14 @@ n_markers <- sapply(markers_1vALL, function(x) sum(x$FDR < 0.05))
 hc_anno <- data.frame(cellType_broad = gsub("\\.|_[0-9]+","",names(n_markers)),
                       n_markers = n_markers)
 rownames(hc_anno) <- gsub("\\.","",rownames(hc_anno)) ## EndoMural rename 
+
+excit_layer[rownames(hc_anno),]
+
 hc_anno <- cbind(hc_anno, hc_layer[rownames(hc_anno),])
 
+
+
+write.csv(hc_anno, file = here("processed-data","05_explore_sce","hc_annotaion.csv"))
 
 azimuth_anno <- azimuth_cellType_notes |> 
   column_to_rownames("azimuth") |>
