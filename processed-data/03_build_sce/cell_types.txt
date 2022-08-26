@@ -3,9 +3,9 @@ drop_01
 drop_02
 drop_03
 drop_04
-Endo.Mural
-Endo.Mural_01
-Endo.Mural_02
+EndoMural
+EndoMural_01
+EndoMural_02
 Excit_01
 Excit_02
 Excit_03
@@ -21,7 +21,6 @@ Excit_12
 Excit_13
 Excit_14
 Excit_15
-Excit_16
 Inhib_01
 Inhib_02
 Inhib_03
@@ -29,7 +28,7 @@ Inhib_04
 Inhib_05
 Inhib_06
 Micro
-Micro.Oligo
+MicroOligo
 Oligo_01
 Oligo_02
 Oligo_03
