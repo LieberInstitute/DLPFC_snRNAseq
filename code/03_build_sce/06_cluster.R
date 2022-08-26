@@ -1,15 +1,15 @@
 library("SingleCellExperiment")
 library("jaffelab")
 library("scater")
-library("scran") 
+library("scran")
 library("here")
 library("sessioninfo")
 
 ## Best normalization result
-load(here("processed-data", "03_build_sce","sce_harmony_Sample.Rdata"), verbose = TRUE)
+load(here("processed-data", "03_build_sce", "sce_harmony_Sample.Rdata"), verbose = TRUE)
 
 message("running buildSNNGraph - ", Sys.time())
-snn.gr <- buildSNNGraph(sce, k=20, use.dimred="HARMONY")
+snn.gr <- buildSNNGraph(sce, k = 20, use.dimred = "HARMONY")
 
 message("running walktrap - ", Sys.time())
 clusters <- igraph::cluster_walktrap(snn.gr)$membership
@@ -24,7 +24,7 @@ save(clusters, file = here("processed-data", "03_build_sce", "clusters.Rdata"))
 # sgejobs::job_single('06_cluster', create_shell = TRUE, queue= 'bluejay', memory = '100G', command = "Rscript 06_cluster.R subject")
 
 ## Reproducibility information
-print('Reproducibility information:')
+print("Reproducibility information:")
 Sys.time()
 proc.time()
 options(width = 120)

@@ -4,98 +4,113 @@ library("jaffelab")
 library("here")
 
 #### Load Data ####
-load(here("processed-data", "sce","sce_DLPFC.Rdata"), verbose = TRUE)
+load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
 
 #### Set Up Plotting ####
 my_theme <- theme_bw() +
-  theme(text = element_text(size=15))
+    theme(text = element_text(size = 15))
 
-plot_dir = here("plots","05_explore_sce","01_explore_cell_types")
-if(!dir.exists(plot_dir)) dir.create(plot_dir)
+plot_dir <- here("plots", "05_explore_sce", "01_explore_cell_types")
+if (!dir.exists(plot_dir)) dir.create(plot_dir)
 
-load(here("processed-data", "03_build_sce","cell_type_colors.Rdata"), verbose = TRUE)
+load(here("processed-data", "03_build_sce", "cell_type_colors.Rdata"), verbose = TRUE)
 cell_type_color <- cell_type_colors
 
 #### Replot with Annotations ####
-(ct <- sort(unique(as.character(c(sce$cellType_k,sce$cellType_hc)))))
-cat(ct, file = here("processed-data","03_build_sce","cell_types.txt"), sep = "\n")
+(ct <- sort(unique(as.character(c(sce$cellType_k, sce$cellType_hc)))))
+cat(ct, file = here("processed-data", "03_build_sce", "cell_types.txt"), sep = "\n")
 all(ct %in% names(cell_type_colors)) ## if not revisit cell_colors
 
 ## Plot clusters in TSNE
-TSNE_HC_cellTypes <- ggcells(sce, mapping=aes(x=TSNE.1, y=TSNE.2, colour=cellType_hc)) +
-  geom_point(size = 0.2, alpha = 0.3) +
-  scale_color_manual(values = cell_type_colors) +
-  my_theme +
-  coord_equal()
+TSNE_HC_cellTypes <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = cellType_hc)) +
+    geom_point(size = 0.2, alpha = 0.3) +
+    scale_color_manual(values = cell_type_colors) +
+    my_theme +
+    coord_equal()
 
-ggsave(TSNE_HC_cellTypes + 
-         guides(colour = guide_legend(override.aes = list(size=2, alpha = 1))),
-       filename = here(plot_dir, "TSNE_cellType.png"), width = 10)
+ggsave(TSNE_HC_cellTypes +
+    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+filename = here(plot_dir, "TSNE_cellType.png"), width = 10
+)
 
 ## Add facet for cell types
-ggsave(TSNE_HC_cellTypes + 
-         facet_wrap(~cellType_hc) +
-         theme(legend.position = "None"),
-       filename = here(plot_dir, "TSNE_cellType_facet.png"), width = 10, height = 10)
+ggsave(TSNE_HC_cellTypes +
+    facet_wrap(~cellType_hc) +
+    theme(legend.position = "None"),
+filename = here(plot_dir, "TSNE_cellType_facet.png"), width = 10, height = 10
+)
 
 
-TSNE_broad_cellTypes <- ggcells(sce, mapping=aes(x=TSNE.1, y=TSNE.2)) +
-  geom_point(aes(colour=cellType_broad_hc), size = 0.2, alpha = 0.3) +
-  scale_color_manual(values = cell_type_colors[levels(sce$cellType_broad_hc)], drop = TRUE) +
-  my_theme +
-  coord_equal()
+TSNE_broad_cellTypes <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2)) +
+    geom_point(aes(colour = cellType_broad_hc), size = 0.2, alpha = 0.3) +
+    scale_color_manual(values = cell_type_colors[levels(sce$cellType_broad_hc)], drop = TRUE) +
+    my_theme +
+    coord_equal()
 
-ggsave(TSNE_broad_cellTypes + 
-         guides(colour = guide_legend(override.aes = list(size=2, alpha = 1))),
-       filename = here(plot_dir, "TSNE_broad_cellType.png"), width = 10)
+ggsave(TSNE_broad_cellTypes +
+    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+filename = here(plot_dir, "TSNE_broad_cellType.png"), width = 10
+)
 
 
 #### Explore UMI ####
-UMI_ct_k <- ggcells(sce, mapping=aes(x=cellType_k, y=sum, fill=cellType_k)) +
-  geom_boxplot()+
-  scale_fill_manual(values = cell_type_colors[levels(sce$cellType_k)], drop = TRUE) +
-  my_theme +
-  theme(legend.position = "None",axis.title.x=element_blank(),
-        axis.text.x=element_text(angle=90,hjust=1))
+UMI_ct_k <- ggcells(sce, mapping = aes(x = cellType_k, y = sum, fill = cellType_k)) +
+    geom_boxplot() +
+    scale_fill_manual(values = cell_type_colors[levels(sce$cellType_k)], drop = TRUE) +
+    my_theme +
+    theme(
+        legend.position = "None", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 1)
+    )
 
-ggsave(UMI_ct_k,filename = here(plot_dir, "UMI_mbkm-29_cellType.png"), width = 10)
+ggsave(UMI_ct_k, filename = here(plot_dir, "UMI_mbkm-29_cellType.png"), width = 10)
 
 
-UMI_ct_hc <- ggcells(sce, mapping=aes(x=cellType_hc, y=sum, fill=cellType_hc)) +
-  geom_boxplot()+
-  scale_fill_manual(values = cell_type_colors) +
-  my_theme +
-  theme(legend.position = "None",axis.title.x=element_blank(),
-        axis.text.x=element_text(angle=90,hjust=1))
+UMI_ct_hc <- ggcells(sce, mapping = aes(x = cellType_hc, y = sum, fill = cellType_hc)) +
+    geom_boxplot() +
+    scale_fill_manual(values = cell_type_colors) +
+    my_theme +
+    theme(
+        legend.position = "None", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 1)
+    )
 
-ggsave(UMI_ct_hc,filename = here(plot_dir, "UMI_HC_cellType.png"), width = 10)
+ggsave(UMI_ct_hc, filename = here(plot_dir, "UMI_HC_cellType.png"), width = 10)
 
 
 #### Explore doublet scores
-dbs_ct_k <- ggcells(sce, mapping=aes(x=cellType_k, y=doubletScore, fill=cellType_k)) +
-  geom_boxplot()+
-  scale_fill_manual(values = cell_type_colors) +
-  my_theme +
-  theme(legend.position = "None",axis.title.x=element_blank(),
-        axis.text.x=element_text(angle=90,hjust=1))
+dbs_ct_k <- ggcells(sce, mapping = aes(x = cellType_k, y = doubletScore, fill = cellType_k)) +
+    geom_boxplot() +
+    scale_fill_manual(values = cell_type_colors) +
+    my_theme +
+    theme(
+        legend.position = "None", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 1)
+    )
 
-ggsave(dbs_ct_k,filename = here(plot_dir, "doubletScore_mbkm-29_cellType.png"), width = 10)
+ggsave(dbs_ct_k, filename = here(plot_dir, "doubletScore_mbkm-29_cellType.png"), width = 10)
 
 
-dbs_ct_hc <- ggcells(sce, mapping=aes(x=cellType_hc, y=doubletScore, fill=cellType_hc)) +
-  geom_boxplot()+
-  scale_fill_manual(values = cell_type_colors) +
-  my_theme +
-  theme(legend.position = "None",axis.title.x=element_blank(),
-        axis.text.x=element_text(angle=90,hjust=1))
+dbs_ct_hc <- ggcells(sce, mapping = aes(x = cellType_hc, y = doubletScore, fill = cellType_hc)) +
+    geom_boxplot() +
+    scale_fill_manual(values = cell_type_colors) +
+    my_theme +
+    theme(
+        legend.position = "None", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 1)
+    )
 
-ggsave(dbs_ct_hc,filename = here(plot_dir, "doubletScore_HC_cellType.png"), width = 10)
+ggsave(dbs_ct_hc, filename = here(plot_dir, "doubletScore_HC_cellType.png"), width = 10)
 
 
 cellType.idx <- splitit(sce$cellType_hc)
-#sapply(c("Excit", "Inhib", "MSN"), function(x){grep(x, names(cellType.idx))})
+# sapply(c("Excit", "Inhib", "MSN"), function(x){grep(x, names(cellType.idx))})
 
-sapply(cellType.idx, function(x){quantile(sce$doubletScore[x])})[ ,order(sapply(cellType.idx, function(x){quantile(sce$doubletScore[x])["50%"]}))]
+sapply(cellType.idx, function(x) {
+    quantile(sce$doubletScore[x])
+})[, order(sapply(cellType.idx, function(x) {
+    quantile(sce$doubletScore[x])["50%"]
+}))]
 #       Excit_15    Micro  Oligo_03 Excit_09     Astro       OPC Excit_10   Oligo_02 Excit_13  Excit_11 Endo.Mural_02
 # 0%   0.0086180 0.000000  0.000000  0.00000  0.000000  0.000000 0.000000  0.0000000 0.000000  0.050708      0.000000
 # 25%  0.0348360 0.032112  0.042816  0.04134  0.057876  0.068640 0.077310  0.0811380 0.103416  0.144880      0.085632
@@ -115,7 +130,11 @@ sapply(cellType.idx, function(x){quantile(sce$doubletScore[x])})[ ,order(sapply(
 # 75%   1.166396 1.447852 1.533816 1.438500 1.387359 1.712640 1.785096
 # 100% 13.872384 9.825768 8.841504 6.457070 8.640852 5.808176 4.430430
 
-sapply(cellType.idx, function(x){quantile(sce$sum[x])})[ ,order(sapply(cellType.idx, function(x){quantile(sce$sum[x])["50%"]}))]
+sapply(cellType.idx, function(x) {
+    quantile(sce$sum[x])
+})[, order(sapply(cellType.idx, function(x) {
+    quantile(sce$sum[x])["50%"]
+}))]
 #      Excit_15 Oligo_01 Excit_09 Oligo_03 Micro Endo.Mural_02   Astro Excit_13 Oligo_02 Excit_10 Excit_05      OPC
 # 0%        678      220      462      359   350         407.0   276.0    648.0    968.0      533   292.00   397.00
 # 25%      1101     1232     1389     1464  1756        2020.5  1474.0   2447.5   3750.0     3298  3077.25  3933.25
@@ -139,65 +158,73 @@ sapply(cellType.idx, function(x){quantile(sce$sum[x])})[ ,order(sapply(cellType.
 load("/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/processed-data/rdata/spe/07_spatial_registration/t_cor_plot_top_genes_k7.rda", verbose = TRUE)
 # dat_small
 table(dat_small$Layer)
-# Layer1 Layer2 Layer3 Layer4 Layer5 Layer6     WM 
-# 91     87     65     80     78     83    100 
+# Layer1 Layer2 Layer3 Layer4 Layer5 Layer6     WM
+# 91     87     65     80     78     83    100
 
-dat_symb <- rownames(sce)[match(rownames(dat_small),rowData(sce)$gene_id)]
+dat_symb <- rownames(sce)[match(rownames(dat_small), rowData(sce)$gene_id)]
 any(is.na(dat_symb))
 
 layer_idx <- splitit(dat_small$Layer)
-layer_top4 <- purrr::map(layer_idx, ~dat_symb[.x][1:4])
+layer_top4 <- purrr::map(layer_idx, ~ dat_symb[.x][1:4])
 # $Layer1
-# [1] "MT1G"  "VIM"   "FABP7" "MT1F" 
-# 
+# [1] "MT1G"  "VIM"   "FABP7" "MT1F"
+#
 # $Layer2
-# [1] "DACT1"   "STXBP6"  "SIPA1L1" "MAN1A1" 
-# 
+# [1] "DACT1"   "STXBP6"  "SIPA1L1" "MAN1A1"
+#
 # $Layer3
 # [1] "CARTPT"    "BAIAP3"    "ADCYAP1"   "LINC01007"
-# 
+#
 # $Layer4
-# [1] "VAMP1" "NEFH"  "SCN1B" "NGB"  
-# 
+# [1] "VAMP1" "NEFH"  "SCN1B" "NGB"
+#
 # $Layer5
 # [1] "PCP4"    "CAMK2D"  "SMYD2"   "TRABD2A"
-# 
+#
 # $Layer6
 # [1] "ISLR"  "NR4A2" "DACH1" "NTNG2"
-# 
+#
 # $WM
 # [1] "NDRG1"  "PTP4A2" "AQP1"   "PAQR6"
 
 
 ## markers
-my_plotMarkers(sce = sce, 
-               marker_list = layer_top4,
-               cat = "cellType_hc",
-               fill_colors = cell_type_colors,
-               pdf_fn = here(plot_dir, "HC_layer_markers_ct.pdf"))
-
-my_plotMarkers(sce = sce, 
-               marker_list = markers.mathys.tran,
-               cat = "cellType_k",
-               fill_colors = cell_type_colors,
-               pdf_fn = here(plot_dir, "mb_kmeans_29_mathys_markers_ct.pdf"))
-
-## Inhib sub-types
-markers.Inhib_subtypes = list(
-  'inhib_markers pg1' = c("HTR3A", "VIP", "CCK", "NPY", "CRHBP", "CALB2", "PNOC"),
-  'inhib_Zhaung2022' = c('SP8', #VIP
-                         'KLF5',#SST
-                         'LGI2',#PVALB
-                         'LAMP5')# LAMP5
+my_plotMarkers(
+    sce = sce,
+    marker_list = layer_top4,
+    cat = "cellType_hc",
+    fill_colors = cell_type_colors,
+    pdf_fn = here(plot_dir, "HC_layer_markers_ct.pdf")
 )
 
-my_plotMarkers(sce = sce[,grep("Inhib",sce$cellType_hc)], 
-               marker_list = markers.Inhib_subtypes,
-               cat = "cellType_hc",
-               fill_colors = cell_type_colors,
-               pdf_fn = here(plot_dir, "HC_inhib_markers_ct.pdf"))
+my_plotMarkers(
+    sce = sce,
+    marker_list = markers.mathys.tran,
+    cat = "cellType_k",
+    fill_colors = cell_type_colors,
+    pdf_fn = here(plot_dir, "mb_kmeans_29_mathys_markers_ct.pdf")
+)
 
-sce_inhib <- sce[,grep("Inhib",sce$cellType_hc)]
+## Inhib sub-types
+markers.Inhib_subtypes <- list(
+    "inhib_markers pg1" = c("HTR3A", "VIP", "CCK", "NPY", "CRHBP", "CALB2", "PNOC"),
+    "inhib_Zhaung2022" = c(
+        "SP8", # VIP
+        "KLF5", # SST
+        "LGI2", # PVALB
+        "LAMP5"
+    ) # LAMP5
+)
+
+my_plotMarkers(
+    sce = sce[, grep("Inhib", sce$cellType_hc)],
+    marker_list = markers.Inhib_subtypes,
+    cat = "cellType_hc",
+    fill_colors = cell_type_colors,
+    pdf_fn = here(plot_dir, "HC_inhib_markers_ct.pdf")
+)
+
+sce_inhib <- sce[, grep("Inhib", sce$cellType_hc)]
 sce_inhib$cellType_hc <- droplevels(sce_inhib$cellType_hc)
 sce_inhib$collapsedCluster <- droplevels(sce_inhib$collapsedCluster)
 table(sce_inhib$cellType_hc, sce_inhib$collapsedCluster)

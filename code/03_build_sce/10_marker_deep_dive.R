@@ -3,7 +3,7 @@ library("scran")
 library("here")
 
 #### Load data ####
-load(here("processed-data","sce","sce_DLPFC.Rdata"), verbose = TRUE)
+load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
 
 pd <- as.data.frame(SummarizedExperiment::colData(sce))
 # message("donor" %in% colnames(pd))
@@ -14,18 +14,18 @@ head(mod)
 
 sce$contrast <- ifelse(sce[["cellType_hc"]] == "Astro", 1, 0)
 table(sce$contrast)
-# 0     1 
-# 73625  3979 
+# 0     1
+# 73625  3979
 
 fm_astro <- scran::findMarkers(sce,
-                         groups = sce$contrast,
-                         assay.type = "logcounts", design = mod, test.type = "t",
-                         direction = "up", pval.type = "all", full.stats = T
+    groups = sce$contrast,
+    assay.type = "logcounts", design = mod, test.type = "t",
+    direction = "up", pval.type = "all", full.stats = T
 )
 
-save(fm_astro, file =  here("processed-data","03_build_sce","10_markere_deep_dive","fm_astro.Rdata"))
+save(fm_astro, file = here("processed-data", "03_build_sce", "10_markere_deep_dive", "fm_astro.Rdata"))
 
-##  sorted marker gene list for the corresponding group -> so cellType.target == 1 ...? 
+##  sorted marker gene list for the corresponding group -> so cellType.target == 1 ...?
 fm_astro[["0"]]
 # DataFrame with 6 rows and 4 columns
 # p.value       FDR summary.stats                   stats.1
@@ -71,15 +71,17 @@ fm_astro[["1"]]$stats.0
 # Standardized log-fold changes may be more appealing for visualization as it avoids large fold changes due to large variance. The choice
 # of std.lfc does not affect the calculation of the p-values. aka t-stat
 fm_std_astro <- scran::findMarkers(sce,
-                             groups = sce$contrast,
-                             assay.type = assay_name, design = mod, test.type = "t",
-                             std.lfc = TRUE,
-                             direction = "up", pval.type = "all", full.stats = T
+    groups = sce$contrast,
+    assay.type = assay_name, design = mod, test.type = "t",
+    std.lfc = TRUE,
+    direction = "up", pval.type = "all", full.stats = T
 )
 
 
-pw_astro <- findMarkers(sce, groups=sce$cellType_hc,
-                            assay.type="logcounts", design=mod, test="t",
-                            direction="up", pval.type="all", full.stats=T)
+pw_astro <- findMarkers(sce,
+    groups = sce$cellType_hc,
+    assay.type = "logcounts", design = mod, test = "t",
+    direction = "up", pval.type = "all", full.stats = T
+)
 
-save(pw_astro, file =  here("processed-data","03_build_sce","10_markere_deep_dive","pw_astro.Rdata"))
+save(pw_astro, file = here("processed-data", "03_build_sce", "10_markere_deep_dive", "pw_astro.Rdata"))

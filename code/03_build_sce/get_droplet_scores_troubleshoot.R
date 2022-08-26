@@ -69,7 +69,7 @@ droplet_elbow_plot <- as.data.frame(bcRanks) %>%
     geom_hline(yintercept = metadata(bcRanks)$knee, linetype = "dotted", color = "gray") +
     annotate("text", x = 10, y = metadata(bcRanks)$knee, label = "Second Knee", vjust = -1, color = "gray") +
     geom_hline(yintercept = knee_lower, linetype = "dashed") +
-    annotate("text", x = 10, y = knee_lower, label = "Knee est 'lower'", vjust = -0.5) +    
+    annotate("text", x = 10, y = knee_lower, label = "Knee est 'lower'", vjust = -0.5) +
     geom_hline(yintercept = user_lower, linetype = "dashed", color = "red") +
     annotate("text", x = 10, y = user_lower, label = "User defined 'lower'", vjust = -0.5, color = "red") +
     scale_x_continuous(trans = "log10") +

@@ -18,7 +18,7 @@ args <- commandArgs(trailingOnly = TRUE)
 var_oi_input <- args[[1]]
 
 # load sc data
-load(here("processed-data","sce","sce_DLPFC.Rdata"), verbose = TRUE)
+load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
 
 ## Edit colData
 rownames(sce) <- rowData(sce)$gene_id # have to make row names of object the ensembl id instead of gene names
@@ -35,7 +35,7 @@ results_specificity <- computeEnrichment(sce, var_oi = var_oi_input, covars = c(
 
 
 message("Done! saving - ", Sys.time())
-save(results_specificity, file = here("processed-data","05_explore_sce","enrichment",paste0("enrichment_",var_oi_input,".Rdata")))
+save(results_specificity, file = here("processed-data", "05_explore_sce", "enrichment", paste0("enrichment_", var_oi_input, ".Rdata")))
 
 
 # sgejobs::job_single('run_computeEnrichment_hc', create_shell = TRUE, memory = '50G', command = "Rscript run_computeEnrichment.R cellType_hc")

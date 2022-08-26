@@ -16,7 +16,7 @@ my_theme <- theme_bw() +
     theme(text = element_text(size = 15))
 
 plot_dir <- here(plot_dir, "03_droplet_qc")
-if(!dir.exists(plot_dir)) dir.create(plot_dir)
+if (!dir.exists(plot_dir)) dir.create(plot_dir)
 
 ## Load raw data
 load(here("processed-data", "sce", "sce_raw.Rdata"), verbose = TRUE)
@@ -24,7 +24,9 @@ length(table(sce$Sample))
 
 pd <- colData(sce) %>% as.data.frame()
 
-round_info <- pd %>% group_by(Sample, round) %>% count()
+round_info <- pd %>%
+    group_by(Sample, round) %>%
+    count()
 
 droplet_score_fn <- list.files(here("processed-data", "03_build_sce", "droplet_scores"),
     full.names = TRUE
@@ -35,12 +37,12 @@ names(droplet_score_fn) <- gsub("st", "s", gsub("droplet_scores_|.Rdata", "", ba
 e.out <- lapply(droplet_score_fn, function(x) get(load(x)))
 
 #### Compile drop empty info ####
-## What were the cutoffs? 
+## What were the cutoffs?
 log_fn <- list.files(here("code", "03_build_sce", "logs"), pattern = "get_droplet_scores.[0-9]", full.names = TRUE)
 logs <- map(log_fn, readLines)
 
-knee_lower <- map_dbl(logs, ~parse_number(.x[grepl("knee_lower =", .x)]))
-names(knee_lower) <- gsub("st", "s", map_chr(logs, ~ss(.x[grepl("Running Sample: ", .x)]," ",3)))
+knee_lower <- map_dbl(logs, ~ parse_number(.x[grepl("knee_lower =", .x)]))
+names(knee_lower) <- gsub("st", "s", map_chr(logs, ~ ss(.x[grepl("Running Sample: ", .x)], " ", 3)))
 
 ## check out n empty with boxplot
 
@@ -370,14 +372,16 @@ ggsave(n_boxplot, filename = here(plot_dir, "n_nuclei_boxplot.png"))
 #### Save clean data as HDF5 file  ####
 load(here("processed-data", "sce", "sce_no_empty_droplets.Rdata"))
 
-sce <- sce[,!sce$discard_auto]
+sce <- sce[, !sce$discard_auto]
 dim(sce)
 # [1] 36601 77604
 
-##save HDF5
-saveHDF5SummarizedExperiment(sce, dir=here("processed-data", "03_build_sce", "hdf5_sce"), prefix="", replace=FALSE,
-                             chunkdim=NULL, level=NULL, as.sparse=TRUE,
-                             verbose=TRUE)
+## save HDF5
+saveHDF5SummarizedExperiment(sce,
+    dir = here("processed-data", "03_build_sce", "hdf5_sce"), prefix = "", replace = FALSE,
+    chunkdim = NULL, level = NULL, as.sparse = TRUE,
+    verbose = TRUE
+)
 
 # sgejobs::job_single('03_droplet_qc', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript 03_droplet_qc.R")
 

@@ -13,15 +13,17 @@ library("here")
 library("sessioninfo")
 
 #### Plot Setup ####
-plot_dir = here("plots","05_explore_sce","05_azimuth_validation")
-if(!dir.exists(plot_dir)) dir.create(plot_dir)
+plot_dir <- here("plots", "05_explore_sce", "05_azimuth_validation")
+if (!dir.exists(plot_dir)) dir.create(plot_dir)
 
 #### Cell Annotation with RunAzimuth ####
-load(here("processed-data","sce","sce_DLPFC.Rdata"), verbose = TRUE)
+load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
 
-query <- CreateSeuratObject(counts = as.matrix(counts(sce)), 
-                            meta.data = data.frame(colData(sce)),
-                            project = "DLPFC")
+query <- CreateSeuratObject(
+    counts = as.matrix(counts(sce)),
+    meta.data = data.frame(colData(sce)),
+    project = "DLPFC"
+)
 
 ## Use Azimuth Refrence ##
 set.seed(20220818)
@@ -30,21 +32,23 @@ query <- RunAzimuth(query, reference = "humancortexref") ## Cell annotation with
 
 sce$cellType_azimuth <- query$predicted.subclass
 table(query$predicted.subclass)
-# Astro       Endo    L2/3 IT      L5 ET      L5 IT    L5/6 NP      L6 CT      L6 IT L6 IT Car3        L6b 
-# 6744       9888      21440        109       6775        345       1158       1155        332        875 
-# Lamp5  Micro-PVM      Oligo        OPC      Pvalb       Sncg        Sst  Sst Chodl        Vip       VLMC 
-# 802       2507      11384       1836       1513        243       4689         87       4178       1544 
+# Astro       Endo    L2/3 IT      L5 ET      L5 IT    L5/6 NP      L6 CT      L6 IT L6 IT Car3        L6b
+# 6744       9888      21440        109       6775        345       1158       1155        332        875
+# Lamp5  Micro-PVM      Oligo        OPC      Pvalb       Sncg        Sst  Sst Chodl        Vip       VLMC
+# 802       2507      11384       1836       1513        243       4689         87       4178       1544
 
-## Save 
-SeuratDisk::SaveH5Seurat(query, filename = here("processed-data","05_explore_sce","05_azimuth_validation","sce_DLPFC.h5Seurat"),
-                         overwrite = TRUE)
+## Save
+SeuratDisk::SaveH5Seurat(query,
+    filename = here("processed-data", "05_explore_sce", "05_azimuth_validation", "sce_DLPFC.h5Seurat"),
+    overwrite = TRUE
+)
 
-save(sce, file = here("processed-data","sce","sce_DLPFC.Rdata"))
+save(sce, file = here("processed-data", "sce", "sce_DLPFC.Rdata"))
 
 # sgejobs::job_single('05_azimuth_validation', create_shell = TRUE, queue= 'bluejay', memory = '75G', command = "Rscript 05_azimuth_validation.R")
 
 ## Reproducibility information
-print('Reproducibility information:')
+print("Reproducibility information:")
 Sys.time()
 proc.time()
 options(width = 120)
@@ -204,11 +208,11 @@ session_info()
 # XVector                     0.36.0     2022-04-26 [2] Bioconductor
 # zlibbioc                    1.42.0     2022-04-26 [2] Bioconductor
 # zoo                         1.8-10     2022-04-15 [2] CRAN (R 4.2.0)
-# 
+#
 # [1] /users/lhuuki/R/devel
 # [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-devel/R/devel/lib64/R/site-library
 # [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-devel/R/devel/lib64/R/library
-# 
+#
 # ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-# 
-# 
+#
+#

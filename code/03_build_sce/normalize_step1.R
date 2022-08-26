@@ -11,16 +11,16 @@ load(here("processed-data", "sce", "sce_no_empty_droplets.Rdata"), verbose = TRU
 
 ## Drop auto-drop nuclei
 table(sce$discard_auto)
-# FALSE  TRUE 
+# FALSE  TRUE
 # 77604  7152
 
-sce <- sce[,!sce$discard_auto]
+sce <- sce[, !sce$discard_auto]
 dim(sce)
 # [1] 36601 77604
 
 #### Rescale ####
 # Use `multiBatchNorm()` to compute log-normalized counts
-sce <- multiBatchNorm(sce, batch=sce$round)
+sce <- multiBatchNorm(sce, batch = sce$round)
 
 # Find HVGs
 geneVar <- modelGeneVar(sce)
@@ -32,19 +32,21 @@ rowData(sce)$hvgs <- chosen.hvgs
 
 #### How does the un-normalized data look? ####
 message("running PCA - ", Sys.time())
-sce_uncorrected <- runPCA(sce, subset_row=chosen.hvgs,
-                      BSPARAM=BiocSingular::RandomParam())
+sce_uncorrected <- runPCA(sce,
+    subset_row = chosen.hvgs,
+    BSPARAM = BiocSingular::RandomParam()
+)
 
 message("running TSNE - ", Sys.time())
-sce_uncorrected <- runTSNE(sce_uncorrected, dimred="PCA")
+sce_uncorrected <- runTSNE(sce_uncorrected, dimred = "PCA")
 
 message("Saving Data - ", Sys.time())
-save(sce_uncorrected, file = here("processed-data", "03_build_sce","sce_uncorrected.Rdata"))
+save(sce_uncorrected, file = here("processed-data", "03_build_sce", "sce_uncorrected.Rdata"))
 
 # sgejobs::job_single('normalize_step1', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript normalize_step1.R")
 
 ## Reproducibility information
-print('Reproducibility information:')
+print("Reproducibility information:")
 Sys.time()
 proc.time()
 options(width = 120)

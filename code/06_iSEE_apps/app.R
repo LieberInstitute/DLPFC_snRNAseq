@@ -4,7 +4,7 @@ library("shiny")
 library("paletteer")
 library("HDF5Array")
 
-#load("sce_DLPFC.Rdata", verbose = TRUE)
+# load("sce_DLPFC.Rdata", verbose = TRUE)
 sce <- loadHDF5SummarizedExperiment("sce_DLPFC_annotated/")
 
 cell_type_colors <- metadata(sce)$cell_type_colors[levels(sce$cellType_hc)]
@@ -19,8 +19,8 @@ source("initial.R", print.eval = TRUE)
 ## From https://github.com/LieberInstitute/10xPilot_snRNAseq-human/blob/810b47364af4c8afe426bd2a6b559bd6a9f1cc98/shiny_apps/tran2021_AMY/app.R#L10-L14
 ## Related to https://github.com/iSEE/iSEE/issues/568
 colData(sce) <- cbind(
-  colData(sce)[, !colnames(colData(sce)) %in% c("Sample", "cellType_hc")],
-  colData(sce)[, c("cellType_hc", "Sample")]
+    colData(sce)[, !colnames(colData(sce)) %in% c("Sample", "cellType_hc")],
+    colData(sce)[, c("cellType_hc", "Sample")]
 )
 
 sce$Sample <- as.factor(sce$Sample)
@@ -41,8 +41,8 @@ iSEE(
         #     names(cols) <- levels(sce$Sample)
         #     return(cols)
         # },
-    cellType_hc = function(n) {
-        return(cell_type_colors)
-    }
+        cellType_hc = function(n) {
+            return(cell_type_colors)
+        }
     ))
 )

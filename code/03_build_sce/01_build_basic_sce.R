@@ -14,18 +14,20 @@ tmp <- read.table(here("raw-data", "sample_libs_round0-5.tsv"), header = FALSE)
 
 sample_info <- data.frame(
     SAMPLE_ID = tmp$V1,
-    pos = gsub("st","s",tolower(gsub("DLPFC_", "", tmp$V2))),
+    pos = gsub("st", "s", tolower(gsub("DLPFC_", "", tmp$V2))),
     BrNum = tmp$V3,
     round = tmp$V5
 )
 
-position_codes <- data.frame(pos = c("ant","mid","pos"),
-                             Position = factor(c("Anterior","Middle","Posterior")))
+position_codes <- data.frame(
+    pos = c("ant", "mid", "pos"),
+    Position = factor(c("Anterior", "Middle", "Posterior"))
+)
 
 ## Build Sample Info compatible with other DLPFC data
-sample_info <- sample_info |> 
-  left_join(position_codes) |>
-  mutate(Sample = paste0(BrNum,"_",pos))
+sample_info <- sample_info |>
+    left_join(position_codes) |>
+    mutate(Sample = paste0(BrNum, "_", pos))
 
 stopifnot(all(!duplicated(sample_info$Sample)))
 
@@ -105,11 +107,11 @@ sce
 ## Note that no empty droplets have been filtered out yet!
 
 ## Save for later
-if(!dir.exists(here("processed-data", "sce"))) dir.create(here("processed-data", "sce"))
+if (!dir.exists(here("processed-data", "sce"))) dir.create(here("processed-data", "sce"))
 save(sce, file = here("processed-data", "sce", "sce_raw.Rdata"))
 
 ## Size in Gb
-lobstr::obj_size(sce) 
+lobstr::obj_size(sce)
 # 15.52167
 
 # sgejobs::job_single('01_build_basic_sce', create_shell = TRUE, queue= 'bluejay', memory = '50G', command = "Rscript 01_build_basic_sce.R")

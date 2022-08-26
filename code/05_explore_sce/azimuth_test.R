@@ -30,7 +30,7 @@ table(pbmcsca$predicted.celltype.l2)
 # sgejobs::job_single('azimuth_test', create_shell = TRUE,, memory = '25G', command = "Rscript azimuth_test.R")
 
 ## Reproducibility information
-print('Reproducibility information:')
+print("Reproducibility information:")
 Sys.time()
 proc.time()
 options(width = 120)
@@ -190,11 +190,11 @@ sessioninfo::session_info()
 # XVector                     0.36.0     2022-04-26 [2] Bioconductor
 # zlibbioc                    1.42.0     2022-04-26 [2] Bioconductor
 # zoo                         1.8-10     2022-04-15 [2] CRAN (R 4.2.0)
-# 
+#
 # [1] /users/lhuuki/R/devel
 # [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-devel/R/devel/lib64/R/site-library
 # [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-devel/R/devel/lib64/R/library
-# 
+#
 # ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-# 
-# 
+#
+#

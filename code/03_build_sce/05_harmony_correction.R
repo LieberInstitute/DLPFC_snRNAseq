@@ -4,14 +4,14 @@ library("scater")
 library("here")
 library("sessioninfo")
 
-## Choose Correction 
-#!/usr/bin/env Rscript
-args = commandArgs(trailingOnly=TRUE)
-correction = args[1]
+## Choose Correction
+# !/usr/bin/env Rscript
+args <- commandArgs(trailingOnly = TRUE)
+correction <- args[1]
 
 ## Load empty-free sce data
-sce_uncorrected <- loadHDF5SummarizedExperiment(here("processed-data", "03_build_sce","sce_uncorrected"))
-load(here("processed-data", "03_build_sce","sce_uncorrected_glm.Rdata"), verbose = TRUE)
+sce_uncorrected <- loadHDF5SummarizedExperiment(here("processed-data", "03_build_sce", "sce_uncorrected"))
+load(here("processed-data", "03_build_sce", "sce_uncorrected_glm.Rdata"), verbose = TRUE)
 stopifnot(correction %in% colnames(colData(sce_uncorrected)))
 message("Correcting by: ", correction)
 
@@ -28,22 +28,22 @@ reducedDim(sce, "PCA") <- NULL
 #### TSNE & UMAP ####
 set.seed(602)
 message("running TSNE - ", Sys.time())
-sce <- runTSNE(sce, dimred = 'HARMONY')
+sce <- runTSNE(sce, dimred = "HARMONY")
 
 message("running UMAP - ", Sys.time())
-sce <- runUMAP(sce, dimred = 'HARMONY')
+sce <- runUMAP(sce, dimred = "HARMONY")
 
 message("Done TSNE + UMAP - Saving data...", Sys.time())
 
-save(sce, file = here("processed-data", "03_build_sce",paste0("sce_harmony_",correction,".Rdata")))
+save(sce, file = here("processed-data", "03_build_sce", paste0("sce_harmony_", correction, ".Rdata")))
 
-saveHDF5SummarizedExperiment(sce_uncorrected, dir = here("processed-data", "03_build_sce",paste0("sce_harmony_",correction)))
+saveHDF5SummarizedExperiment(sce_uncorrected, dir = here("processed-data", "03_build_sce", paste0("sce_harmony_", correction)))
 
 ## going with Sample
 # sgejobs::job_single('05_harmony_correction_Sample', create_shell = TRUE, queue= 'bluejay', memory = '25G', command = "Rscript 05_harmony_correction.R Sample")
 
 ## Reproducibility information
-print('Reproducibility information:')
+print("Reproducibility information:")
 Sys.time()
 proc.time()
 options(width = 120)
@@ -52,8 +52,8 @@ session_info()
 
 # [1] "Reproducibility information:"
 # [1] "2022-06-10 12:44:52 EDT"
-# user   system  elapsed 
-# 1913.514    6.390 1921.608 
+# user   system  elapsed
+# 1913.514    6.390 1921.608
 # ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
 # setting  value
 # version  R version 4.1.2 Patched (2021-11-04 r81138)
@@ -66,7 +66,7 @@ session_info()
 # tz       US/Eastern
 # date     2022-06-10
 # pandoc   2.13 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1.x/bin/pandoc
-# 
+#
 # ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
 # package              * version  date (UTC) lib source
 # assertthat             0.2.1    2019-03-21 [2] CRAN (R 4.1.0)
@@ -147,9 +147,9 @@ session_info()
 # withr                  2.5.0    2022-03-03 [2] CRAN (R 4.1.2)
 # XVector                0.34.0   2021-10-26 [2] Bioconductor
 # zlibbioc               1.40.0   2021-10-26 [2] Bioconductor
-# 
+#
 # [1] /users/lhuuki/R/4.1.x
 # [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1.x/R/4.1.x/lib64/R/site-library
 # [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-4.1.x/R/4.1.x/lib64/R/library
-# 
+#
 # ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────

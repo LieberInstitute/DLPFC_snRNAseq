@@ -12,8 +12,8 @@ metrics_files <- find_metrics_csv(here("processed-data", "cellranger"))
 ## Read in the metrics
 cellranger_metrics_raw <- lapply(metrics_files, read.csv)
 table(sapply(cellranger_metrics_raw, ncol))
-# 19 
-# 19 
+# 19
+# 19
 
 
 ## Merge
@@ -29,13 +29,13 @@ rownames(cellranger_metrics) <- rownames(cellranger_metrics_chr)
 tmp <- read.table(here("raw-data", "sample_libs_round0-5.tsv"), header = FALSE, row.names = 1)
 
 sample_info <- data.frame(
-  row.names = rownames(tmp),
-  region_short = tolower(gsub("DLPFC_", "", tmp$V2)),
-  subject = tmp$V3,
-  round = tmp$V5
+    row.names = rownames(tmp),
+    region_short = tolower(gsub("DLPFC_", "", tmp$V2)),
+    subject = tmp$V3,
+    round = tmp$V5
 )
 ## match tables
-sample_info <- sample_info[rownames(cellranger_metrics),]
+sample_info <- sample_info[rownames(cellranger_metrics), ]
 
 cellranger_metrics$metrics_csv <- metrics_files
 cellranger_metrics$set <- sample_info$round
