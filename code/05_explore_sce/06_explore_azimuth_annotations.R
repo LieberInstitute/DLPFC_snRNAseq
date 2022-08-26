@@ -1,5 +1,4 @@
 library("SingleCellExperiment")
-# library("SeuratData")
 library("patchwork")
 library("here")
 library("pheatmap")
@@ -7,7 +6,8 @@ library("scater")
 library("bluster")
 library("tidyverse")
 library("sessioninfo")
-library(dplyr)
+library("dplyr")
+library("patchwork")
 
 #### Plot Setup ####
 plot_dir = here("plots","05_explore_sce","06_explore_azimuth_annotations")
@@ -27,7 +27,6 @@ cell_type_colors <- metadata(sce)$cell_type_colors[levels(sce$cellType_hc)]
 cell_type_colors_broad <- metadata(sce)$cell_type_colors_broad[levels(sce$cellType_broad_hc)]
 
 #### prop breakdown ####
-
 ct_counts <- pd |> 
   group_by(cellType_hc, cellType_azimuth) |>
   summarize(n_cell = n())
@@ -55,7 +54,6 @@ azimuth_count_bar <- azimuth_prop |>
 
 ggsave(azimuth_count_bar, filename = here(plot_dir, "count_bar_azimuth.png"))
 
-library(patchwork)
 ggsave(azimuth_prop_bar + theme(legend.position = "None") + azimuth_count_bar, filename = here(plot_dir, "count-prop_bar_azimuth.png"), width = 12)
 
 #### Azimuth Cell Types ####
@@ -73,8 +71,28 @@ azimuth_cellType_notes <- data.frame(azimuth = az,
                                                    "Inhib","Excit","Excit","Excit","Excit","Excit")) |>
   mutate(Layer = ifelse(grepl("L[1-6]", azimuth), gsub("(L[1-6]|L[1-6]/[1-6]).*", "\\1", azimuth), NA))
 
+#### Layer Data ####
+load(here("processed-data","05_explore_sce","07_sptatial_registration","layer_cor.Rdata"), verbose = TRUE)
 
-#### Compare to HC annotations 
+## HC Cor
+make_layer_tab <- function(cor){
+  max_cor <- apply(cor, 1, max)
+  max_layer <- colnames(cor)[apply(cor,1,which.max)]
+  max_layer <- gsub("ayer","",max_layer)
+  layer_tab <- data.frame(max_layer, max_cor)
+  # layer_tab <- data.frame(cell_type = rownames(cor),max_layer, max_cor)
+  return(layer_tab)
+}
+
+hc_layer <- make_layer_tab(cor_hc_top100)
+excit_layer <- make_layer_tab(cor_excit_top100)
+
+azimuth_layer <- make_layer_tab(cor_azimuth_top100)
+rownames(azimuth_layer) <- gsub("\\."," ",gsub("([0-9])\\.([0-9])","\\1/\\2",rownames(azimuth_layer)))
+rownames(azimuth_layer)[[7]] <- "Micro-PVM"
+#### Plot Heat Maps ####
+
+##Simple Compare to HC annotations 
 ct_annos <- table(sce$cellType_hc, sce$cellType_azimuth)
 
 png(here(plot_dir, "azimuth_v_hc.png"),height = 800, width = 800)
@@ -119,26 +137,25 @@ load(here("processed-data", "03_build_sce","cell_type_markers.Rdata"), verbose =
 n_markers <- sapply(markers_1vALL, function(x) sum(x$FDR < 0.05))
 
 ## Spatial Registration
-load(here("processed-data","05_explore_sce","07_sptatial_registration","layer_cor.Rdata"), verbose = TRUE)
-max_cor <- apply(cor, 1, max)
-max_layer <- colnames(cor)[apply(cor,1,which.max)[names(n_markers)]]
 
 ## build annotation df
 hc_anno <- data.frame(cellType_broad = gsub("\\.|_[0-9]+","",names(n_markers)),
-                      n_markers = n_markers,
-                      max_cor = max_cor[names(n_markers)],
-                      Layer = gsub("ayer","",max_layer))
-
-rownames(hc_anno) <- gsub("\\.","",rownames(hc_anno))
+                      n_markers = n_markers)
+rownames(hc_anno) <- gsub("\\.","",rownames(hc_anno)) ## EndoMural rename 
+hc_anno <- cbind(hc_anno, hc_layer[rownames(hc_anno),])
 
 
 azimuth_anno <- azimuth_cellType_notes |> 
-  column_to_rownames("azimuth")
+  column_to_rownames("azimuth") |>
+  select(-Layer)
 
-layers <- c("WM", "L1", "L2", "L2/3", "L3","L4","L5","L5/6","L6")
+azimuth_anno <- cbind(azimuth_anno, azimuth_layer[rownames(azimuth_anno),])
 
-azimuth_anno$Layer <- factor(azimuth_anno$Layer, levels = layers)
-hc_anno$Layer <- factor(hc_anno$Layer, levels = layers)
+layers <- c("WM", "L1", "L2", "L3","L4","L5","L6")
+# layers <- c("WM", "L1", "L2", "L2/3", "L3","L4","L5","L5/6","L6")
+
+azimuth_anno$max_layer <- factor(azimuth_anno$max_layer, levels = layers)
+hc_anno$max_layer <- factor(hc_anno$max_layer, levels = layers)
 
 layer_colors <- viridis(length(layers))
 names(layer_colors) <- layers 
@@ -148,7 +165,7 @@ pheatmap(jacc.mat,
          color= inferno(100),
          annotation_row = hc_anno,
          annotation_col = azimuth_anno,
-         annotation_colors = list(Layer = layer_colors, cellType_broad = cell_type_colors_broad),
+         annotation_colors = list(max_layer = layer_colors, cellType_broad = cell_type_colors_broad),
          main = "Strength of the correspondence between Azimuth & HC")
 dev.off()
 
