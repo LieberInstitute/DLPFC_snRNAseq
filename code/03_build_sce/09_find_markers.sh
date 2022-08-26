@@ -17,7 +17,7 @@ echo "Hostname: ${HOSTNAME}"
 echo "Task id: ${SGE_TASK_ID}"
 
 ## Load the R module (absent since the JHPCE upgrade to CentOS v7)
-module load conda_R
+module load conda_R/devel
 
 ## List current modules for reproducibility
 module list

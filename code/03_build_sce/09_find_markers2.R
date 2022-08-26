@@ -24,15 +24,44 @@ colLabels(sce) <- sce$cellType_hc
 table(sce$Sample)
 mod <- "~Sample"
 
-message("Running 1vALL findMarkers")
-Sys.time()
+# message("Running 1vALL findMarkers")
+# Sys.time()
+# 
+# markers_1vALL_sample <- findMarkers_1vAll(sce, assay_name = "logcounts", cellType_col = "cellType_hc", mod = mod)
+# 
+# message("Done - ", Sys.time())
+# Sys.time()
+# 
+# save(markers_1vALL_sample, file = here("processed-data", "03_build_sce","cell_type_markers_1vALL_mod.Rdata"))
 
-markers_1vALL_sample <- findMarkers_1vAll(sce, assay_name = "logcounts", cellType_col = "cellType_hc", mod = mod)
+## subtype enrichment 
 
-message("Done - ", Sys.time())
-Sys.time()
+## Which cell types have sub-types?
+cell_types <- levels(sce$cellType_hc)
+(ctt <- table(jaffelab::ss(cell_types,"_")))
+# Astro EndoMural     Excit     Inhib     Micro     Oligo       OPC 
+# 1         2        15         6         1         3         1
 
-save(markers_1vALL_sample, file = here("processed-data", "03_build_sce","cell_type_markers_1vALL_mod.Rdata"))
+## 
+(sub_cell_types <- names(ctt)[ctt > 1])
+# [1] "EndoMural" "Excit"     "Inhib"     "Oligo" 
+
+markers_enrich_subtype <- purrr::map(sub_cell_types, function(ct){
+  
+  message("Finding ", ct, " enrichment markers - ", Sys.time())
+  
+  sce_temp <- sce[,grepl(ct, sce$cellType_hc)]
+  sce_temp$cellType_hc <- droplevels(sce_temp$cellType_hc)
+  
+  print(table(sce_temp$cellType_hc))
+  enrich_subtype <- findMarkers_1vAll(sce_temp, assay_name = "logcounts", cellType_col = "cellType_hc", mod = mod)
+  
+  message("Done - ", Sys.time())
+  
+  return(enrich_subtype)
+})
+
+save(markers_enrich_subtyp, file = here("processed-data", "03_build_sce","cell_type_markers_enrich_subtype.Rdata"))
 
 
 # sgejobs::job_single('09_find_markers2', create_shell = TRUE, queue= 'bluejay', memory = '20G', command = "Rscript 09_find_markers2.R")
