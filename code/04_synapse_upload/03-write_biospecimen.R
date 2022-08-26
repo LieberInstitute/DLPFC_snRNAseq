@@ -26,7 +26,7 @@ meta_df <- data.frame(
     "tissue" = "dorsolateral prefrontal cortex",
     "isPostMortem" = TRUE,
     "BrodmannArea" = NA,
-    "nucleicAcidSource" = NA,
+    "nucleicAcidSource" = "single nucleus",
     "cellType" = NA,
     "reprogrammedCellType" = NA,
     "terminalDifferentiationPoint" = NA,
