@@ -152,3 +152,23 @@ broad_prop_bar_pos <- plot_composition_bar(prop_broad,
     labs(x = "Position")
 
 ggsave(broad_prop_bar_pos, filename = here(plot_dir, "prop_bar_broad_Position.png"))
+
+#### Layer Annotation Proportions ####
+
+n_nuc_layer <- pd |>
+  group_by(cellType_hc, cellType_layer) |>
+  summarize(n_nuc = n())
+
+barplot_n_nuc_layer <- n_nuc_layer |> 
+  ggplot(aes(x = cellType_layer, y = n_nuc, fill = cellType_hc)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = n_nuc), size = 2.5, position = position_stack(vjust = 0.5)) +
+  scale_fill_manual(values = cell_type_colors) +
+  theme_bw() +
+  theme(legend.position = "None", axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
+  labs(y = "Number of Nuclei", title )
+
+ggsave(barplot_n_nuc_layer, filename = here(plot_dir, "barplot_n_nuc_layer.png"))
+
+
+
