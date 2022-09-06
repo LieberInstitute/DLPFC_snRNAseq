@@ -412,6 +412,20 @@ my_plotMarkers(
     pdf_fn = here(plot_dir, "Azimuth_basic_mathys_markers.pdf")
 )
 
+#### Add Layer Annotations to colData ####
+
+layer_annotation <- read.csv(here("processed-data","05_explore_sce","DLPFC_HC_layer_annotation.csv")) |>
+  select(cellType_hc, cellType_layer = layer_level_post_qc)
+
+sce$cellType_layer <- factor(layer_annotation$cellType_layer[match(sce$cellType_hc, layer_annotation$cellType_hc)])
+
+table(sce$cellType_layer)
+# Astro  EndoMural Excit_L2/3   Excit_L4 Excit_L4/5   Excit_L5 Excit_L5/6   Excit_L6      Inhib      Micro 
+# 3979       2157       7927        482       4949       2505       2487       1792      11067       1601 
+# Oligo        OPC 
+# 32051       1940
+
+save(sce, file = here("processed-data", "sce", "sce_DLPFC.Rdata"))
 
 # sgejobs::job_single('05_azimuth_validation', create_shell = TRUE, queue= 'bluejay', memory = '75G', command = "Rscript 05_azimuth_validation.R")
 
