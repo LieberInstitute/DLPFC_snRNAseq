@@ -13,6 +13,7 @@ plot_dir <- here("plots", "05_explore_sce", "02_cellType_prop")
 #### Load SCE ####
 load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
 cell_type_colors <- metadata(sce)$cell_type_colors[levels(sce$cellType_hc)]
+cell_type_colors_layer <- metadata(sce)$cell_type_colors_layer[levels(sce$cellType_layer)]
 
 pd <- as.data.frame(colData(sce))
 
@@ -48,7 +49,6 @@ barplot_n_nuc <- pd |>
     labs(y = "Number of Nuclei")
 
 ggsave(barplot_n_nuc, filename = here(plot_dir, "barplot_n_nuc.png"), heigh = 3.5, width = 8)
-
 
 
 prop_boxplots <- prop_broad |>
@@ -170,5 +170,21 @@ barplot_n_nuc_layer <- n_nuc_layer |>
 
 ggsave(barplot_n_nuc_layer, filename = here(plot_dir, "barplot_n_nuc_layer.png"))
 
+## Prop Bar
+prop_layer <- pd |>
+  filter(!is.an(cellType_layer)) |>
+  count(Sample, cellType_layer) |>
+  left_join(n_nuc) |>
+  mutate(prop = n / n_nuc)
 
+layer_prop_bar_all <- plot_composition_bar(prop_layer,
+                                           sample_col = "Sample",
+                                           ct_col = "cellType_layer",
+                                           min_prop_text = .02
+) +
+  scale_fill_manual(values = cell_type_colors_layer) +
+  theme_bw() +
+  theme(legend.position = "None")
+
+ggsave(layer_prop_bar_all, filename = here(plot_dir, "prop_bar_layer_ALL.png"))
 
