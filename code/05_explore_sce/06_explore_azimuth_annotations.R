@@ -92,7 +92,6 @@ hc_layer <- make_layer_tab(cor_hc_top100)
 excit_layer <- make_layer_tab(cor_excit_top100)
 
 library(tidyverse)
-source(here("code", "05_explore_sce", "annotate_registered_clusters.R"), echo = TRUE)
 make_layer_tab2 <- function(cor) {
     cor_long <- as.data.frame(cor) |>
         tibble::rownames_to_column("cell_type") |>
