@@ -117,8 +117,7 @@ make_layer_tab2 <- function(cor) {
         arrange(cell_type)
 
     layer_tab <- layer_tab |>
-        left_join(annotate_registered_clusters(cor, cutoff_merge_ratio = 0.25), by = c("cell_type" = "cluster")) |>
-        mutate(layer_label = ifelse(layer_confidence == "good", layer_label, paste0(layer_label, "*")))
+        left_join(annotate_registered_clusters(cor, cutoff_merge_ratio = 0.25), by = c("cell_type" = "cluster"))
     return(layer_tab)
 }
 
@@ -420,9 +419,9 @@ layer_annotation <- read.csv(here("processed-data","05_explore_sce","DLPFC_HC_la
 sce$cellType_layer <- factor(layer_annotation$cellType_layer[match(sce$cellType_hc, layer_annotation$cellType_hc)])
 
 table(sce$cellType_layer)
-# Astro  EndoMural Excit_L2/3   Excit_L4 Excit_L4/5   Excit_L5 Excit_L5/6   Excit_L6      Inhib      Micro 
-# 3979       2157       7927        482       4949       2505       2487       1792      11067       1601 
-# Oligo        OPC 
+# Astro  EndoMural Excit_L2/3   Excit_L4 Excit_L4/5   Excit_L5 Excit_L5/6   Excit_L6      Inhib      Micro
+# 3979       2157       7927        482       4949       2505       2487       1792      11067       1601
+# Oligo        OPC
 # 32051       1940
 
 save(sce, file = here("processed-data", "sce", "sce_DLPFC.Rdata"))
