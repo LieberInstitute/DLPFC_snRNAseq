@@ -453,3 +453,52 @@ sapply(subtype_markers$all$Excit, function(x) rownames(x[is.na(x$FDR)])[[1]])
 
 
 sum(subtype_markers$all$Excit$Excit_15$FDR < 0.05)
+
+
+#### Heatmaps ####
+
+mean_ratio_top <- markers_mean_ratio |>
+  group_by(cellType.target) |>
+  slice(1:2) |>
+  filter(gene != "MALAT1") |>
+  mutate(cellType.target = gsub("\\.","", cellType.target))
+
+mean_ratio_top |> ungroup() |> count(gene) |> filter(n>1)
+
+## Pseudobulk by cell type
+pb_sce_hc <- scuttle::aggregateAcrossCells(sce, 
+                                           ids = sce$cellType_hc)
+
+## Need to normalize?
+sizeFactors.PB <- scater::librarySizeFactors(assays(pb_sce_hc)$counts)
+
+# # Normalize with these LSFs
+assays(pb_sce_hc)$logcounts<- t(apply(assays(pb_sce_hc)$counts, 1, function(x) {
+  log2(x /sizeFactors.PB + 1)
+}))
+
+
+summary(colSums(assays(pb_sce_hc)$logcounts))
+
+library(ComplexHeatmap)
+
+marker_anno <- mean_ratio_top |>
+  column_to_rownames("gene") |>
+  select(cellType = cellType.target)
+
+ct_anno <- 
+
+png(here(plot_dir, "heatmap_test_pheatmap.png"), height = 800, width = 800)
+# pheatmap(assays(pb_sce_hc_top)$counts,
+pheatmap(assays(pb_sce_hc)$logcounts[mean_ratio_top$gene,],
+         main = "Top Markers",
+         annotation_row = marker_anno,
+         annotation_colors = list(cellType = cell_type_colors)
+)
+dev.off()
+
+png(here(plot_dir, "heatmap_test_complex.png"), height = 800, width = 800)
+Heatmap(assays(pb_sce_hc_top)$counts)
+dev.off()
+
+
