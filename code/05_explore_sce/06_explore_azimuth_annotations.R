@@ -92,6 +92,7 @@ hc_layer <- make_layer_tab(cor_hc_top100)
 excit_layer <- make_layer_tab(cor_excit_top100)
 
 library(tidyverse)
+source(here("code", "05_explore_sce", "annotate_registered_clusters.R"), echo = TRUE)
 make_layer_tab2 <- function(cor) {
     cor_long <- as.data.frame(cor) |>
         tibble::rownames_to_column("cell_type") |>
@@ -116,7 +117,8 @@ make_layer_tab2 <- function(cor) {
         arrange(cell_type)
 
     layer_tab <- layer_tab |>
-        left_join(annotate_registered_clusters(cor, cutoff_merge_ratio = 0.25), by = c("cell_type" = "cluster"))
+        left_join(annotate_registered_clusters(cor, cutoff_merge_ratio = 0.25), by = c("cell_type" = "cluster")) |>
+        mutate(layer_label = ifelse(layer_confidence == "good", layer_label, paste0(layer_label, "*")))
     return(layer_tab)
 }
 
@@ -409,21 +411,6 @@ my_plotMarkers(
     cat = "azimuth_basic",
     pdf_fn = here(plot_dir, "Azimuth_basic_mathys_markers.pdf")
 )
-
-#### Add Layer Annotations to colData ####
-
-layer_annotation <- read.csv(here("processed-data","05_explore_sce","DLPFC_HC_layer_annotation.csv")) |>
-  select(cellType_hc, cellType_layer = layer_level_post_qc)
-
-sce$cellType_layer <- factor(layer_annotation$cellType_layer[match(sce$cellType_hc, layer_annotation$cellType_hc)])
-
-table(sce$cellType_layer)
-# Astro  EndoMural Excit_L2/3   Excit_L4 Excit_L4/5   Excit_L5 Excit_L5/6   Excit_L6      Inhib      Micro
-# 3979       2157       7927        482       4949       2505       2487       1792      11067       1601
-# Oligo        OPC
-# 32051       1940
-
-save(sce, file = here("processed-data", "sce", "sce_DLPFC.Rdata"))
 
 # sgejobs::job_single('05_azimuth_validation', create_shell = TRUE, queue= 'bluejay', memory = '75G', command = "Rscript 05_azimuth_validation.R")
 
