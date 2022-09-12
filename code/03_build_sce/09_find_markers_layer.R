@@ -30,7 +30,6 @@ markers_1vALL <- scran::findMarkers(sce, pval.type = "all", direction = "up")
 message("Running Tran 1vAll - ", Sys.time())
 markers_1vALL_enrich <- findMarkers_1vAll(sce, assay_name = "logcounts", cellType_col = "cellType_layer", mod="~Sample")
 
-
 ## Run mean Ratio markers
 message("Running Mean Ratio - ", Sys.time())
 markers_mean_ratio <- get_mean_ratio2(sce, assay_name = "logcounts", cellType_col = "cellType_layer")

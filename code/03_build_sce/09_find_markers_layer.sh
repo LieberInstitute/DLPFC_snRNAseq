@@ -1,6 +1,6 @@
 #!/bin/bash
 #$ -cwd
-#$ -l mem_free=20G,h_vmem=20G,h_fsize=100G
+#$ -l mem_free=100G,h_vmem=100G,h_fsize=100G
 #$ -N find_markers_layer
 #$ -o logs/09_find_markers_layer.txt
 #$ -e logs/09_find_markers_layer.txt
