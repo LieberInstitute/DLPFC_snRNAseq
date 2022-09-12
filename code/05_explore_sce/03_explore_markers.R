@@ -502,3 +502,101 @@ Heatmap(assays(pb_sce_hc_top)$counts)
 dev.off()
 
 
+#### Layer markers ####
+
+load(here("processed-data", "03_build_sce", "cell_type_markers_layer.Rdata"), verbose = TRUE)
+# markers_1vALL
+# markers_1vALL_enrich
+# markers_mean_ratio
+
+# sapply(markers_1vALL, function(x) sum(x$FDR < 0.05))
+# Astro    EndoMural        Micro        Oligo          OPC   Excit_L2/3     Excit_L3 Excit_L3/4/5     Excit_L4 
+# 1300         1570         1639          293          667            0           87          707           82 
+# Excit_L5   Excit_L5/6     Excit_L6        Inhib 
+# 168          127          361          450 
+
+markers_1vALL_enrich |> 
+  filter(log.FDR < log(0.05)) |>
+  group_by(cellType.target) |>
+  count()
+
+# cellType.target     n
+# <fct>           <int>
+#   1 Astro            7083
+# 2 EndoMural        7981
+# 3 Micro            6616
+# 4 Oligo            4258
+# 5 OPC              5107
+# 6 Excit_L2/3       1063
+# 7 Excit_L3        10114
+# 8 Excit_L3/4/5     6226
+# 9 Excit_L4         7300
+# 10 Excit_L5         7645
+# 11 Excit_L5/6       6872
+# 12 Excit_L6         6317
+# 13 Inhib            9019
+
+
+markers_mean_ratio  |> 
+  filter(ratio > 1) |>
+  group_by(cellType.target) |>
+  count()
+
+# cellType.target     n
+# <fct>           <int>
+# 1 Astro             242
+# 2 EndoMural         261
+# 3 Micro             305
+# 4 Oligo              27
+# 5 OPC               353
+# 6 Excit_L2/3        184
+# 7 Excit_L3          190
+# 8 Excit_L3/4/5      290
+# 9 Excit_L4          288
+# 10 Excit_L5          364
+# 11 Excit_L5/6        425
+# 12 Excit_L6          667
+# 13 Inhib             357
+
+layer_markers <- left_join(markers_1vALL_enrich,markers_mean_ratio)
+
+layer_markers |> 
+
+  
+pb_sce_layer <- scuttle::aggregateAcrossCells(sce[,!is.na(sce$cellType_layer)],
+                                              ids = sce$cellType_layer[!is.na(sce$cellType_layer)])
+
+## Need to normalize?
+sizeFactors.PB <- scater::librarySizeFactors(assays(pb_sce_layer)$counts)
+
+# # Normalize with these LSFs
+assays(pb_sce_layer)$logcounts<- t(apply(assays(pb_sce_layer)$counts, 1, function(x) {
+  log2(x /sizeFactors.PB + 1)
+}))
+
+layer_markers_top <- markers_mean_ratio |>
+  filter(rank_ratio <= 2) |>
+  arrange(cellType.target)
+
+marker_anno <- layer_markers_top |>
+  column_to_rownames("gene") |>
+  select(cellType = cellType.target)
+
+pb_sce_layer_top <- pb_sce_layer[layer_markers_top$gene,]
+
+
+row_ha = rowAnnotation(cell_type = layer_markers_top$cellType.target,
+                       col = list(cell_type = metadata(sce)$cell_type_colors_layer))
+
+column_ha = HeatmapAnnotation(ncells = anno_barplot(pb_sce_layer$ncells), cell_type = pb_sce_layer$cellType_layer,
+                              col = list(cell_type = metadata(sce)$cell_type_colors_layer))
+
+png(here(plot_dir, "heatmap_test_complex.png"), height = 800, width = 800)
+Heatmap(assays(pb_sce_layer_top)$counts,
+        cluster_rows = FALSE,
+        cluster_columns = FALSE,
+        right_annotation = row_ha,
+        top_annotation = column_ha)
+dev.off()
+
+table(sce$cellType_layer, sce$cellType_azimuth)
