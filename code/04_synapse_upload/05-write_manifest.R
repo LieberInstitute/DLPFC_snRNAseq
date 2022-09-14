@@ -59,7 +59,7 @@ meta_df <- data.frame(
     "study" = "LIBD_U01_DLPFC",
     "grant" = NA, # TODO: need to provide this
     "resourceType" = "experimentalData",
-    "dataType" = NA,
+    "dataType" = "geneExpression",
     "dataSubtype" = c(
         rep("metadata", num_metadata), rep("raw", num_fastq)
     ),
