@@ -18,48 +18,50 @@ cell_type_colors_layer <- metadata(sce)$cell_type_colors_layer[levels(sce$cellTy
 
 #### UMAP plots ####
 UMAP_cellTypes_hc <- ggcells(sce, mapping = aes(x = UMAP.1, y = UMAP.2, colour = cellType_hc)) +
-  geom_point(size = 0.2, alpha = 0.3) +
-  scale_color_manual(values = cell_type_colors) +
-  my_theme +
-  coord_equal()
+    geom_point(size = 0.2, alpha = 0.3) +
+    scale_color_manual(values = cell_type_colors) +
+    my_theme +
+    coord_equal()
 
 ggsave(UMAP_cellTypes_hc +
-         guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
-       filename = here(plot_dir, "UMAP_cellType.png"), width = 9
+    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+filename = here(plot_dir, "UMAP_cellType.png"), width = 9
 )
 
-## pdf versions 
+## pdf versions
 ggsave(UMAP_cellTypes_hc +
-         guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
-       filename = here(plot_dir, "UMAP_cellType.pdf"), width = 9
+    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+filename = here(plot_dir, "UMAP_cellType.pdf"), width = 9
 )
 
 ggsave(UMAP_cellTypes_hc +
-         theme(legend.position = 'None'),
-       filename = here(plot_dir, "UMAP_cellType_no_legend.png"))
+    theme(legend.position = "None"),
+filename = here(plot_dir, "UMAP_cellType_no_legend.png")
+)
 
 ## Add facet for cell types
 ggsave(UMAP_cellTypes_hc +
-         facet_wrap(~cellType_hc) +
-         theme(legend.position = "None"),
-       filename = here(plot_dir, "UMAP_cellType_facet.png"), width = 10, height = 10
+    facet_wrap(~cellType_hc) +
+    theme(legend.position = "None"),
+filename = here(plot_dir, "UMAP_cellType_facet.png"), width = 10, height = 10
 )
 
 ## layer annotaions
-UMAP_cellType_layer <- ggcells(sce[,!is.na(sce$cellType_layer)], mapping = aes(x = UMAP.1, y = UMAP.2, colour = cellType_layer)) +
-  geom_point(size = 0.2, alpha = 0.3) +
-  scale_color_manual(values = cell_type_colors_layer) +
-  my_theme +
-  coord_equal()
+UMAP_cellType_layer <- ggcells(sce[, !is.na(sce$cellType_layer)], mapping = aes(x = UMAP.1, y = UMAP.2, colour = cellType_layer)) +
+    geom_point(size = 0.2, alpha = 0.3) +
+    scale_color_manual(values = cell_type_colors_layer) +
+    my_theme +
+    coord_equal()
 
 ggsave(UMAP_cellType_layer +
-         guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
-       filename = here(plot_dir, "UMAP_cellType_layer.png"), width = 9
+    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+filename = here(plot_dir, "UMAP_cellType_layer.png"), width = 9
 )
 
-ggsave(UMAP_cellType_layer  +
-         theme(legend.position = 'None'),
-       filename = here(plot_dir, "UMAP_cellType_layer_no_legend.png"))
+ggsave(UMAP_cellType_layer +
+    theme(legend.position = "None"),
+filename = here(plot_dir, "UMAP_cellType_layer_no_legend.png")
+)
 
 
 #### Plot clusters in TSNE ####

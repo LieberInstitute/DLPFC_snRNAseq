@@ -155,38 +155,37 @@ ggsave(broad_prop_bar_pos, filename = here(plot_dir, "prop_bar_broad_Position.pn
 
 #### Layer Annotation Proportions ####
 n_nuc_layer <- pd |>
-  group_by(cellType_hc, cellType_layer) |>
-  summarize(n_nuc = n())
+    group_by(cellType_hc, cellType_layer) |>
+    summarize(n_nuc = n())
 
-## Overlap between 
+## Overlap between
 # Excit_14 82
 # Excit_15 66
 ## Solve with ifelse..add 66 in post?
-barplot_n_nuc_layer <- n_nuc_layer |> 
-  ggplot(aes(x = cellType_layer, y = n_nuc, fill = cellType_hc)) +
-  geom_bar(stat = "identity") +
-  geom_text(aes(label = ifelse(n_nuc > 70, n_nuc, NA)), size = 2.5, position = position_stack(vjust = 0.5)) +
-  scale_fill_manual(values = cell_type_colors) +
-  theme_bw() +
-  theme(legend.position = "None", axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
-  labs(y = "Number of Nuclei", title )
+barplot_n_nuc_layer <- n_nuc_layer |>
+    ggplot(aes(x = cellType_layer, y = n_nuc, fill = cellType_hc)) +
+    geom_bar(stat = "identity") +
+    geom_text(aes(label = ifelse(n_nuc > 70, n_nuc, NA)), size = 2.5, position = position_stack(vjust = 0.5)) +
+    scale_fill_manual(values = cell_type_colors) +
+    theme_bw() +
+    theme(legend.position = "None", axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
+    labs(y = "Number of Nuclei", title)
 
 ggsave(barplot_n_nuc_layer, filename = here(plot_dir, "barplot_n_nuc_layer.png"))
 ggsave(barplot_n_nuc_layer, filename = here(plot_dir, "barplot_n_nuc_layer.pdf"))
 
 ## Prop Bar
 prop_layer <- pd |>
-  # filter(!is.na(cellType_layer)) |>
-  count(Sample, cellType_layer) |>
-  left_join(n_nuc) |>
-  mutate(prop = n / n_nuc)
+    # filter(!is.na(cellType_layer)) |>
+    count(Sample, cellType_layer) |>
+    left_join(n_nuc) |>
+    mutate(prop = n / n_nuc)
 
 layer_prop_bar_all <- plot_composition_bar(prop_layer,
-                                           sample_col = "Sample",
-                                           ct_col = "cellType_layer",
-                                           min_prop_text = .02
+    sample_col = "Sample",
+    ct_col = "cellType_layer",
+    min_prop_text = .02
 ) +
-  scale_fill_manual(values = cell_type_colors_layer) +
-  theme_bw()
+    scale_fill_manual(values = cell_type_colors_layer) +
+    theme_bw()
 ggsave(layer_prop_bar_all, filename = here(plot_dir, "prop_bar_layer_ALL.png"), width = 3)
-

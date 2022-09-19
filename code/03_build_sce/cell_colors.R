@@ -124,11 +124,12 @@ dev.off()
 
 save(cell_type_colors_broad, cell_type_colors, file = here("processed-data", "03_build_sce", "cell_type_colors.Rdata"))
 
-## Add colors for layer annotation cell types 
-
+## Add colors for layer annotation cell types
+library(SingleCellExperiment)
 load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
-cell_types_layer <- levels(sce$cellType_layer)
-
+(cell_types_layer <- levels(sce$cellType_layer))
+# [1] "Astro"        "EndoMural"    "Micro"        "Oligo"        "OPC"          "Excit_L2/3"   "Excit_L3"
+# [8] "Excit_L3/4/5" "Excit_L4"     "Excit_L5"     "Excit_L5/6"   "Excit_L6"     "Inhib"
 
 cell_type_colors_layer <- expand_cell_colors(cell_type_colors_broad, cell_types_layer)
 
@@ -140,20 +141,22 @@ dev.off()
 ## hmm blues are very simmilar...try brewer blues
 blues <- brewer.pal(9, "PuBu")
 
-cell_type_colors_layer[grepl("Excit_", names(cell_type_colors_layer))] <- blues[4:9]
+cell_type_colors_layer[grepl("Excit_", names(cell_type_colors_layer))] <- blues[3:9]
+
+cell_type_colors_layer <- cell_type_colors_layer[cell_types_layer]
 
 png(here("plots", "cell_colors", "cell_type_colors_layer_brew.png"))
 preview_colors(cell_type_colors_layer)
 dev.off()
 
-metadata(sce)$cell_type_colors_layer <- cell_type_colors_layer
-
-## In to green gradiant 
-# blues <- brewer.pal(8, "YlGnBu") 
+## In to green gradiant
+# blues <- brewer.pal(8, "YlGnBu")
 # cell_type_colors_layer[grepl("Excit_", names(cell_type_colors_layer))] <- blues[3:8]
-# 
+#
 # png(here("plots", "cell_colors", "cell_type_colors_layer_brew.png"))
 # preview_colors(cell_type_colors_layer)
 # dev.off()
 
-
+## Save in metadata
+metadata(sce)$cell_type_colors_layer <- cell_type_colors_layer
+save(sce, file = here("processed-data", "sce", "sce_DLPFC.Rdata"))

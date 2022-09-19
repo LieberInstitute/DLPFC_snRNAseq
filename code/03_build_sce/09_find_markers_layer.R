@@ -9,7 +9,7 @@ load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
 
 #### Find Markers ####
 ## Drop NA in layer anno
-sce <- sce[,!is.na(sce$cellType_layer)]
+sce <- sce[, !is.na(sce$cellType_layer)]
 
 table(sce$cellType_layer)
 # Astro Endo.Mural_01 Endo.Mural_02      Excit_01      Excit_02      Excit_03      Excit_04      Excit_05
@@ -28,14 +28,14 @@ markers_1vALL <- scran::findMarkers(sce, pval.type = "all", direction = "up")
 
 
 message("Running Tran 1vAll - ", Sys.time())
-markers_1vALL_enrich <- findMarkers_1vAll(sce, assay_name = "logcounts", cellType_col = "cellType_layer", mod="~Sample")
+markers_1vALL_enrich <- findMarkers_1vAll(sce, assay_name = "logcounts", cellType_col = "cellType_layer", mod = "~Sample")
 
 ## Run mean Ratio markers
 message("Running Mean Ratio - ", Sys.time())
 markers_mean_ratio <- get_mean_ratio2(sce, assay_name = "logcounts", cellType_col = "cellType_layer")
 
 
-save(markers_1vALL, markers_1vALL_enrich, markers_mean_ratio,  file = here("processed-data", "03_build_sce", "cell_type_markers_layer.Rdata"))
+save(markers_1vALL, markers_1vALL_enrich, markers_mean_ratio, file = here("processed-data", "03_build_sce", "cell_type_markers_layer.Rdata"))
 
 
 # sgejobs::job_single('09_find_markers_layer', create_shell = TRUE, memory = '20G', command = "Rscript 09_find_markers_layer.R")
