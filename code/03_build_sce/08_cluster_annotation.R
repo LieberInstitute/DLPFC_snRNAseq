@@ -643,16 +643,18 @@ UMI_ct_k <- ggcells(sce, mapping = aes(x = cellType_k, y = sum, fill = cellType_
 ggsave(UMI_ct_k, filename = here(plot_dir, "UMI_mbkm-29_cellType.png"), width = 10)
 
 
-UMI_ct_hc <- ggcells(sce, mapping = aes(x = cellType_hc, y = sum, fill = cellType_hc)) +
+UMI_ct_hc <- ggcells(sce, mapping = aes(x = reorder(cellType_hc, sum, FUN = median), 
+                                        y = sum, fill = cellType_hc)) +
     geom_boxplot() +
     scale_fill_manual(values = cell_type_colors) +
     my_theme +
     theme(
         legend.position = "None", axis.title.x = element_blank(),
-        axis.text.x = element_text(angle = 90, hjust = 1)
-    )
+        axis.text.x = element_text(angle = 45, hjust = 1)
+    )+
+  labs(y = "Total UMIs")
 
-ggsave(UMI_ct_hc, filename = here(plot_dir, "UMI_HC_cellType.png"), width = 10)
+ggsave(UMI_ct_hc, filename = here(plot_dir, "qc_UMI_HC_cellType.png"), height = 3)
 
 
 #### Explore doublet scores
@@ -668,16 +670,20 @@ dbs_ct_k <- ggcells(sce, mapping = aes(x = cellType_k, y = doubletScore, fill = 
 ggsave(dbs_ct_k, filename = here(plot_dir, "doubletScore_mbkm-29_cellType.png"), width = 10)
 
 
-dbs_ct_hc <- ggcells(sce, mapping = aes(x = cellType_hc, y = doubletScore, fill = cellType_hc)) +
+dbs_ct_hc <- ggcells(sce, 
+                     mapping = aes(x = reorder(cellType_hc, doubletScore, FUN = median),
+                                   y = doubletScore, 
+                                   fill = cellType_hc)) +
     geom_boxplot() +
     scale_fill_manual(values = cell_type_colors) +
     my_theme +
     theme(
         legend.position = "None", axis.title.x = element_blank(),
-        axis.text.x = element_text(angle = 90, hjust = 1)
-    )
+        axis.text.x = element_text(angle = 45, hjust = 1)
+    ) +
+  labs(y = "Doublet Score")
 
-ggsave(dbs_ct_hc, filename = here(plot_dir, "doubletScore_HC_cellType.png"), width = 10)
+ggsave(dbs_ct_hc, filename = here(plot_dir, "qc_doubletScore_HC_cellType.png"), height = 3)
 
 
 cellType.idx <- splitit(sce$cellType_hc)
@@ -741,11 +747,21 @@ mito_ct_hc <- ggcells(sce, mapping = aes(
     my_theme +
     theme(
         legend.position = "None", axis.title.x = element_blank(),
-        axis.text.x = element_text(angle = 90, hjust = 1)
-    )
+        axis.text.x = element_text(angle = 45, hjust = 1)
+    ) +
+  labs(y = "Percent Mito")
 
-ggsave(mito_ct_hc, filename = here(plot_dir, "mitoRate_HC_cellType.png"), width = 10)
+ggsave(mito_ct_hc, filename = here(plot_dir, "qc_mitoRate_HC_cellType.png"), height = 3)
+ggsave(mito_ct_hc, filename = here(plot_dir, "qc_mitoRate_HC_cellType.pdf"), height = 3)
 
+
+#### ALL QC plots ####
+library(patchwork)
+
+ggsave((UMI_ct_hc / dbs_ct_hc / mito_ct_hc), filename = here(plot_dir, "qc_ALL_HC_cellType.png"), height = 7.5)
+
+
+## Mito over UMAP
 library(scales)
 UMAP_mito <- ggcells(sce, mapping = aes(x = UMAP.1, y = UMAP.2)) +
     geom_point(aes(colour = subsets_Mito_percent), size = 0.2, alpha = 0.3) +
