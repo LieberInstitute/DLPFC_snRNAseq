@@ -10,7 +10,7 @@ library("patchwork")
 #' @export
 #'
 #' @examples
-plot_reducedDim_facet <- function(sce, type = "TSNE", facet_by = "round", title = "") {
+plot_reducedDim_facet <- function(sce, type = "TSNE", facet_by = "round", title = NULL) {
 
     # main_plot <- ggcells(sce, mapping=aes(x=paste0(type,".1"), y=TSNE.2, colour=round)) +
 
@@ -21,11 +21,13 @@ plot_reducedDim_facet <- function(sce, type = "TSNE", facet_by = "round", title 
         geom_point(size = 0.2, alpha = 0.3) +
         coord_equal() +
         my_theme +
-        theme(legend.position = "none")
+        theme(legend.position = "none") +
+        labs(x = paste(type,"Dimension 1"), y = paste(type,"Dimension 2"))
 
     facet_plot <- main_plot + facet_wrap(as.formula(paste("~", facet_by)))
 
-    return(main_plot + labs(title = title) + facet_plot)
+    return(main_plot + labs(title = title) + 
+             facet_plot + theme(axis.title.y = element_blank()))
 }
 
 
