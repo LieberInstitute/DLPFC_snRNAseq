@@ -10,8 +10,9 @@ library("purrr")
 source(here("code", "03_build_sce", "utils.R"))
 
 # Plotting set up
-my_theme <- theme_classic() +
-    theme(text = element_text(size = 15))
+my_theme <- theme_bw() +
+  theme(text = element_text(size = 15),
+        panel.grid.major = element_blank(), panel.grid.minor = element_blank())
 
 plot_dir <- here("plots", "03_build_sce", "05_harmony_correction")
 
@@ -46,8 +47,8 @@ walk2(sce_fn, names(sce_fn), function(sce_fn, name) {
       
       message("plotting... ", fn)
       cat_plot <- plot_reducedDim_facet(sce, type = t, facet_by = cat)
-      ggsave(cat_plot, filename = here(plot_dir, paste(fn,".png")), width = 13)
-      ggsave(cat_plot, filename = here(plot_dir, paste(fn,".pdf")), width = 13)
+      ggsave(cat_plot, filename = here(plot_dir, paste0(fn,".png")), width = 13)
+      ggsave(cat_plot, filename = here(plot_dir, paste0(fn,".pdf")), width = 13)
       
     }
   }
