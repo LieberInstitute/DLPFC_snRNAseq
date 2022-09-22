@@ -1,136 +1,0 @@
-Adding LIBD modules
-Loading git
-Loading LIBD module for git-status-size/github
-Loading LIBD module for git-lfs/2.8.0
-Loading LIBD module for rmate/1.5.9
-Loading LIBD module for ruby/2.6.4p104
-Loading conda_R/devel
-**** Job starts ****
-Thu Aug 18 15:22:53 EDT 2022
-**** JHPCE info ****
-User: lhuuki
-Job id: 1583033
-Job name: azimuth_test
-Hostname: compute-146.cm.cluster
-Task id: undefined
-Unloading conda_R/devel
-Loading conda_R/4.1.x
-
-The following have been reloaded with a version change:
-  1) conda_R/devel => conda_R/4.1.x
-
-
-Currently Loaded Modules:
-  1) matlab/R2019a     6) COMMUNITY_CENTOS7_DEFAULT_ENV  11) ruby/2.6.4p104
-  2) stata/17          7) JHPCE_CENTOS7_DEFAULT_ENV      12) rmate/1.5.9
-  3) JHPCE_tools/1.0   8) git-status-size/github         13) conda/3-4.6.14
-  4) sge/8.1.9         9) git/2.28.0                     14) conda_R/4.1.x
-  5) gcc/4.4.7        10) git-lfs/2.8.0
-
- 
-
-Attaching SeuratObject
-Attaching sp
-Registered S3 method overwritten by 'SeuratDisk':
-  method            from  
-  as.sparse.H5Group Seurat
-Attaching shinyBS
-Installing package into ‘/users/lhuuki/R/4.1.x’
-(as ‘lib’ is unspecified)
-trying URL 'http://seurat.nygenome.org/src/contrib/pbmcsca.SeuratData_3.0.0.tar.gz'
-Content type 'application/octet-stream' length 58634290 bytes (55.9 MB)
-==================================================
-downloaded 55.9 MB
-
-* installing *source* package ‘pbmcsca.SeuratData’ ...
-** using staged installation
-** R
-** data
-*** moving datasets to lazyload DB
-** inst
-** byte-compile and prepare package for lazy loading
-** help
-*** installing help indices
-** building package indices
-** testing if installed package can be loaded from temporary location
-** testing if installed package can be loaded from final location
-** testing if installed package keeps a record of temporary installation path
-* DONE (pbmcsca.SeuratData)
-
-The downloaded source packages are in
-	‘/scratch/temp/1583033.1.shared.q/RtmpmOTI4n/downloaded_packages’
-An object of class Seurat 
-33694 features across 31021 samples within 1 assay 
-Active assay: RNA (33694 features, 0 variable features)
-Installing package into ‘/users/lhuuki/R/4.1.x’
-(as ‘lib’ is unspecified)
-trying URL 'http://seurat.nygenome.org/src/contrib/pbmcref.SeuratData_1.0.0.tar.gz'
-Content type 'application/octet-stream' length 77023016 bytes (73.5 MB)
-==================================================
-downloaded 73.5 MB
-
-* installing *source* package ‘pbmcref.SeuratData’ ...
-** using staged installation
-** R
-** inst
-** byte-compile and prepare package for lazy loading
-** help
-*** installing help indices
-** building package indices
-** testing if installed package can be loaded from temporary location
-** testing if installed package can be loaded from final location
-** testing if installed package keeps a record of temporary installation path
-* DONE (pbmcref.SeuratData)
-
-The downloaded source packages are in
-	‘/scratch/temp/1583033.1.shared.q/RtmpmOTI4n/downloaded_packages’
-An AzimuthData object - reference version: 1.0.0 
-Contains 3 meta.data field(s) to transfer.detected inputs from HUMAN with id type Gene.name
-reference rownames detected HUMAN with id type Gene.name
-Using reference SCTModel to calculate pearson residuals
-Determine variable features
-Setting min_variance to:  -Inf
-Calculating residuals of type pearson for 4265 genes
-  |                                                                              |                                                                      |   0%  |                                                                              |====                                                                  |   6%  |                                                                              |========                                                              |  12%  |                                                                              |============                                                          |  18%  |                                                                              |================                                                      |  24%  |                                                                              |=====================                                                 |  29%  |                                                                              |=========================                                             |  35%  |                                                                              |=============================                                         |  41%  |                                                                              |=================================                                     |  47%  |                                                                              |=====================================                                 |  53%  |                                                                              |=========================================                             |  59%  |                                                                              |=============================================                         |  65%  |                                                                              |=================================================                     |  71%  |                                                                              |======================================================                |  76%  |                                                                              |==========================================================            |  82%  |                                                                              |==============================================================        |  88%  |                                                                              |==================================================================    |  94%  |                                                                              |======================================================================| 100%
-  |                                                                              |                                                                      |   0%  |                                                                              |============                                                          |  17%  |                                                                              |=======================                                               |  33%  |                                                                              |===================================                                   |  50%  |                                                                              |===============================================                       |  67%  |                                                                              |==========================================================            |  83%  |                                                                              |======================================================================| 100%
-Set default assay to refAssay
-Normalizing query using reference SCT model
-Projecting cell embeddings
-Finding query neighbors
-Finding neighborhoods
-Finding anchors
-	Found 16075 anchors
-Finding integration vectors
-Finding integration vector weights
-0%   10   20   30   40   50   60   70   80   90   100%
-[----|----|----|----|----|----|----|----|----|----|
-**************************************************|
-Predicting cell labels
-Warning: Keys should be one or more alphanumeric characters followed by an underscore, setting key from predictionscorecelltype.l1_ to predictionscorecelltypel1_
-Predicting cell labels
-Warning: Feature names cannot have underscores ('_'), replacing with dashes ('-')
-Warning: Keys should be one or more alphanumeric characters followed by an underscore, setting key from predictionscorecelltype.l2_ to predictionscorecelltypel2_
-Predicting cell labels
-Warning: Feature names cannot have underscores ('_'), replacing with dashes ('-')
-Warning: Keys should be one or more alphanumeric characters followed by an underscore, setting key from predictionscorecelltype.l3_ to predictionscorecelltypel3_
-
-Integrating dataset 2 with reference dataset
-Finding integration vectors
-Integrating data
-Warning: Keys should be one or more alphanumeric characters followed by an underscore, setting key from integrated_dr_ to integrateddr_
-Warning: Keys should be one or more alphanumeric characters followed by an underscore, setting key from integrated_dr_ to integrateddr_
-Warning: All keys should be one or more alphanumeric characters followed by an underscore '_', setting key to integrateddr_
-Computing nearest neighbors
-Warning: The default method for RunUMAP has changed from calling Python UMAP via reticulate to the R-native UWOT using the cosine metric
-To use Python UMAP via reticulate, set umap.method to 'umap-learn' and metric to 'correlation'
-This message will be shown once per session
-Running UMAP projection
-Error in if (num_precomputed_nns == 1 && nn_is_single(nn_method)) { : 
-  missing value where TRUE/FALSE needed
-Calls: RunAzimuth ... RunUMAP.Neighbor -> RunUMAP -> RunUMAP.default -> umap_transform
-In addition: Warning message:
-In RunUMAP.default(object = neighborlist, reduction.model = reduction.model,  :
-  Number of neighbors between query and reference is not equal to the number of neighbros within reference
-Execution halted
-**** Job ends ****
-Thu Aug 18 15:30:34 EDT 2022
