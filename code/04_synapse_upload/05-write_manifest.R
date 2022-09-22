@@ -42,7 +42,8 @@ meta_df <- data.frame(
     "path" = paths,
     "parent" = c(
         rep("syn32383331", num_metadata),
-        rep("syn32383329", num_fastq + num_geno)
+        rep("syn32383329", num_fastq),
+        rep("syn36814730", num_geno)
     ),
     "individualID" = c(
         rep(NA, num_metadata),

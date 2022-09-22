@@ -1,10 +1,10 @@
 **** Job starts ****
-Wed Sep 21 15:32:06 EDT 2022
+Thu Sep 22 14:51:55 EDT 2022
 **** JHPCE info ****
 User: neagles
-Job id: 38933
+Job id: 42488
 Job name: write_manifest
-Hostname: compute-057.cm.cluster
+Hostname: compute-111.cm.cluster
 Loading conda_R/devel
 here() starts at /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq
 ─ Session info ───────────────────────────────────────────────────────────────
@@ -17,7 +17,7 @@ here() starts at /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       US/Eastern
- date     2022-09-21
+ date     2022-09-22
  pandoc   2.11.0.4 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-devel/bin/pandoc
 
 ─ Packages ───────────────────────────────────────────────────────────────────
@@ -45,4 +45,4 @@ here() starts at /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq
 
 ──────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Wed Sep 21 15:32:11 EDT 2022
+Thu Sep 22 14:52:05 EDT 2022
