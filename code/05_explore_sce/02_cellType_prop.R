@@ -221,7 +221,8 @@ prop_layer <- pd |>
     # filter(!is.na(cellType_layer)) |>
     count(Sample, cellType_layer) |>
     left_join(n_nuc) |>
-    mutate(prop = n / n_nuc)
+    mutate(prop = n / n_nuc,
+           cellType_layer = addNA(cellType_layer))
 
 layer_prop_bar_all <- plot_composition_bar(prop_layer,
     sample_col = "Sample",
@@ -240,9 +241,26 @@ layer_sample_prop_bar <- plot_composition_bar(prop_layer,
                                         min_prop_text = .03
 ) +
   labs(y = "Proportion") +
-  scale_fill_manual(values = metadata(sce)$cell_type_colors_layer) +
+  scale_fill_manual(values = c(metadata(sce)$cell_type_colors_layer, `NA` = "dark grey")) +
   theme_bw() +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 
 ggsave(layer_sample_prop_bar, filename = here(plot_dir, "prop_bar_layer_Sample.png"), width = 12)
+ggsave(layer_sample_prop_bar, filename = here(plot_dir, "prop_bar_layer_Sample.pdf"), width = 12)
+
+## facet version
+layer_prop_bar_position <- ggplot(data = prop_layer, aes(x = Sample, y = prop, fill = cellType_layer)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = ifelse(prop > 0.02,format(round(prop, 3), 3), "")), 
+            size = 2.7, 
+            position = position_stack(vjust = 0.5)) +
+  facet_grid(. ~Position, scales = "free", space = "free") +
+  scale_fill_manual(values = c(metadata(sce)$cell_type_colors_layer, `NA` = "dark grey")) +
+  labs(y = "Cell Type Proportion", fill = "Cell Type") +
+  my_theme +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
+ggsave(layer_prop_bar_position, filename = here(plot_dir, "prop_bar_layer_position.png"), width = 12)
+ggsave(layer_prop_bar_position, filename = here(plot_dir, "prop_bar_Sample_position.pdf"), width = 12)
+
 
