@@ -315,6 +315,18 @@ anno_hc2 <- anno_hc %>%
     ungroup() %>%
     mutate(cellType = as.factor(ifelse(n > 1, ct, broad)))
 
+order_cell_types <- function(cell_types){
+  
+  neun_mask <- grepl("Excit|Inhib", cell_types)
+  neun_ct <- cell_types[neun_mask]
+  glia_ct <- cell_types[!neun_mask]
+  
+  
+  
+  ordered_cell_types <- c(sort(glia_ct), sort(neun_ct))
+  return(ordered_cell_types)
+}
+
 
 ## Assign to sce
 sce$cellType_broad_k <- factor(anno_k$broad[match(sce$kmeans, anno_k$cluster)])
@@ -333,21 +345,24 @@ table(sce$cellType_k)
 # 461       2242       6018       1311        249       5541      28085       5631       1791
 
 
-sce$cellType_broad_hc <- factor(anno_hc$broad[match(sce$collapsedCluster, anno_hc$cluster)])
-sce$cellType_hc <- factor(anno_hc2$cellType[match(sce$collapsedCluster, anno_hc2$cluster)])
+hc_levels <- order_cell_types(levels(anno_hc2$cellType))
+hc_broad_levels <- order_cell_types(unique(anno_hc2$broad))
+
+sce$cellType_broad_hc <- factor(anno_hc$broad[match(sce$collapsedCluster, anno_hc$cluster)], levels = hc_broad_levels)
+sce$cellType_hc <- factor(anno_hc2$cellType[match(sce$collapsedCluster, anno_hc2$cluster)], levels = hc_levels)
 table(sce$cellType_broad_hc)
-# Astro EndoMural      Excit      Inhib      Micro      Oligo        OPC
-# 3979       2157      24809      11067       1601      32051       1940
+# Astro EndoMural     Micro     Oligo       OPC     Excit     Inhib 
+# 3979      2157      1601     32051      1940     24809     11067
 
 table(sce$cellType_hc)
-# EndoMural_01 EndoMural_02      Excit_01      Excit_02      Excit_03      Excit_04      Excit_05      Excit_06
-#           446          1711          7927          2487          1309          2171          2532           329
-# Excit_07      Excit_08      Excit_09      Excit_10      Excit_11      Excit_12      Excit_13      Excit_14
-#      334          1463          2561          3979          1079           482           420          1567
-# Excit_15      Excit_16      Inhib_01      Inhib_02      Inhib_03      Inhib_04      Inhib_05      Inhib_06
-#       82            66          5366          1267          1310           565          1192          1367
-# Micro      Oligo_01      Oligo_02      Oligo_03           OPC
-#  1601         23025          4732          4294          1940
+# Astro EndoMural_01 EndoMural_02        Micro     Oligo_01     Oligo_02     Oligo_03          OPC     Excit_01 
+# 3979          446         1711         1601        23025         4732         4294         1940         7927 
+# Excit_02     Excit_03     Excit_04     Excit_05     Excit_06     Excit_07     Excit_08     Excit_09     Excit_10 
+# 2487         1309         2171         2532          329          334         1463         2561         1079 
+# Excit_11     Excit_12     Excit_13     Excit_14     Excit_15     Inhib_01     Inhib_02     Inhib_03     Inhib_04 
+# 482          420         1567           82           66         5366         1267         1310          565 
+# Inhib_05     Inhib_06 
+# 1192         1367 
 
 ## Check out prop
 (prop_k <- 100 * round(table(sce$cellType_broad_k) / ncol(sce), 3))
