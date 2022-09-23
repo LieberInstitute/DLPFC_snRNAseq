@@ -1,10 +1,10 @@
 **** Job starts ****
-Wed Sep 21 15:24:24 EDT 2022
+Fri Sep 23 11:27:26 EDT 2022
 **** JHPCE info ****
 User: neagles
-Job id: 38904
+Job id: 61385
 Job name: write_assay
-Hostname: compute-127.cm.cluster
+Hostname: compute-106.cm.cluster
 Loading conda_R/devel
 here() starts at /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq
 Loading required package: rafalib
@@ -18,7 +18,7 @@ Loading required package: rafalib
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       US/Eastern
- date     2022-09-21
+ date     2022-09-23
  pandoc   2.11.0.4 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-devel/bin/pandoc
 
 ─ Packages ───────────────────────────────────────────────────────────────────
@@ -79,4 +79,4 @@ Loading required package: rafalib
 
 ──────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Wed Sep 21 15:24:34 EDT 2022
+Fri Sep 23 11:27:39 EDT 2022

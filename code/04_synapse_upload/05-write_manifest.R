@@ -22,7 +22,8 @@ pd <- read.csv(pd_path)
 fastq_naming <- read.csv(fastq_naming_path)
 
 paths <- c(
-    here("processed-data", "04_synapse_upload", "assay.csv"),
+    here("processed-data", "04_synapse_upload", "assay_scrnaSeq.csv"),
+    here("processed-data", "04_synapse_upload", "assay_snpArray.csv"),
     here("processed-data", "04_synapse_upload", "biospecimen.csv"),
     here("processed-data", "04_synapse_upload", "individual.csv"),
     fastq_naming$new_path,
@@ -33,9 +34,9 @@ paths <- c(
 #  Populate data frame that will become TSV
 ###############################################################################
 
-num_metadata <- 3
 num_fastq <- length(fastq_naming$new_path)
 num_geno <- length(geno_paths)
+num_metadata <- length(paths) - num_fastq - num_geno
 
 #  Populate a data frame
 meta_df <- data.frame(
@@ -43,7 +44,7 @@ meta_df <- data.frame(
     "parent" = c(
         rep("syn32383331", num_metadata),
         rep("syn32383329", num_fastq),
-        rep("syn36814730", num_geno)
+        rep("syn36915175", num_geno)
     ),
     "individualID" = c(
         rep(NA, num_metadata),
@@ -59,22 +60,31 @@ meta_df <- data.frame(
     "isMultiSpecimen" = c(
         rep(NA, num_metadata), rep(FALSE, num_fastq), rep(TRUE, num_geno)
     ),
-    "assay" = "scrnaSeq",
+    "assay" = c(
+        rep("scrnaSeq", num_metadata + num_fastq),
+        rep("snpArray", num_geno)
+    ),
     "libraryID" = NA,
     "fileFormat" = c(
-        rep("csv", num_metadata), rep("fastq", num_fastq), "vcf", "tsv"
+        rep("csv", num_metadata), rep("fastq", num_fastq), "vcf", "tab"
     ),
     "consortium" = "PEC",
     "study" = "LIBD_U01_DLPFC",
     "grant" = "U01MH122849",
-    "resourceType" = "experimentalData",
-    "dataType" = "geneExpression",
+    "resourceType" = c(
+        rep("metadata", num_metadata),
+        rep("experimentalData", num_fastq + num_geno)
+    ),
+    "dataType" = c(
+        rep("geneExpression", num_metadata + num_fastq),
+        rep("genomicVariants", num_geno)
+    ),
     "dataSubtype" = c(
         rep("metadata", num_metadata), rep("raw", num_fastq),
         rep("processed", num_geno)
     ),
     "metadataType" = c(
-        "assay", "biospecimen", "individual",
+        "assay", "assay", "biospecimen", "individual",
         rep(NA, num_fastq + num_geno)
     ),
     "analysisType" = NA

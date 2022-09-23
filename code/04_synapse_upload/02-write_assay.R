@@ -74,7 +74,7 @@ geno = geno[match(pd$subject, geno$BrNum),]
 
 meta_df <- data.frame(
     "specimenID" = pd$Sample,
-    "assay" = "Genotyping",
+    "assay" = "snpArray",
     "platform" = "Illumina_Omni2pt5M",
     "dnaBatch" = NA,
     "arrayBatch" = geno$GenotypingBatch,
