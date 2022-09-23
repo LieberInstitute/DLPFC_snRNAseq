@@ -196,8 +196,14 @@ table(pd$cellType_layer)
 table(pd$layer_annotation)
 
 n_nuc_layer <- pd |>
-    group_by(cellType_hc, cellType_layer) |>
-    summarize(n_nuc = n())
+  group_by(cellType_hc, cellType_layer) |>
+  summarize(n_nuc = n()) |>
+  mutate(ct_short = sub("^(\\w).*(_\\d)", "\\1\\2", cellType_hc),
+         anno = case_when(ct_short == cellType_hc ~ as.character(n_nuc),
+                          n_nuc < 2000 ~ paste(ct_short, n_nuc),
+                          TRUE ~ paste0(ct_short,"\n",n_nuc)))
+
+n_nuc_layer$anno
 
 ## Overlap between
 # Excit_14 82
@@ -207,14 +213,14 @@ barplot_n_nuc_layer <- n_nuc_layer |>
     ggplot(aes(x = cellType_layer, y = n_nuc, fill = cellType_hc)) +
     geom_bar(stat = "identity") +
     # geom_text(aes(label = ifelse(n_nuc > 70, n_nuc, NA)), size = 2.5, position = position_stack(vjust = 0.5)) +
-    geom_text(aes(label = n_nuc), size = 2.5, position = position_stack(vjust = 0.5)) +
+    geom_text(aes(label = anno), size = 2.5, position = position_stack(vjust = 0.5)) +
     scale_fill_manual(values = cell_type_colors) +
-    theme_bw() +
+    my_theme +
     theme(legend.position = "None", axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
     labs(y = "Number of Nuclei", title)
 
-ggsave(barplot_n_nuc_layer, filename = here(plot_dir, "barplot_n_nuc_layer.png"))
-ggsave(barplot_n_nuc_layer, filename = here(plot_dir, "barplot_n_nuc_layer.pdf"))
+ggsave(barplot_n_nuc_layer, filename = here(plot_dir, "barplot_n_nuc_layer.png"), width = 10, height = 6)
+ggsave(barplot_n_nuc_layer, filename = here(plot_dir, "barplot_n_nuc_layer.pdf"), width = 12)
 
 ## Prop Bar
 prop_layer <- pd |>
