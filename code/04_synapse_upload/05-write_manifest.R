@@ -15,7 +15,7 @@ fastq_naming_path <- here(
 )
 geno_paths <- file.path(
     "/dcl01/lieber/RNAseq/Datasets/BrainGenotyping_2018/processed_data/subsets",
-    c("sc_n10.maf01.vcf.gz", "sc_n10_br2genoIDs.tab")
+    c("sc_n10.maf01.vcf.gz", "sc_n10.brnum2genoID.tab")
 )
 
 pd <- read.csv(pd_path)
