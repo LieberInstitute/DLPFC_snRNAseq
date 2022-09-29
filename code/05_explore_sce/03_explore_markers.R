@@ -504,6 +504,7 @@ dev.off()
 
 #### Layer markers ####
 
+## TODO make sure this file is the same that Nick is using
 load(here("processed-data", "03_build_sce", "cell_type_markers_layer.Rdata"), verbose = TRUE)
 # markers_1vALL
 # markers_1vALL_enrich
@@ -600,3 +601,44 @@ Heatmap(assays(pb_sce_layer_top)$counts,
 dev.off()
 
 table(sce$cellType_layer, sce$cellType_azimuth)
+
+## plot expression of top marker for each cell type
+layer_markers_best <- markers_mean_ratio |>
+  filter(rank_ratio == 1) |>
+  mutate(gene_anno = paste(cellType.target, "-", gene))
+
+layer_markers_best_expression <- my_plotExpression(sce, layer_markers_best$gene, cat = "cellType_layer", fill_colors = metadata(sce)$cell_type_colors_layer)
+ggsave(layer_markers_best_expression, filename = here(plot_dir, "markers_layer_best.png"))
+
+## Add annoations
+layer_df <- as.data.frame(colData(sce))[, "cellType_layer", drop = FALSE]
+expression_long <- reshape2::melt(as.matrix(assays(sce)$logcounts[layer_markers_best$gene, ])) 
+
+expression_long2 <- cbind(expression_long, layer = layer_df[expression_long$Var2, ]) |>
+  left_join(layer_markers_best, by = c(Var1 = "gene")) |>
+  filter(!is.na(layer))
+
+expression_long2 |> count(gene_anno)
+
+layer_markers_best_expression2 <- expression_violin <- ggplot(data = expression_long2, aes(x = layer, y = value, fill = layer, color = layer)) +
+  geom_violin(scale = "width") +
+  facet_wrap(~gene_anno, nrow = 3) +
+  labs(
+    y = paste0("Expression logcounts")
+  ) +
+  theme_bw() +
+  theme(
+    legend.position = "None", axis.title.x = element_blank(),
+    axis.text.x = element_text(angle = 90, hjust = 1),
+    strip.text.x = element_text(face = "italic")
+  ) +
+  stat_summary(
+    fun = median,
+    geom = "crossbar",
+    width = 0.3,
+    color = "black"
+  ) + 
+  scale_fill_manual(values = metadata(sce)$cell_type_colors_layer) +
+  scale_color_manual(values = metadata(sce)$cell_type_colors_layer)
+
+ggsave(layer_markers_best_expression2, filename = here(plot_dir, "markers_layer_best_anno.png"), width = 12)
