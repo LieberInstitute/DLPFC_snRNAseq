@@ -2,6 +2,7 @@
 library("SingleCellExperiment")
 library("DeconvoBuddies")
 library("tidyverse")
+library("patchwork")
 library("here")
 
 #### plot setup  ####
@@ -78,7 +79,7 @@ ggsave(prop_boxplot_position, filename = here(plot_dir, "prop_boxplot_position.p
 
 
 #### Compositon Plots ####
-library(patchwork)
+
 ## Mean Prop
 prop_bar_all <- plot_composition_bar(prop_all,
     sample_col = "Sample",
@@ -203,8 +204,6 @@ n_nuc_layer <- pd |>
                           n_nuc < 2000 ~ paste(ct_short, n_nuc),
                           TRUE ~ paste0(ct_short,"\n",n_nuc)))
 
-n_nuc_layer$anno
-
 ## Overlap between
 # Excit_14 82
 # Excit_15 66
@@ -267,6 +266,6 @@ layer_prop_bar_position <- ggplot(data = prop_layer, aes(x = Sample, y = prop, f
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ggsave(layer_prop_bar_position, filename = here(plot_dir, "prop_bar_layer_position.png"), width = 12)
-ggsave(layer_prop_bar_position, filename = here(plot_dir, "prop_bar_Sample_position.pdf"), width = 12)
+ggsave(layer_prop_bar_position, filename = here(plot_dir, "prop_bar_layer_position.pdf"), width = 12)
 
 
