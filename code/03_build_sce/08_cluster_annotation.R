@@ -670,6 +670,7 @@ UMI_ct_hc <- ggcells(sce, mapping = aes(x = reorder(cellType_hc, sum, FUN = medi
   labs(y = "Total UMIs")
 
 ggsave(UMI_ct_hc, filename = here(plot_dir, "qc_UMI_HC_cellType.png"), height = 3)
+ggsave(UMI_ct_hc, filename = here(plot_dir, "qc_UMI_HC_cellType.pdf"), height = 3)
 
 
 #### Explore doublet scores
@@ -699,6 +700,7 @@ dbs_ct_hc <- ggcells(sce,
   labs(y = "Doublet Score")
 
 ggsave(dbs_ct_hc, filename = here(plot_dir, "qc_doubletScore_HC_cellType.png"), height = 3)
+ggsave(dbs_ct_hc, filename = here(plot_dir, "qc_doubletScore_HC_cellType.pdf"), height = 3)
 
 
 cellType.idx <- splitit(sce$cellType_hc)
