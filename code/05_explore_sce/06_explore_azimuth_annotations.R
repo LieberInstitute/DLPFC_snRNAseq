@@ -1,13 +1,13 @@
 library("SingleCellExperiment")
 library("patchwork")
-library("here")
-library("pheatmap")
+library("tidyverse")
+library("viridis")
+# library("pheatmap")
+library("ComplexHeatmap")
 library("scater")
 library("bluster")
-library("tidyverse")
 library("sessioninfo")
-library("dplyr")
-library("patchwork")
+library("here")
 
 #### Plot Setup ####
 plot_dir <- here("plots", "05_explore_sce", "06_explore_azimuth_annotations")
@@ -57,12 +57,7 @@ ggsave(azimuth_count_bar, filename = here(plot_dir, "count_bar_azimuth.png"))
 ggsave(azimuth_prop_bar + theme(legend.position = "None") + azimuth_count_bar, filename = here(plot_dir, "count-prop_bar_azimuth.png"), width = 12)
 
 #### Azimuth Cell Types ####
-
 az <- unique(sce$cellType_azimuth)
-gsub("(L[1-6]).*", "\\1", az)
-# [1] "Sst"       "Oligo"     "OPC"       "Vip"       "L6"        "L5"        "VLMC"      "Astro"     "Endo"
-# [10] "L2"        "Micro-PVM" "L6"        "Sst Chodl" "Lamp5"     "Pvalb"     "Sncg"      "L6"        "L6"
-# [19] "L5"        "L5"
 
 azimuth_cellType_notes <- data.frame(
     azimuth = az,
@@ -77,6 +72,9 @@ azimuth_cellType_notes <- data.frame(
 
 #### Layer Data ####
 load(here("processed-data", "05_explore_sce", "07_spatial_registration", "layer_cor.Rdata"), verbose = TRUE)
+# cor_hc_top100
+# cor_excit_top100
+# cor_azimuth_top100
 
 ## HC Cor
 make_layer_tab <- function(cor) {
@@ -90,50 +88,12 @@ make_layer_tab <- function(cor) {
 
 hc_layer <- make_layer_tab(cor_hc_top100)
 excit_layer <- make_layer_tab(cor_excit_top100)
-
-library(tidyverse)
-source(here("code", "05_explore_sce", "annotate_registered_clusters.R"), echo = TRUE)
-make_layer_tab2 <- function(cor) {
-    cor_long <- as.data.frame(cor) |>
-        tibble::rownames_to_column("cell_type") |>
-        pivot_longer(!cell_type, names_to = "layer", values_to = "cor") |>
-        group_by(cell_type) |>
-        mutate(rank = rank(-cor), layer = gsub("ayer", "", layer))
-
-    layer1 <- cor_long |>
-        filter(rank == 1)
-
-    layer2 <- cor_long |>
-        filter(rank == 2) |>
-        select(cell_type, layer_rank2 = layer, cor_rank2 = cor) |>
-        mutate(cor_rank2 = ifelse(cor_rank2 > 0, cor_rank2, NA)) |>
-        mutate(layer_rank2 = ifelse(cor_rank2 > 0, layer_rank2, NA))
-
-    layer_tab <- layer1 |>
-        select(-rank) |>
-        left_join(layer2, by = "cell_type") |>
-        mutate(cor_diff = cor - cor_rank2) |>
-        mutate(diff_cor2_ratio = cor_diff / cor_rank2) |>
-        arrange(cell_type)
-
-    layer_tab <- layer_tab |>
-        left_join(annotate_registered_clusters(cor, cutoff_merge_ratio = 0.25), by = c("cell_type" = "cluster")) |>
-        mutate(layer_label = ifelse(layer_confidence == "good", layer_label, paste0(layer_label, "*")))
-    return(layer_tab)
-}
-
-make_layer_tab2(cor_hc_top100)
-write.csv(make_layer_tab2(cor_hc_top100), file = here("processed-data", "05_explore_sce", "spatial_registration_cor_details_hc.csv"))
-write.csv(make_layer_tab2(cor_excit_top100), file = here("processed-data", "05_explore_sce", "spatial_registration_cor_details_hc-Excit.csv"))
-write.csv(make_layer_tab2(cor_azimuth_top100), file = here("processed-data", "05_explore_sce", "spatial_registration_cor_details_azimuth.csv"))
-
-make_layer_tab2(cor_excit_top100)
-
 azimuth_layer <- make_layer_tab(cor_azimuth_top100)
+
 rownames(azimuth_layer) <- gsub("\\.", " ", gsub("([0-9])\\.([0-9])", "\\1/\\2", rownames(azimuth_layer)))
 rownames(azimuth_layer)[[7]] <- "Micro-PVM"
-#### Plot Heat Maps ####
 
+#### Plot Heat Maps ####
 ## Simple Compare to HC annotations
 ct_annos <- table(sce$cellType_hc, sce$cellType_azimuth)
 
@@ -175,9 +135,6 @@ dev.off()
 
 
 #### Annotate the Heatmap ####
-library(viridis)
-jacc.mat[1:5, 1:5]
-
 ## Number of markers
 load(here("processed-data", "03_build_sce", "cell_type_markers.Rdata"), verbose = TRUE)
 n_markers <- sapply(markers_1vALL, function(x) sum(x$FDR < 0.05))
@@ -195,22 +152,23 @@ excit_layer[rownames(hc_anno), ]
 
 hc_anno <- cbind(hc_anno, hc_layer[rownames(hc_anno), ])
 
-
-
 write.csv(hc_anno, file = here("processed-data", "05_explore_sce", "hc_annotation.csv"))
 
+## azimuth annotation
 azimuth_anno <- azimuth_cellType_notes |>
     column_to_rownames("azimuth") |>
     select(-Layer)
 
 azimuth_anno <- cbind(azimuth_anno, azimuth_layer[rownames(azimuth_anno), ])
 
-layers <- c("WM", "L1", "L2", "L3", "L4", "L5", "L6")
+## factor layers
+layers <- c("L1", "L2", "L3", "L4", "L5", "L6", "WM")
 # layers <- c("WM", "L1", "L2", "L2/3", "L3","L4","L5","L5/6","L6")
 
 azimuth_anno$max_layer <- factor(azimuth_anno$max_layer, levels = layers)
 hc_anno$max_layer <- factor(hc_anno$max_layer, levels = layers)
 
+## layer colors
 layer_colors <- viridis(length(layers))
 names(layer_colors) <- layers
 
@@ -348,7 +306,6 @@ pairwiseRand(sce$cellType_k, sce$cellType_azimuth, mode = "index")
 pairwiseRand(sce$cellType_hc, sce$cellType_azimuth, mode = "index")
 # [1] 0.2441774
 
-library(ggplot2)
 
 ## load the query
 # p1 <- DimPlot(query, group.by = "predicted.subclass", label = TRUE, label.size = 3, repel = TRUE) + labs(title = "DLPFC Data")
@@ -371,8 +328,6 @@ library(ggplot2)
 
 #### OUR UMAP space ####
 sce$azimuth_cellType <- query$predicted.subclass
-
-library(scater)
 
 UMAP_azi_cellTypes <- ggcells(sce, mapping = aes(x = UMAP.1, y = UMAP.2, colour = azimuth_cellType)) +
     geom_point(size = 0.2, alpha = 0.3) +
