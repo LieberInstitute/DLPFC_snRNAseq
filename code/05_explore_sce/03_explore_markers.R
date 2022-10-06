@@ -503,18 +503,11 @@ dev.off()
 
 
 #### Layer markers ####
-
-## TODO make sure this file is the same that Nick is using
+## explore markers 
 load(here("processed-data", "03_build_sce", "cell_type_markers_layer.Rdata"), verbose = TRUE)
 # markers_1vALL
 # markers_1vALL_enrich
 # markers_mean_ratio
-
-# sapply(markers_1vALL, function(x) sum(x$FDR < 0.05))
-# Astro    EndoMural        Micro        Oligo          OPC   Excit_L2/3     Excit_L3 Excit_L3/4/5     Excit_L4 
-# 1300         1570         1639          293          667            0           87          707           82 
-# Excit_L5   Excit_L5/6     Excit_L6        Inhib 
-# 168          127          361          450 
 
 markers_1vALL_enrich |> 
   filter(log.FDR < log(0.05)) |>
@@ -561,9 +554,30 @@ markers_mean_ratio  |>
 
 layer_markers <- left_join(markers_1vALL_enrich,markers_mean_ratio)
 
-layer_markers |> 
+## version from spatialDLPFC from Nick
+here("processed-data", "spot_deconvo", "05-shared_utilities")
 
-  
+marker_stats_spatial <- readRDS(file = "/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/processed-data/spot_deconvo/05-shared_utilities/marker_stats_layer.rds")
+head(marker_stats_spatial)
+
+## do stats match?
+all_equal(markers_mean_ratio[colnames(markers_mean_ratio)], markers_mean_ratio)
+# [1] TRUE ## nice get_mean_ratio2 is consistent :) 
+
+## Exclude mitochondrial genes
+marker_stats_spatial2 <-  marker_stats_spatial |> 
+  add_column(symbol = rownames(sce)[match(marker_stats_spatial$gene, rowData(sce)$gene_id)]) |>
+  filter(!grepl('^MT-', symbol))
+
+
+marker_stats_anno <- marker_stats_spatial2 |> 
+  filter(rank_ratio <= 25) |>
+  select(symbol, cellType.target, rank_ratio) |> 
+  mutate(marker_anno = paste0(cellType.target,"_", rank_ratio))
+
+marker_stats_anno |> count(cellType.target)
+
+
 pb_sce_layer <- scuttle::aggregateAcrossCells(sce[,!is.na(sce$cellType_layer)],
                                               ids = sce$cellType_layer[!is.na(sce$cellType_layer)])
 
