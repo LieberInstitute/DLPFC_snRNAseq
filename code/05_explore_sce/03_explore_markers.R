@@ -2,6 +2,7 @@ library("SingleCellExperiment")
 # library("scater")
 library("tidyverse")
 library("EnhancedVolcano")
+library("ComplexHeatmap")
 library("here")
 library("sessioninfo")
 
@@ -393,7 +394,6 @@ ggsave(ratio_vs_stdFC_sample, filename = here(plot_dir, "ratio_vs_stdFC_Sample.p
 
 
 #### subtype Markers ####
-library(purrr)
 sapply(markers_1vALL, function(x) sum(x$FDR < 0.05))
 
 names(subtype_markers$Excit)
@@ -480,7 +480,6 @@ assays(pb_sce_hc)$logcounts<- t(apply(assays(pb_sce_hc)$counts, 1, function(x) {
 
 summary(colSums(assays(pb_sce_hc)$logcounts))
 
-library(ComplexHeatmap)
 
 marker_anno <- mean_ratio_top |>
   column_to_rownames("gene") |>
@@ -555,29 +554,80 @@ markers_mean_ratio  |>
 layer_markers <- left_join(markers_1vALL_enrich,markers_mean_ratio)
 
 ## version from spatialDLPFC from Nick
-here("processed-data", "spot_deconvo", "05-shared_utilities")
-
-marker_stats_spatial <- readRDS(file = "/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/processed-data/spot_deconvo/05-shared_utilities/marker_stats_layer.rds")
+marker_stats_spatial_layer <- readRDS(file = "/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/processed-data/spot_deconvo/05-shared_utilities/marker_stats_layer.rds")
+marker_stats_spatial_broad <- readRDS(file = "/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/processed-data/spot_deconvo/05-shared_utilities/marker_stats_broad.rds")
 head(marker_stats_spatial)
 
 ## do stats match?
 all_equal(markers_mean_ratio[colnames(markers_mean_ratio)], markers_mean_ratio)
 # [1] TRUE ## nice get_mean_ratio2 is consistent :) 
 
-## Exclude mitochondrial genes
-marker_stats_spatial2 <-  marker_stats_spatial |> 
-  add_column(symbol = rownames(sce)[match(marker_stats_spatial$gene, rowData(sce)$gene_id)]) |>
-  filter(!grepl('^MT-', symbol))
+## Nicks final list
+marker_list_layer = readLines("/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/processed-data/spot_deconvo/05-shared_utilities/markers_layer.txt")
+marker_list_broad = readLines("/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/processed-data/spot_deconvo/05-shared_utilities/markers_broad.txt")
+
+## layer markers
+layer_marker_stats_anno <- marker_stats_spatial_layer |> 
+  add_column(symbol = rownames(sce)[match(marker_stats_spatial_layer$gene, rowData(sce)$gene_id)]) |>
+  filter(!grepl('^MT-', symbol)) |> ## Exclude mitochondrial genes
+  mutate(marker = gene %in% marker_list_layer) |>
+  filter(rank_ratio <= 50 & marker) |> ## this catches the 20 Oligo markers, not all top 25
+  select(symbol, gene, cellType.target, rank_ratio) |> 
+  group_by(cellType.target) |>
+  mutate(adj_rank_ratio = row_number()) |> ## adjust for removed MT genes
+  mutate(marker_anno = paste0(cellType.target,"-", adj_rank_ratio))
 
 
-marker_stats_anno <- marker_stats_spatial2 |> 
-  filter(rank_ratio <= 25) |>
-  select(symbol, cellType.target, rank_ratio) |> 
-  mutate(marker_anno = paste0(cellType.target,"_", rank_ratio))
+setequal(layer_marker_stats_anno$gene, marker_list_layer)
+# [1] TRUE
+layer_marker_stats_anno |> count(cellType.target)
+layer_marker_stats_anno |> group_by(cellType.target) |> count(rank_ratio == adj_rank_ratio)
 
-marker_stats_anno |> count(cellType.target)
+## Add to rowdata
+rowData(sce)$marker_layer <- layer_marker_stats_anno$marker_anno[match(rowData(sce)$gene_id, layer_marker_stats_anno$gene)]
 
 
+## braod markers
+broad_marker_stats_anno <-  marker_stats_spatial_broad |> 
+  add_column(symbol = rownames(sce)[match(marker_stats_spatial_broad$gene, rowData(sce)$gene_id)]) |>
+  filter(!grepl('^MT-', symbol)) |>
+  mutate(marker = gene %in% marker_list_broad) |>
+  filter(rank_ratio <= 50 & marker) |> ## this catches the 20 Oligo markers, not all top 25
+  select(symbol, gene, cellType.target, rank_ratio) |>
+  group_by(cellType.target) |>
+  mutate(adj_rank_ratio = row_number()) |> ## adjust for removed MT genes
+  mutate(marker_anno = paste0(cellType.target,"-", adj_rank_ratio))
+
+setequal(broad_marker_stats_anno$gene, marker_list_broad)
+# [1] TRUE
+broad_marker_stats_anno |> count(cellType.target)
+broad_marker_stats_anno |> group_by(cellType.target) |> count(rank_ratio == adj_rank_ratio)
+
+rowData(sce)$marker_broad_spatial <- broad_marker_stats_anno$marker_anno[match(rowData(sce)$gene_id, broad_marker_stats_anno$gene)]
+
+layer_marker_stats_anno |> filter(rank_ratio == 1)
+
+## check some genes
+rowData(sce)[c("GRIP2","MBP","SLC25A18","VCAN"),]
+# DataFrame with 4 rows and 9 columns
+# source     type         gene_id gene_version   gene_name      gene_type binomial_deviance marker_layer
+# <factor> <factor>     <character>  <character> <character>    <character>         <numeric>  <character>
+#   GRIP2      HAVANA     gene ENSG00000144596           13       GRIP2 protein_coding           84376.8     Inhib-12
+# MBP        HAVANA     gene ENSG00000197971           15         MBP protein_coding          962309.0      Oligo-3
+# SLC25A18   HAVANA     gene ENSG00000182902           14    SLC25A18 protein_coding           88904.8     Astro-11
+# VCAN       HAVANA     gene ENSG00000038427           16        VCAN protein_coding          232054.0       OPC-17
+# marker_broad_spatial
+# <character>
+#   GRIP2                 Inhib-2
+# MBP                   Oligo-6
+# SLC25A18             Astro-12
+# VCAN                   OPC-23
+
+## Save annotated rowData
+# save(sce, file = here("processed-data", "sce", "sce_DLPFC.Rdata"))
+
+
+#### Markere Gene Heatmap ####
 pb_sce_layer <- scuttle::aggregateAcrossCells(sce[,!is.na(sce$cellType_layer)],
                                               ids = sce$cellType_layer[!is.na(sce$cellType_layer)])
 
