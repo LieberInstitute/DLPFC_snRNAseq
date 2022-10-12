@@ -8,7 +8,7 @@ library("HDF5Array")
 sce <- readRDS("se.rds")
 
 cell_type_colors <- metadata(sce)$cell_type_colors_layer[levels(sce$cellType_layer)]
-#stopifnot(all(unique(sce$cellType_layer) %in% names(cell_type_colors)))
+# stopifnot(all(unique(sce$cellType_layer) %in% names(cell_type_colors)))
 
 ## Don't run this on app.R since we don't want to run this every single time
 # lobstr::obj_size(sce)

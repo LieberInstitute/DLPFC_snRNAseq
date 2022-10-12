@@ -68,9 +68,9 @@ write.csv(meta_df, write_rna_path, row.names = FALSE)
 ################################################################################
 
 #   Read in genotype batch info, take just the date, and line up with pd
-geno = read.csv(geno_path)
-geno$GenotypingBatch = ss(geno$GenotypingBatch, '-', 3)
-geno = geno[match(pd$subject, geno$BrNum),]
+geno <- read.csv(geno_path)
+geno$GenotypingBatch <- ss(geno$GenotypingBatch, "-", 3)
+geno <- geno[match(pd$subject, geno$BrNum), ]
 
 meta_df <- data.frame(
     "specimenID" = pd$Sample,

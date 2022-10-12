@@ -315,16 +315,15 @@ anno_hc2 <- anno_hc %>%
     ungroup() %>%
     mutate(cellType = as.factor(ifelse(n > 1, ct, broad)))
 
-order_cell_types <- function(cell_types){
-  
-  neun_mask <- grepl("Excit|Inhib", cell_types)
-  neun_ct <- cell_types[neun_mask]
-  glia_ct <- cell_types[!neun_mask]
-  
-  
-  
-  ordered_cell_types <- c(sort(glia_ct), sort(neun_ct))
-  return(ordered_cell_types)
+order_cell_types <- function(cell_types) {
+    neun_mask <- grepl("Excit|Inhib", cell_types)
+    neun_ct <- cell_types[neun_mask]
+    glia_ct <- cell_types[!neun_mask]
+
+
+
+    ordered_cell_types <- c(sort(glia_ct), sort(neun_ct))
+    return(ordered_cell_types)
 }
 
 
@@ -351,18 +350,18 @@ hc_broad_levels <- order_cell_types(unique(anno_hc2$broad))
 sce$cellType_broad_hc <- factor(anno_hc$broad[match(sce$collapsedCluster, anno_hc$cluster)], levels = hc_broad_levels)
 sce$cellType_hc <- factor(anno_hc2$cellType[match(sce$collapsedCluster, anno_hc2$cluster)], levels = hc_levels)
 table(sce$cellType_broad_hc)
-# Astro EndoMural     Micro     Oligo       OPC     Excit     Inhib 
+# Astro EndoMural     Micro     Oligo       OPC     Excit     Inhib
 # 3979      2157      1601     32051      1940     24809     11067
 
 table(sce$cellType_hc)
-# Astro EndoMural_01 EndoMural_02        Micro     Oligo_01     Oligo_02     Oligo_03          OPC     Excit_01 
-# 3979          446         1711         1601        23025         4732         4294         1940         7927 
-# Excit_02     Excit_03     Excit_04     Excit_05     Excit_06     Excit_07     Excit_08     Excit_09     Excit_10 
-# 2487         1309         2171         2532          329          334         1463         2561         1079 
-# Excit_11     Excit_12     Excit_13     Excit_14     Excit_15     Inhib_01     Inhib_02     Inhib_03     Inhib_04 
-# 482          420         1567           82           66         5366         1267         1310          565 
-# Inhib_05     Inhib_06 
-# 1192         1367 
+# Astro EndoMural_01 EndoMural_02        Micro     Oligo_01     Oligo_02     Oligo_03          OPC     Excit_01
+# 3979          446         1711         1601        23025         4732         4294         1940         7927
+# Excit_02     Excit_03     Excit_04     Excit_05     Excit_06     Excit_07     Excit_08     Excit_09     Excit_10
+# 2487         1309         2171         2532          329          334         1463         2561         1079
+# Excit_11     Excit_12     Excit_13     Excit_14     Excit_15     Inhib_01     Inhib_02     Inhib_03     Inhib_04
+# 482          420         1567           82           66         5366         1267         1310          565
+# Inhib_05     Inhib_06
+# 1192         1367
 
 ## Check out prop
 (prop_k <- 100 * round(table(sce$cellType_broad_k) / ncol(sce), 3))
@@ -658,16 +657,18 @@ UMI_ct_k <- ggcells(sce, mapping = aes(x = cellType_k, y = sum, fill = cellType_
 ggsave(UMI_ct_k, filename = here(plot_dir, "UMI_mbkm-29_cellType.png"), width = 10)
 
 
-UMI_ct_hc <- ggcells(sce, mapping = aes(x = reorder(cellType_hc, sum, FUN = median), 
-                                        y = sum, fill = cellType_hc)) +
+UMI_ct_hc <- ggcells(sce, mapping = aes(
+    x = reorder(cellType_hc, sum, FUN = median),
+    y = sum, fill = cellType_hc
+)) +
     geom_boxplot() +
     scale_fill_manual(values = cell_type_colors) +
     my_theme +
     theme(
         legend.position = "None", axis.title.x = element_blank(),
         axis.text.x = element_text(angle = 45, hjust = 1)
-    )+
-  labs(y = "Total UMIs")
+    ) +
+    labs(y = "Total UMIs")
 
 ggsave(UMI_ct_hc, filename = here(plot_dir, "qc_UMI_HC_cellType.png"), height = 3)
 ggsave(UMI_ct_hc, filename = here(plot_dir, "qc_UMI_HC_cellType.pdf"), height = 3)
@@ -686,10 +687,13 @@ dbs_ct_k <- ggcells(sce, mapping = aes(x = cellType_k, y = doubletScore, fill = 
 ggsave(dbs_ct_k, filename = here(plot_dir, "doubletScore_mbkm-29_cellType.png"), width = 10)
 
 
-dbs_ct_hc <- ggcells(sce, 
-                     mapping = aes(x = reorder(cellType_hc, doubletScore, FUN = median),
-                                   y = doubletScore, 
-                                   fill = cellType_hc)) +
+dbs_ct_hc <- ggcells(sce,
+    mapping = aes(
+        x = reorder(cellType_hc, doubletScore, FUN = median),
+        y = doubletScore,
+        fill = cellType_hc
+    )
+) +
     geom_boxplot() +
     scale_fill_manual(values = cell_type_colors) +
     my_theme +
@@ -697,7 +701,7 @@ dbs_ct_hc <- ggcells(sce,
         legend.position = "None", axis.title.x = element_blank(),
         axis.text.x = element_text(angle = 45, hjust = 1)
     ) +
-  labs(y = "Doublet Score")
+    labs(y = "Doublet Score")
 
 ggsave(dbs_ct_hc, filename = here(plot_dir, "qc_doubletScore_HC_cellType.png"), height = 3)
 ggsave(dbs_ct_hc, filename = here(plot_dir, "qc_doubletScore_HC_cellType.pdf"), height = 3)
@@ -766,7 +770,7 @@ mito_ct_hc <- ggcells(sce, mapping = aes(
         legend.position = "None", axis.title.x = element_blank(),
         axis.text.x = element_text(angle = 45, hjust = 1)
     ) +
-  labs(y = "Percent Mito")
+    labs(y = "Percent Mito")
 
 ggsave(mito_ct_hc, filename = here(plot_dir, "qc_mitoRate_HC_cellType.png"), height = 3)
 ggsave(mito_ct_hc, filename = here(plot_dir, "qc_mitoRate_HC_cellType.pdf"), height = 3)

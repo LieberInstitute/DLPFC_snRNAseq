@@ -7,7 +7,7 @@ library("here")
 
 #### plot setup  ####
 my_theme <- theme_bw() +
-  theme(text = element_text(size = 15))
+    theme(text = element_text(size = 15))
 
 plot_dir <- here("plots", "05_explore_sce", "02_cellType_prop")
 # load(here("processed-data", "03_build_sce","cell_type_colors.Rdata"), verbose = TRUE)
@@ -113,7 +113,7 @@ sample_prop_bar <- plot_composition_bar(prop_all,
     ct_col = "cellType_hc",
     min_prop_text = .03
 ) +
-  labs(y = "Proportion") +
+    labs(y = "Proportion") +
     scale_fill_manual(values = cell_type_colors) +
     theme_bw() +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
@@ -122,30 +122,32 @@ ggsave(sample_prop_bar, filename = here(plot_dir, "prop_bar_Sample.png"), width 
 
 ## Facet by position
 sample_prop_bar_position <- ggplot(data = prop_all, aes(x = Sample, y = prop, fill = cellType_hc)) +
-  geom_bar(stat = "identity") +
-  geom_text(aes(label = ifelse(prop > 0.02,format(round(prop, 3), 3), "")), 
-            size = 2.7, 
-            position = position_stack(vjust = 0.5)) +
-  facet_grid(. ~Position, scales = "free", space = "free") +
-  scale_fill_manual(values = cell_type_colors) +
-  labs(y = "Cell Type Proportion", fill = "Cell Type") +
-  my_theme +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    geom_bar(stat = "identity") +
+    geom_text(aes(label = ifelse(prop > 0.02, format(round(prop, 3), 3), "")),
+        size = 2.7,
+        position = position_stack(vjust = 0.5)
+    ) +
+    facet_grid(. ~ Position, scales = "free", space = "free") +
+    scale_fill_manual(values = cell_type_colors) +
+    labs(y = "Cell Type Proportion", fill = "Cell Type") +
+    my_theme +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ggsave(sample_prop_bar_position, filename = here(plot_dir, "prop_bar_Sample_position.png"), width = 12)
 ggsave(sample_prop_bar_position, filename = here(plot_dir, "prop_bar_Sample_position.pdf"), width = 12)
 
 ## number nuclei
 sample_n_bar_position <- ggplot(data = prop_all, aes(x = Sample, y = n, fill = cellType_hc)) +
-  geom_bar(stat = "identity") +
-  geom_text(aes(label = ifelse(prop > 0.02,format(round(n, 3), 3), "")), 
-            size = 2.7, 
-            position = position_stack(vjust = 0.5)) +
-  facet_grid(. ~Position, scales = "free", space = "free") +
-  scale_fill_manual(values = cell_type_colors) +
-  labs(y = "n Nuclei", fill = "Cell Type") +
-  my_theme +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    geom_bar(stat = "identity") +
+    geom_text(aes(label = ifelse(prop > 0.02, format(round(n, 3), 3), "")),
+        size = 2.7,
+        position = position_stack(vjust = 0.5)
+    ) +
+    facet_grid(. ~ Position, scales = "free", space = "free") +
+    scale_fill_manual(values = cell_type_colors) +
+    labs(y = "n Nuclei", fill = "Cell Type") +
+    my_theme +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ggsave(sample_n_bar_position, filename = here(plot_dir, "nnuc_bar_Sample_position.png"), width = 12)
 ggsave(sample_n_bar_position, filename = here(plot_dir, "nnuc_bar_Sample_position.pdf"), width = 12)
@@ -190,19 +192,23 @@ ggsave(broad_prop_bar_pos, filename = here(plot_dir, "prop_bar_broad_Position.pn
 
 #### Layer Annotation Proportions ####
 table(pd$cellType_layer)
-# Astro    EndoMural        Micro        Oligo          OPC   Excit_L2/3     Excit_L3 Excit_L3/4/5     Excit_L4 
-# 3979         2157         1601        32051         1940           82        10459         3043         2388 
-# Excit_L5   Excit_L5/6     Excit_L6        Inhib 
-# 2505         2487         1792        11067 
+# Astro    EndoMural        Micro        Oligo          OPC   Excit_L2/3     Excit_L3 Excit_L3/4/5     Excit_L4
+# 3979         2157         1601        32051         1940           82        10459         3043         2388
+# Excit_L5   Excit_L5/6     Excit_L6        Inhib
+# 2505         2487         1792        11067
 table(pd$layer_annotation)
 
 n_nuc_layer <- pd |>
-  group_by(cellType_hc, cellType_layer) |>
-  summarize(n_nuc = n()) |>
-  mutate(ct_short = sub("^(\\w).*(_\\d)", "\\1\\2", cellType_hc),
-         anno = case_when(ct_short == cellType_hc ~ as.character(n_nuc),
-                          n_nuc < 2000 ~ paste(ct_short, n_nuc),
-                          TRUE ~ paste0(ct_short,"\n",n_nuc)))
+    group_by(cellType_hc, cellType_layer) |>
+    summarize(n_nuc = n()) |>
+    mutate(
+        ct_short = sub("^(\\w).*(_\\d)", "\\1\\2", cellType_hc),
+        anno = case_when(
+            ct_short == cellType_hc ~ as.character(n_nuc),
+            n_nuc < 2000 ~ paste(ct_short, n_nuc),
+            TRUE ~ paste0(ct_short, "\n", n_nuc)
+        )
+    )
 
 ## Overlap between
 # Excit_14 82
@@ -226,8 +232,10 @@ prop_layer <- pd |>
     # filter(!is.na(cellType_layer)) |>
     count(Sample, cellType_layer) |>
     left_join(n_nuc) |>
-    mutate(prop = n / n_nuc,
-           cellType_layer = addNA(cellType_layer))
+    mutate(
+        prop = n / n_nuc,
+        cellType_layer = addNA(cellType_layer)
+    )
 
 layer_prop_bar_all <- plot_composition_bar(prop_layer,
     sample_col = "Sample",
@@ -240,32 +248,31 @@ ggsave(layer_prop_bar_all, filename = here(plot_dir, "prop_bar_layer_ALL.png"), 
 
 ## Sample prop bar
 layer_sample_prop_bar <- plot_composition_bar(prop_layer,
-                                        sample_col = "Sample",
-                                        x_col = "Sample",
-                                        ct_col = "cellType_layer",
-                                        min_prop_text = .03
+    sample_col = "Sample",
+    x_col = "Sample",
+    ct_col = "cellType_layer",
+    min_prop_text = .03
 ) +
-  labs(y = "Proportion") +
-  scale_fill_manual(values = c(metadata(sce)$cell_type_colors_layer, `NA` = "dark grey")) +
-  theme_bw() +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
+    labs(y = "Proportion") +
+    scale_fill_manual(values = c(metadata(sce)$cell_type_colors_layer, `NA` = "dark grey")) +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 
 ggsave(layer_sample_prop_bar, filename = here(plot_dir, "prop_bar_layer_Sample.png"), width = 12)
 ggsave(layer_sample_prop_bar, filename = here(plot_dir, "prop_bar_layer_Sample.pdf"), width = 12)
 
 ## facet version
 layer_prop_bar_position <- ggplot(data = prop_layer, aes(x = Sample, y = prop, fill = cellType_layer)) +
-  geom_bar(stat = "identity") +
-  geom_text(aes(label = ifelse(prop > 0.02,format(round(prop, 3), 3), "")), 
-            size = 2.7, 
-            position = position_stack(vjust = 0.5)) +
-  facet_grid(. ~Position, scales = "free", space = "free") +
-  scale_fill_manual(values = c(metadata(sce)$cell_type_colors_layer, `NA` = "dark grey")) +
-  labs(y = "Cell Type Proportion", fill = "Cell Type") +
-  my_theme +
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    geom_bar(stat = "identity") +
+    geom_text(aes(label = ifelse(prop > 0.02, format(round(prop, 3), 3), "")),
+        size = 2.7,
+        position = position_stack(vjust = 0.5)
+    ) +
+    facet_grid(. ~ Position, scales = "free", space = "free") +
+    scale_fill_manual(values = c(metadata(sce)$cell_type_colors_layer, `NA` = "dark grey")) +
+    labs(y = "Cell Type Proportion", fill = "Cell Type") +
+    my_theme +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 ggsave(layer_prop_bar_position, filename = here(plot_dir, "prop_bar_layer_position.png"), width = 12)
 ggsave(layer_prop_bar_position, filename = here(plot_dir, "prop_bar_layer_position.pdf"), width = 12)
-
-

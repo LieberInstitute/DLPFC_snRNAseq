@@ -22,12 +22,12 @@ plot_reducedDim_facet <- function(sce, type = "TSNE", facet_by = "round", title 
         coord_equal() +
         my_theme +
         theme(legend.position = "none") +
-        labs(x = paste(type,"Dimension 1"), y = paste(type,"Dimension 2"))
+        labs(x = paste(type, "Dimension 1"), y = paste(type, "Dimension 2"))
 
     facet_plot <- main_plot + facet_wrap(as.formula(paste("~", facet_by)))
 
-    return(main_plot + labs(title = title) + 
-             facet_plot + theme(axis.title.y = element_blank()))
+    return(main_plot + labs(title = title) +
+        facet_plot + theme(axis.title.y = element_blank()))
 }
 
 

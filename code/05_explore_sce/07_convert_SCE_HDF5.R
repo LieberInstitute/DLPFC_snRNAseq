@@ -15,7 +15,7 @@ assays(sce)$binomial_deviance_residuals <- NULL
 message("Object Size: ", lobstr::obj_size(sce))
 # 181.85 MB
 
-## print details 
+## print details
 message("\n **** SCE details ****")
 sce
 

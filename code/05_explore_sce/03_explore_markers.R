@@ -458,23 +458,27 @@ sum(subtype_markers$all$Excit$Excit_15$FDR < 0.05)
 #### Heatmaps ####
 
 mean_ratio_top <- markers_mean_ratio |>
-  group_by(cellType.target) |>
-  slice(1:2) |>
-  filter(gene != "MALAT1") |>
-  mutate(cellType.target = gsub("\\.","", cellType.target))
+    group_by(cellType.target) |>
+    slice(1:2) |>
+    filter(gene != "MALAT1") |>
+    mutate(cellType.target = gsub("\\.", "", cellType.target))
 
-mean_ratio_top |> ungroup() |> count(gene) |> filter(n>1)
+mean_ratio_top |>
+    ungroup() |>
+    count(gene) |>
+    filter(n > 1)
 
 ## Pseudobulk by cell type
-pb_sce_hc <- scuttle::aggregateAcrossCells(sce, 
-                                           ids = sce$cellType_hc)
+pb_sce_hc <- scuttle::aggregateAcrossCells(sce,
+    ids = sce$cellType_hc
+)
 
 ## Need to normalize?
 sizeFactors.PB <- scater::librarySizeFactors(assays(pb_sce_hc)$counts)
 
 # # Normalize with these LSFs
-assays(pb_sce_hc)$logcounts<- t(apply(assays(pb_sce_hc)$counts, 1, function(x) {
-  log2(x /sizeFactors.PB + 1)
+assays(pb_sce_hc)$logcounts <- t(apply(assays(pb_sce_hc)$counts, 1, function(x) {
+    log2(x / sizeFactors.PB + 1)
 }))
 
 
@@ -482,17 +486,16 @@ summary(colSums(assays(pb_sce_hc)$logcounts))
 
 
 marker_anno <- mean_ratio_top |>
-  column_to_rownames("gene") |>
-  select(cellType = cellType.target)
+    column_to_rownames("gene") |>
+    select(cellType = cellType.target)
 
-ct_anno <- 
-
-png(here(plot_dir, "heatmap_test_pheatmap.png"), height = 800, width = 800)
+ct_anno <-
+    png(here(plot_dir, "heatmap_test_pheatmap.png"), height = 800, width = 800)
 # pheatmap(assays(pb_sce_hc_top)$counts,
-pheatmap(assays(pb_sce_hc)$logcounts[mean_ratio_top$gene,],
-         main = "Top Markers",
-         annotation_row = marker_anno,
-         annotation_colors = list(cellType = cell_type_colors)
+pheatmap(assays(pb_sce_hc)$logcounts[mean_ratio_top$gene, ],
+    main = "Top Markers",
+    annotation_row = marker_anno,
+    annotation_colors = list(cellType = cell_type_colors)
 )
 dev.off()
 
@@ -502,16 +505,16 @@ dev.off()
 
 
 #### Layer markers ####
-## explore markers 
+## explore markers
 load(here("processed-data", "03_build_sce", "cell_type_markers_layer.Rdata"), verbose = TRUE)
 # markers_1vALL
 # markers_1vALL_enrich
 # markers_mean_ratio
 
-markers_1vALL_enrich |> 
-  filter(log.FDR < log(0.05)) |>
-  group_by(cellType.target) |>
-  count()
+markers_1vALL_enrich |>
+    filter(log.FDR < log(0.05)) |>
+    group_by(cellType.target) |>
+    count()
 
 # cellType.target     n
 # <fct>           <int>
@@ -530,10 +533,10 @@ markers_1vALL_enrich |>
 # 13 Inhib            9019
 
 
-markers_mean_ratio  |> 
-  filter(ratio > 1) |>
-  group_by(cellType.target) |>
-  count()
+markers_mean_ratio |>
+    filter(ratio > 1) |>
+    group_by(cellType.target) |>
+    count()
 
 # cellType.target     n
 # <fct>           <int>
@@ -551,7 +554,7 @@ markers_mean_ratio  |>
 # 12 Excit_L6          667
 # 13 Inhib             357
 
-layer_markers <- left_join(markers_1vALL_enrich,markers_mean_ratio)
+layer_markers <- left_join(markers_1vALL_enrich, markers_mean_ratio)
 
 ## version from spatialDLPFC from Nick
 marker_stats_spatial_layer <- readRDS(file = "/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/processed-data/spot_deconvo/05-shared_utilities/marker_stats_layer.rds")
@@ -560,55 +563,59 @@ head(marker_stats_spatial)
 
 ## do stats match?
 all_equal(markers_mean_ratio[colnames(markers_mean_ratio)], markers_mean_ratio)
-# [1] TRUE ## nice get_mean_ratio2 is consistent :) 
+# [1] TRUE ## nice get_mean_ratio2 is consistent :)
 
 ## Nicks final list
-marker_list_layer = readLines("/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/processed-data/spot_deconvo/05-shared_utilities/markers_layer.txt")
-marker_list_broad = readLines("/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/processed-data/spot_deconvo/05-shared_utilities/markers_broad.txt")
+marker_list_layer <- readLines("/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/processed-data/spot_deconvo/05-shared_utilities/markers_layer.txt")
+marker_list_broad <- readLines("/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/processed-data/spot_deconvo/05-shared_utilities/markers_broad.txt")
 
 ## layer markers
-layer_marker_stats_anno <- marker_stats_spatial_layer |> 
-  add_column(symbol = rownames(sce)[match(marker_stats_spatial_layer$gene, rowData(sce)$gene_id)]) |>
-  filter(!grepl('^MT-', symbol)) |> ## Exclude mitochondrial genes
-  mutate(marker = gene %in% marker_list_layer) |>
-  filter(rank_ratio <= 50 & marker) |> ## this catches the 20 Oligo markers, not all top 25
-  select(symbol, gene, cellType.target, rank_ratio) |> 
-  group_by(cellType.target) |>
-  mutate(adj_rank_ratio = row_number()) |> ## adjust for removed MT genes
-  mutate(marker_anno = paste0(cellType.target,"-", adj_rank_ratio))
+layer_marker_stats_anno <- marker_stats_spatial_layer |>
+    add_column(symbol = rownames(sce)[match(marker_stats_spatial_layer$gene, rowData(sce)$gene_id)]) |>
+    filter(!grepl("^MT-", symbol)) |> ## Exclude mitochondrial genes
+    mutate(marker = gene %in% marker_list_layer) |>
+    filter(rank_ratio <= 50 & marker) |> ## this catches the 20 Oligo markers, not all top 25
+    select(symbol, gene, cellType.target, rank_ratio) |>
+    group_by(cellType.target) |>
+    mutate(adj_rank_ratio = row_number()) |> ## adjust for removed MT genes
+    mutate(marker_anno = paste0(cellType.target, "-", adj_rank_ratio))
 
 
 setequal(layer_marker_stats_anno$gene, marker_list_layer)
 # [1] TRUE
 layer_marker_stats_anno |> count(cellType.target)
-layer_marker_stats_anno |> group_by(cellType.target) |> count(rank_ratio == adj_rank_ratio)
+layer_marker_stats_anno |>
+    group_by(cellType.target) |>
+    count(rank_ratio == adj_rank_ratio)
 
 ## Add to rowdata
 rowData(sce)$marker_layer <- layer_marker_stats_anno$marker_anno[match(rowData(sce)$gene_id, layer_marker_stats_anno$gene)]
 
 
 ## braod markers
-broad_marker_stats_anno <-  marker_stats_spatial_broad |> 
-  add_column(symbol = rownames(sce)[match(marker_stats_spatial_broad$gene, rowData(sce)$gene_id)]) |>
-  filter(!grepl('^MT-', symbol)) |>
-  mutate(marker = gene %in% marker_list_broad) |>
-  filter(rank_ratio <= 50 & marker) |> ## this catches the 20 Oligo markers, not all top 25
-  select(symbol, gene, cellType.target, rank_ratio) |>
-  group_by(cellType.target) |>
-  mutate(adj_rank_ratio = row_number()) |> ## adjust for removed MT genes
-  mutate(marker_anno = paste0(cellType.target,"-", adj_rank_ratio))
+broad_marker_stats_anno <- marker_stats_spatial_broad |>
+    add_column(symbol = rownames(sce)[match(marker_stats_spatial_broad$gene, rowData(sce)$gene_id)]) |>
+    filter(!grepl("^MT-", symbol)) |>
+    mutate(marker = gene %in% marker_list_broad) |>
+    filter(rank_ratio <= 50 & marker) |> ## this catches the 20 Oligo markers, not all top 25
+    select(symbol, gene, cellType.target, rank_ratio) |>
+    group_by(cellType.target) |>
+    mutate(adj_rank_ratio = row_number()) |> ## adjust for removed MT genes
+    mutate(marker_anno = paste0(cellType.target, "-", adj_rank_ratio))
 
 setequal(broad_marker_stats_anno$gene, marker_list_broad)
 # [1] TRUE
 broad_marker_stats_anno |> count(cellType.target)
-broad_marker_stats_anno |> group_by(cellType.target) |> count(rank_ratio == adj_rank_ratio)
+broad_marker_stats_anno |>
+    group_by(cellType.target) |>
+    count(rank_ratio == adj_rank_ratio)
 
 rowData(sce)$marker_broad_spatial <- broad_marker_stats_anno$marker_anno[match(rowData(sce)$gene_id, broad_marker_stats_anno$gene)]
 
 layer_marker_stats_anno |> filter(rank_ratio == 1)
 
 ## check some genes
-rowData(sce)[c("GRIP2","MBP","SLC25A18","VCAN"),]
+rowData(sce)[c("GRIP2", "MBP", "SLC25A18", "VCAN"), ]
 # DataFrame with 4 rows and 9 columns
 # source     type         gene_id gene_version   gene_name      gene_type binomial_deviance marker_layer
 # <factor> <factor>     <character>  <character> <character>    <character>         <numeric>  <character>
@@ -628,81 +635,87 @@ rowData(sce)[c("GRIP2","MBP","SLC25A18","VCAN"),]
 
 
 #### Markere Gene Heatmap ####
-pb_sce_layer <- scuttle::aggregateAcrossCells(sce[,!is.na(sce$cellType_layer)],
-                                              ids = sce$cellType_layer[!is.na(sce$cellType_layer)])
+pb_sce_layer <- scuttle::aggregateAcrossCells(sce[, !is.na(sce$cellType_layer)],
+    ids = sce$cellType_layer[!is.na(sce$cellType_layer)]
+)
 
 ## Need to normalize?
 sizeFactors.PB <- scater::librarySizeFactors(assays(pb_sce_layer)$counts)
 
 # # Normalize with these LSFs
-assays(pb_sce_layer)$logcounts<- t(apply(assays(pb_sce_layer)$counts, 1, function(x) {
-  log2(x /sizeFactors.PB + 1)
+assays(pb_sce_layer)$logcounts <- t(apply(assays(pb_sce_layer)$counts, 1, function(x) {
+    log2(x / sizeFactors.PB + 1)
 }))
 
 layer_markers_top <- markers_mean_ratio |>
-  filter(rank_ratio <= 2) |>
-  arrange(cellType.target)
+    filter(rank_ratio <= 2) |>
+    arrange(cellType.target)
 
 marker_anno <- layer_markers_top |>
-  column_to_rownames("gene") |>
-  select(cellType = cellType.target)
+    column_to_rownames("gene") |>
+    select(cellType = cellType.target)
 
-pb_sce_layer_top <- pb_sce_layer[layer_markers_top$gene,]
+pb_sce_layer_top <- pb_sce_layer[layer_markers_top$gene, ]
 
 
-row_ha = rowAnnotation(cell_type = layer_markers_top$cellType.target,
-                       col = list(cell_type = metadata(sce)$cell_type_colors_layer))
+row_ha <- rowAnnotation(
+    cell_type = layer_markers_top$cellType.target,
+    col = list(cell_type = metadata(sce)$cell_type_colors_layer)
+)
 
-column_ha = HeatmapAnnotation(ncells = anno_barplot(pb_sce_layer$ncells), cell_type = pb_sce_layer$cellType_layer,
-                              col = list(cell_type = metadata(sce)$cell_type_colors_layer))
+column_ha <- HeatmapAnnotation(
+    ncells = anno_barplot(pb_sce_layer$ncells), cell_type = pb_sce_layer$cellType_layer,
+    col = list(cell_type = metadata(sce)$cell_type_colors_layer)
+)
 
 png(here(plot_dir, "heatmap_test_complex.png"), height = 800, width = 800)
 Heatmap(assays(pb_sce_layer_top)$counts,
-        cluster_rows = FALSE,
-        cluster_columns = FALSE,
-        right_annotation = row_ha,
-        top_annotation = column_ha)
+    cluster_rows = FALSE,
+    cluster_columns = FALSE,
+    right_annotation = row_ha,
+    top_annotation = column_ha
+)
 dev.off()
 
 table(sce$cellType_layer, sce$cellType_azimuth)
 
 ## plot expression of top marker for each cell type
 layer_markers_best <- markers_mean_ratio |>
-  filter(rank_ratio == 1) |>
-  mutate(gene_anno = paste(cellType.target, "-", gene))
+    filter(rank_ratio == 1) |>
+    mutate(gene_anno = paste(cellType.target, "-", gene))
 
 layer_markers_best_expression <- my_plotExpression(sce, layer_markers_best$gene, cat = "cellType_layer", fill_colors = metadata(sce)$cell_type_colors_layer)
 ggsave(layer_markers_best_expression, filename = here(plot_dir, "markers_layer_best.png"))
 
 ## Add annoations
 layer_df <- as.data.frame(colData(sce))[, "cellType_layer", drop = FALSE]
-expression_long <- reshape2::melt(as.matrix(assays(sce)$logcounts[layer_markers_best$gene, ])) 
+expression_long <- reshape2::melt(as.matrix(assays(sce)$logcounts[layer_markers_best$gene, ]))
 
 expression_long2 <- cbind(expression_long, layer = layer_df[expression_long$Var2, ]) |>
-  left_join(layer_markers_best, by = c(Var1 = "gene")) |>
-  filter(!is.na(layer))
+    left_join(layer_markers_best, by = c(Var1 = "gene")) |>
+    filter(!is.na(layer))
 
 expression_long2 |> count(gene_anno)
 
 layer_markers_best_expression2 <- expression_violin <- ggplot(data = expression_long2, aes(x = layer, y = value, fill = layer, color = layer)) +
-  geom_violin(scale = "width") +
-  facet_wrap(~gene_anno, nrow = 3) +
-  labs(
-    y = paste0("Expression logcounts")
-  ) +
-  theme_bw() +
-  theme(
-    legend.position = "None", axis.title.x = element_blank(),
-    axis.text.x = element_text(angle = 90, hjust = 1),
-    strip.text.x = element_text(face = "italic")
-  ) +
-  stat_summary(
-    fun = median,
-    geom = "crossbar",
-    width = 0.3,
-    color = "black"
-  ) + 
-  scale_fill_manual(values = metadata(sce)$cell_type_colors_layer) +
-  scale_color_manual(values = metadata(sce)$cell_type_colors_layer)
+    geom_violin(scale = "width") +
+    facet_wrap(~gene_anno, nrow = 3) +
+    labs(
+        y = paste0("Expression logcounts")
+    ) +
+    theme_bw() +
+    theme(
+        legend.position = "None", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 1),
+        strip.text.x = element_text(face = "italic")
+    ) +
+    stat_summary(
+        fun = median,
+        geom = "crossbar",
+        width = 0.3,
+        color = "black"
+    ) +
+    scale_fill_manual(values = metadata(sce)$cell_type_colors_layer) +
+    scale_color_manual(values = metadata(sce)$cell_type_colors_layer)
 
 ggsave(layer_markers_best_expression2, filename = here(plot_dir, "markers_layer_best_anno.png"), width = 12)
