@@ -1,0 +1,384 @@
+Adding LIBD modules
+Loading git
+Loading LIBD module for git-status-size/github
+Loading LIBD module for git-lfs/2.8.0
+Loading LIBD module for rmate/1.5.9
+Loading LIBD module for ruby/2.6.4p104
+Loading conda_R/4.2
+**** Job starts ****
+Fri Oct  7 16:05:31 EDT 2022
+**** JHPCE info ****
+User: lhuuki
+Job id: 182282
+Job name: convert_SCE_HDF5
+Hostname: compute-054.cm.cluster
+Task id: undefined
+Unloading conda_R/4.2
+Loading conda_R/4.2
+
+Currently Loaded Modules:
+  1) matlab/R2019a     6) COMMUNITY_CENTOS7_DEFAULT_ENV  11) ruby/2.6.4p104
+  2) stata/17          7) JHPCE_CENTOS7_DEFAULT_ENV      12) rmate/1.5.9
+  3) JHPCE_tools/1.0   8) git-status-size/github         13) conda/3-4.11.0
+  4) sge/8.1.9         9) git/2.28.0                     14) conda_R/4.2
+  5) gcc/4.4.7        10) git-lfs/2.8.0
+
+ 
+
+Loading required package: SummarizedExperiment
+Loading required package: MatrixGenerics
+Loading required package: matrixStats
+
+Attaching package: ‘MatrixGenerics’
+
+The following objects are masked from ‘package:matrixStats’:
+
+    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
+    colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+    colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
+    colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
+    colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+    colWeightedMeans, colWeightedMedians, colWeightedSds,
+    colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+    rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+    rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+    rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
+    rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+    rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
+    rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+    rowWeightedSds, rowWeightedVars
+
+Loading required package: GenomicRanges
+Loading required package: stats4
+Loading required package: BiocGenerics
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, append, as.data.frame, basename, cbind, colnames,
+    dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,
+    grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,
+    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
+    rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,
+    union, unique, unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+
+Attaching package: ‘S4Vectors’
+
+The following objects are masked from ‘package:base’:
+
+    expand.grid, I, unname
+
+Loading required package: IRanges
+Loading required package: GenomeInfoDb
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+
+Attaching package: ‘Biobase’
+
+The following object is masked from ‘package:MatrixGenerics’:
+
+    rowMedians
+
+The following objects are masked from ‘package:matrixStats’:
+
+    anyMissing, rowMedians
+
+here() starts at /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq
+Loading objects:
+  sce
+Loading required package: HDF5Array
+Loading required package: DelayedArray
+Loading required package: Matrix
+
+Attaching package: ‘Matrix’
+
+The following object is masked from ‘package:S4Vectors’:
+
+    expand
+
+
+Attaching package: ‘DelayedArray’
+
+The following objects are masked from ‘package:base’:
+
+    aperm, apply, rowsum, scale, sweep
+
+Loading required package: rhdf5
+
+Attaching package: ‘HDF5Array’
+
+The following object is masked from ‘package:rhdf5’:
+
+    h5ls
+
+<36601 x 77604> sparse matrix of class DelayedMatrix and type "double":
+             1_AAACCCAAGTTCTCTT-1 ... 19_TTTGTTGTCTTAAGGC-1
+MIR1302-2HG                     0   .                     0
+    FAM138A                     0   .                     0
+      OR4F5                     0   .                     0
+ AL627309.1                     0   .                     0
+ AL627309.3                     0   .                     0
+        ...                     .   .                     .
+ AC141272.1                     0   .                     0
+ AC023491.2                     0   .                     0
+ AC007325.1                     0   .                     0
+ AC007325.4                     0   .                     0
+ AC007325.2                     0   .                     0
+Object Size: 183705360
+
+ **** SCE details ****
+class: SingleCellExperiment 
+dim: 36601 77604 
+metadata(4): Samples cell_type_colors cell_type_colors_broad
+  cell_type_colors_layer
+assays(1): logcounts
+rownames(36601): MIR1302-2HG FAM138A ... AC007325.4 AC007325.2
+rowData names(9): source type ... marker_layer marker_broad_spatial
+colnames(77604): 1_AAACCCAAGTTCTCTT-1 1_AAACCCACAAGGTCTT-1 ...
+  19_TTTGTTGTCTCATTGT-1 19_TTTGTTGTCTTAAGGC-1
+colData names(33): Sample Barcode ... cellType_layer layer_annotation
+reducedDimNames(4): GLMPCA_approx TSNE UMAP HARMONY
+mainExpName: NULL
+altExpNames(0):
+
+ **** colData ****
+DataFrame with 77604 rows and 33 columns
+                           Sample            Barcode                    key
+                      <character>        <character>            <character>
+1_AAACCCAAGTTCTCTT-1   Br2720_mid AAACCCAAGTTCTCTT-1 AAACCCAAGTTCTCTT-1_B..
+1_AAACCCACAAGGTCTT-1   Br2720_mid AAACCCACAAGGTCTT-1 AAACCCACAAGGTCTT-1_B..
+1_AAACCCATCAAAGACA-1   Br2720_mid AAACCCATCAAAGACA-1 AAACCCATCAAAGACA-1_B..
+1_AAACCCATCATGACAC-1   Br2720_mid AAACCCATCATGACAC-1 AAACCCATCATGACAC-1_B..
+1_AAACCCATCATTGCGA-1   Br2720_mid AAACCCATCATTGCGA-1 AAACCCATCATTGCGA-1_B..
+...                           ...                ...                    ...
+19_TTTGTTGGTAGGGAGG-1  Br2743_mid TTTGTTGGTAGGGAGG-1 TTTGTTGGTAGGGAGG-1_B..
+19_TTTGTTGGTCTTCATT-1  Br2743_mid TTTGTTGGTCTTCATT-1 TTTGTTGGTCTTCATT-1_B..
+19_TTTGTTGTCCCTGGTT-1  Br2743_mid TTTGTTGTCCCTGGTT-1 TTTGTTGTCCCTGGTT-1_B..
+19_TTTGTTGTCTCATTGT-1  Br2743_mid TTTGTTGTCTCATTGT-1 TTTGTTGTCTCATTGT-1_B..
+19_TTTGTTGTCTTAAGGC-1  Br2743_mid TTTGTTGTCTTAAGGC-1 TTTGTTGTCTTAAGGC-1_B..
+                        SAMPLE_ID         pos       BrNum       round
+                      <character> <character> <character> <character>
+1_AAACCCAAGTTCTCTT-1         1c-k         mid      Br2720      round1
+1_AAACCCACAAGGTCTT-1         1c-k         mid      Br2720      round1
+1_AAACCCATCAAAGACA-1         1c-k         mid      Br2720      round1
+1_AAACCCATCATGACAC-1         1c-k         mid      Br2720      round1
+1_AAACCCATCATTGCGA-1         1c-k         mid      Br2720      round1
+...                           ...         ...         ...         ...
+19_TTTGTTGGTAGGGAGG-1      round0         mid      Br2743      round0
+19_TTTGTTGGTCTTCATT-1      round0         mid      Br2743      round0
+19_TTTGTTGTCCCTGGTT-1      round0         mid      Br2743      round0
+19_TTTGTTGTCTCATTGT-1      round0         mid      Br2743      round0
+19_TTTGTTGTCTTAAGGC-1      round0         mid      Br2743      round0
+                         Position       age         sex   diagnosis       sum
+                      <character> <numeric> <character> <character> <numeric>
+1_AAACCCAAGTTCTCTT-1       Middle     48.22           F     Control     23075
+1_AAACCCACAAGGTCTT-1       Middle     48.22           F     Control      4046
+1_AAACCCATCAAAGACA-1       Middle     48.22           F     Control      7104
+1_AAACCCATCATGACAC-1       Middle     48.22           F     Control     28025
+1_AAACCCATCATTGCGA-1       Middle     48.22           F     Control      2903
+...                           ...       ...         ...         ...       ...
+19_TTTGTTGGTAGGGAGG-1      Middle     61.54           M     Control     10089
+19_TTTGTTGGTCTTCATT-1      Middle     61.54           M     Control     32224
+19_TTTGTTGTCCCTGGTT-1      Middle     61.54           M     Control     42618
+19_TTTGTTGTCTCATTGT-1      Middle     61.54           M     Control     22370
+19_TTTGTTGTCTTAAGGC-1      Middle     61.54           M     Control     52975
+                       detected subsets_Mito_sum subsets_Mito_detected
+                      <integer>        <numeric>             <integer>
+1_AAACCCAAGTTCTCTT-1       5837               52                    13
+1_AAACCCACAAGGTCTT-1       2040               12                     7
+1_AAACCCATCAAAGACA-1       2858               23                    10
+1_AAACCCATCATGACAC-1       6272               25                     9
+1_AAACCCATCATTGCGA-1       1406               21                     9
+...                         ...              ...                   ...
+19_TTTGTTGGTAGGGAGG-1      4349                6                     5
+19_TTTGTTGGTCTTCATT-1      7119                3                     3
+19_TTTGTTGTCCCTGGTT-1      8329                4                     3
+19_TTTGTTGTCTCATTGT-1      6291                2                     2
+19_TTTGTTGTCTTAAGGC-1      8740               13                     5
+                      subsets_Mito_percent     total        high_mito
+                                 <numeric> <numeric> <outlier.filter>
+1_AAACCCAAGTTCTCTT-1             0.2253521     23075            FALSE
+1_AAACCCACAAGGTCTT-1             0.2965892      4046            FALSE
+1_AAACCCATCAAAGACA-1             0.3237613      7104            FALSE
+1_AAACCCATCATGACAC-1             0.0892061     28025            FALSE
+1_AAACCCATCATTGCGA-1             0.7233896      2903            FALSE
+...                                    ...       ...              ...
+19_TTTGTTGGTAGGGAGG-1           0.05947071     10089            FALSE
+19_TTTGTTGGTCTTCATT-1           0.00930983     32224            FALSE
+19_TTTGTTGTCCCTGGTT-1           0.00938571     42618            FALSE
+19_TTTGTTGTCTCATTGT-1           0.00894055     22370            FALSE
+19_TTTGTTGTCTTAAGGC-1           0.02453988     52975            FALSE
+                               low_sum     low_detected discard_auto
+                      <outlier.filter> <outlier.filter>    <logical>
+1_AAACCCAAGTTCTCTT-1             FALSE            FALSE        FALSE
+1_AAACCCACAAGGTCTT-1             FALSE            FALSE        FALSE
+1_AAACCCATCAAAGACA-1             FALSE            FALSE        FALSE
+1_AAACCCATCATGACAC-1             FALSE            FALSE        FALSE
+1_AAACCCATCATTGCGA-1             FALSE            FALSE        FALSE
+...                                ...              ...          ...
+19_TTTGTTGGTAGGGAGG-1            FALSE            FALSE        FALSE
+19_TTTGTTGGTCTTCATT-1            FALSE            FALSE        FALSE
+19_TTTGTTGTCCCTGGTT-1            FALSE            FALSE        FALSE
+19_TTTGTTGTCTCATTGT-1            FALSE            FALSE        FALSE
+19_TTTGTTGTCTTAAGGC-1            FALSE            FALSE        FALSE
+                      doubletScore prelimCluster   kmeans sizeFactor
+                         <numeric>      <factor> <factor>  <numeric>
+1_AAACCCAAGTTCTCTT-1      1.399882           76     mbk25   13.27935
+1_AAACCCACAAGGTCTT-1      0.157206           18     mbk11    2.32842
+1_AAACCCATCAAAGACA-1      0.209608           272    mbk07    4.08826
+1_AAACCCATCATGACAC-1      0.381786           57     mbk25   16.12801
+1_AAACCCATCATTGCGA-1      0.074860           18     mbk11    1.67064
+...                            ...           ...      ...        ...
+19_TTTGTTGGTAGGGAGG-1     0.102780           41     mbk15    5.98596
+19_TTTGTTGGTCTTCATT-1     1.945968           48     mbk25   19.11900
+19_TTTGTTGTCCCTGGTT-1     1.062060           20     mbk03   25.28592
+19_TTTGTTGTCTCATTGT-1     0.301488           41     mbk15   13.27247
+19_TTTGTTGTCTTAAGGC-1     0.397416           103    mbk19   31.43089
+                      collapsedCluster cellType_k cellType_hc cellType_broad_k
+                              <factor>   <factor>    <factor>         <factor>
+1_AAACCCAAGTTCTCTT-1              HC04   Inhib_04    Inhib_01            Inhib
+1_AAACCCACAAGGTCTT-1              HC07   Oligo_02    Oligo_02            Oligo
+1_AAACCCATCAAAGACA-1              HC12   OPC         OPC                 OPC  
+1_AAACCCATCATGACAC-1              HC04   Inhib_04    Inhib_01            Inhib
+1_AAACCCATCATTGCGA-1              HC07   Oligo_02    Oligo_02            Oligo
+...                                ...        ...         ...              ...
+19_TTTGTTGGTAGGGAGG-1             HC02   Excit_08    Excit_01            Excit
+19_TTTGTTGGTCTTCATT-1             HC19   Inhib_04    Inhib_05            Inhib
+19_TTTGTTGTCCCTGGTT-1             HC02   Excit_02    Excit_01            Excit
+19_TTTGTTGTCTCATTGT-1             HC02   Excit_08    Excit_01            Excit
+19_TTTGTTGTCTTAAGGC-1             HC03   Excit_10    Excit_02            Excit
+                      cellType_broad_hc cellType_azimuth cellType_layer
+                               <factor>      <character>       <factor>
+1_AAACCCAAGTTCTCTT-1              Inhib              Sst          Inhib
+1_AAACCCACAAGGTCTT-1              Oligo            Oligo          Oligo
+1_AAACCCATCAAAGACA-1              OPC                OPC          OPC  
+1_AAACCCATCATGACAC-1              Inhib              Vip          Inhib
+1_AAACCCATCATTGCGA-1              Oligo            Oligo          Oligo
+...                                 ...              ...            ...
+19_TTTGTTGGTAGGGAGG-1             Excit          L2/3 IT     Excit_L3  
+19_TTTGTTGGTCTTCATT-1             Inhib              Vip     Inhib     
+19_TTTGTTGTCCCTGGTT-1             Excit          L2/3 IT     Excit_L3  
+19_TTTGTTGTCTCATTGT-1             Excit          L2/3 IT     Excit_L3  
+19_TTTGTTGTCTTAAGGC-1             Excit            L6 IT     Excit_L5/6
+                      layer_annotation
+                              <factor>
+1_AAACCCAAGTTCTCTT-1                L2
+1_AAACCCACAAGGTCTT-1                WM
+1_AAACCCATCAAAGACA-1                WM
+1_AAACCCATCATGACAC-1                L2
+1_AAACCCATCATTGCGA-1                WM
+...                                ...
+19_TTTGTTGGTAGGGAGG-1             L3  
+19_TTTGTTGGTCTTCATT-1             L2  
+19_TTTGTTGTCCCTGGTT-1             L3  
+19_TTTGTTGTCTCATTGT-1             L3  
+19_TTTGTTGTCTTAAGGC-1             L5/6
+
+ **** rowData ****
+DataFrame with 36601 rows and 9 columns
+              source     type         gene_id gene_version   gene_name
+            <factor> <factor>     <character>  <character> <character>
+MIR1302-2HG   HAVANA     gene ENSG00000243485            5 MIR1302-2HG
+FAM138A       HAVANA     gene ENSG00000237613            2     FAM138A
+OR4F5         HAVANA     gene ENSG00000186092            6       OR4F5
+AL627309.1    HAVANA     gene ENSG00000238009            6  AL627309.1
+AL627309.3    HAVANA     gene ENSG00000239945            1  AL627309.3
+...              ...      ...             ...          ...         ...
+AC141272.1   ENSEMBL     gene ENSG00000277836            1  AC141272.1
+AC023491.2   ENSEMBL     gene ENSG00000278633            1  AC023491.2
+AC007325.1   ENSEMBL     gene ENSG00000276017            1  AC007325.1
+AC007325.4   ENSEMBL     gene ENSG00000278817            1  AC007325.4
+AC007325.2   ENSEMBL     gene ENSG00000277196            4  AC007325.2
+                 gene_type binomial_deviance marker_layer marker_broad_spatial
+               <character>         <numeric>  <character>          <character>
+MIR1302-2HG         lncRNA               NaN           NA                   NA
+FAM138A             lncRNA               NaN           NA                   NA
+OR4F5       protein_coding               NaN           NA                   NA
+AL627309.1          lncRNA          8778.744           NA                   NA
+AL627309.3          lncRNA           914.703           NA                   NA
+...                    ...               ...          ...                  ...
+AC141272.1  protein_coding               NaN           NA                   NA
+AC023491.2  protein_coding               NaN           NA                   NA
+AC007325.1  protein_coding               NaN           NA                   NA
+AC007325.4  protein_coding          19594.89           NA                   NA
+AC007325.2  protein_coding           6269.42           NA                   NA
+[1] "Reproducibility information:"
+[1] "2022-10-07 19:07:31 EDT"
+     user    system   elapsed 
+10548.824   313.009 10911.083 
+─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.2.1 Patched (2022-08-30 r82775)
+ os       CentOS Linux 7 (Core)
+ system   x86_64, linux-gnu
+ ui       X11
+ language (EN)
+ collate  en_US.UTF-8
+ ctype    en_US.UTF-8
+ tz       US/Eastern
+ date     2022-10-07
+ pandoc   2.19.2 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2/bin/pandoc
+
+─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+ package              * version  date (UTC) lib source
+ beachmat               2.12.0   2022-04-26 [2] Bioconductor
+ Biobase              * 2.56.0   2022-04-26 [2] Bioconductor
+ BiocGenerics         * 0.42.0   2022-04-26 [2] Bioconductor
+ BiocParallel           1.30.3   2022-06-05 [2] Bioconductor
+ BiocSingular           1.12.0   2022-04-26 [2] Bioconductor
+ bitops                 1.0-7    2021-04-24 [2] CRAN (R 4.2.1)
+ cli                    3.4.0    2022-09-08 [1] CRAN (R 4.2.1)
+ codetools              0.2-18   2020-11-04 [3] CRAN (R 4.2.1)
+ DelayedArray         * 0.22.0   2022-04-26 [2] Bioconductor
+ DelayedMatrixStats     1.18.0   2022-04-26 [2] Bioconductor
+ GenomeInfoDb         * 1.32.4   2022-09-06 [1] Bioconductor
+ GenomeInfoDbData       1.2.8    2022-08-30 [2] Bioconductor
+ GenomicRanges        * 1.48.0   2022-04-26 [2] Bioconductor
+ HDF5Array            * 1.24.2   2022-08-02 [2] Bioconductor
+ here                 * 1.0.1    2020-12-13 [2] CRAN (R 4.2.1)
+ IRanges              * 2.30.1   2022-08-18 [2] Bioconductor
+ irlba                  2.3.5    2021-12-06 [2] CRAN (R 4.2.1)
+ lattice                0.20-45  2021-09-22 [3] CRAN (R 4.2.1)
+ lobstr                 1.1.2    2022-06-22 [2] CRAN (R 4.2.1)
+ Matrix               * 1.4-1    2022-03-23 [3] CRAN (R 4.2.1)
+ MatrixGenerics       * 1.8.1    2022-06-26 [2] Bioconductor
+ matrixStats          * 0.62.0   2022-04-19 [2] CRAN (R 4.2.1)
+ Rcpp                   1.0.9    2022-07-08 [2] CRAN (R 4.2.1)
+ RCurl                  1.98-1.8 2022-07-30 [2] CRAN (R 4.2.1)
+ rhdf5                * 2.40.0   2022-04-26 [2] Bioconductor
+ rhdf5filters           1.8.0    2022-04-26 [2] Bioconductor
+ Rhdf5lib               1.18.2   2022-05-15 [2] Bioconductor
+ rlang                  1.0.5    2022-08-31 [1] CRAN (R 4.2.1)
+ rprojroot              2.0.3    2022-04-02 [2] CRAN (R 4.2.1)
+ rsvd                   1.0.5    2021-04-16 [2] CRAN (R 4.2.1)
+ S4Vectors            * 0.34.0   2022-04-26 [2] Bioconductor
+ ScaledMatrix           1.4.1    2022-09-11 [1] Bioconductor
+ scry                   1.8.0    2022-04-26 [2] Bioconductor
+ scuttle                1.6.3    2022-08-23 [2] Bioconductor
+ sessioninfo          * 1.2.2    2021-12-06 [2] CRAN (R 4.2.1)
+ SingleCellExperiment * 1.18.0   2022-04-26 [2] Bioconductor
+ sparseMatrixStats      1.8.0    2022-04-26 [2] Bioconductor
+ SummarizedExperiment * 1.26.1   2022-04-29 [2] Bioconductor
+ XVector                0.36.0   2022-04-26 [2] Bioconductor
+ zlibbioc               1.42.0   2022-04-26 [2] Bioconductor
+
+ [1] /users/lhuuki/R/4.2
+ [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2/R/4.2/lib64/R/site-library
+ [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2/R/4.2/lib64/R/library
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+**** Job ends ****
+Fri Oct  7 19:07:35 EDT 2022
