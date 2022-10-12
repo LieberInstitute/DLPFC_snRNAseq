@@ -592,7 +592,7 @@ layer_marker_stats_anno |>
 rowData(sce)$marker_layer <- layer_marker_stats_anno$marker_anno[match(rowData(sce)$gene_id, layer_marker_stats_anno$gene)]
 
 
-## braod markers
+## broad markers
 broad_marker_stats_anno <- marker_stats_spatial_broad |>
     add_column(symbol = rownames(sce)[match(marker_stats_spatial_broad$gene, rowData(sce)$gene_id)]) |>
     filter(!grepl("^MT-", symbol)) |>
@@ -634,29 +634,17 @@ rowData(sce)[c("GRIP2", "MBP", "SLC25A18", "VCAN"), ]
 # save(sce, file = here("processed-data", "sce", "sce_DLPFC.Rdata"))
 
 
-#### Markere Gene Heatmap ####
-pb_sce_layer <- scuttle::aggregateAcrossCells(sce[, !is.na(sce$cellType_layer)],
-    ids = sce$cellType_layer[!is.na(sce$cellType_layer)]
-)
+#### Marker Gene Heatmap ####
+load(here("processed-data", "05_explore_sce", "08_pseudobulk_cellTypes", "sce_pseudo-cellType_layer.Rdata"), verbose = TRUE)
+dim(sce_pseudo)
 
-## Need to normalize?
-sizeFactors.PB <- scater::librarySizeFactors(assays(pb_sce_layer)$counts)
+layer_markers_top <- layer_marker_stats_anno |>
+  filter(adj_rank_ratio <= 5) |>
+  arrange(cellType.target)
 
-# # Normalize with these LSFs
-assays(pb_sce_layer)$logcounts <- t(apply(assays(pb_sce_layer)$counts, 1, function(x) {
-    log2(x / sizeFactors.PB + 1)
-}))
-
-layer_markers_top <- markers_mean_ratio |>
-    filter(rank_ratio <= 2) |>
-    arrange(cellType.target)
-
-marker_anno <- layer_markers_top |>
-    column_to_rownames("gene") |>
-    select(cellType = cellType.target)
-
-pb_sce_layer_top <- pb_sce_layer[layer_markers_top$gene, ]
-
+marker_logcounts <- logcounts(sce_pseudo)[layer_markers_top$symbol,]
+dim(marker_logcounts)
+marker_logcounts[1:5,1:5]
 
 row_ha <- rowAnnotation(
     cell_type = layer_markers_top$cellType.target,
@@ -664,18 +652,53 @@ row_ha <- rowAnnotation(
 )
 
 column_ha <- HeatmapAnnotation(
-    ncells = anno_barplot(pb_sce_layer$ncells), cell_type = pb_sce_layer$cellType_layer,
+    ncells = anno_barplot(sce_pseudo$ncells),
+    cell_type = sce_pseudo$cellType_layer,
+    BrNum = sce_pseudo$BrNum,
+    Position = sce_pseudo$Position,
     col = list(cell_type = metadata(sce)$cell_type_colors_layer)
 )
 
-png(here(plot_dir, "heatmap_test_complex.png"), height = 800, width = 800)
-Heatmap(assays(pb_sce_layer_top)$counts,
-    cluster_rows = FALSE,
-    cluster_columns = FALSE,
+png(here(plot_dir, "markers_heatmap_layer.png"), height = 1000, width = 1000)
+Heatmap(marker_logcounts,
+    cluster_rows = TRUE,
+    cluster_columns = TRUE,
     right_annotation = row_ha,
-    top_annotation = column_ha
+    top_annotation = column_ha,
+    show_column_names = FALSE,
+    show_row_names = TRUE,
+    col = viridis::viridis(100)
 )
 dev.off()
+
+## mean of cell type 
+ctIndexes = splitit(sce_pseudo$cellType_layer)
+
+ctIndexes$EndoMural <- NULL
+mean_logcounts <- sapply(ctIndexes, function(ii)
+  rowMeans(marker_logcounts[, ii, drop = FALSE]))
+
+sum_cells <- table(sce$cellType_layer)
+sum_cells$EndoMural <- NULL
+
+column_ha_mean <- HeatmapAnnotation(
+  # ncells = anno_barplot(sum_cells),
+  cell_type = colnames(mean_logcounts),
+  col = list(cell_type = metadata(sce)$cell_type_colors_layer)
+)
+
+png(here(plot_dir, "markers_heatmap_layer_mean.png"), height = 1000, width = 1000)
+Heatmap(mean_logcounts,
+        cluster_rows = FALSE,
+        cluster_columns = TRUE,
+        right_annotation = row_ha,
+        top_annotation = column_ha_mean,
+        # show_column_names = FALSE,
+        # show_row_names = TRUE,
+        col = viridis::viridis(100)
+)
+dev.off()
+
 
 table(sce$cellType_layer, sce$cellType_azimuth)
 
