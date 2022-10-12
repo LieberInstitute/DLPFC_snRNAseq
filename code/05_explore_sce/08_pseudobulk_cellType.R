@@ -7,7 +7,7 @@ library("sessioninfo")
 
 args <- commandArgs(trailingOnly = TRUE)
 cellType <- args[1]
-message("\n#### Pseudobulking: ", dataset, " ####")
+message("\n#### Pseudobulking: ", cellType, " ####")
 
 ## load data
 load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
@@ -19,7 +19,7 @@ if(!dir.exists(data_dir)) dir.create(data_dir)
 ## remove an NAs
 sce <- sce[, !is.na(sce$cellType_layer)]
 
-message(Sys.time(), "- Pseudobulking")
+message(Sys.time(), " - Pseudobulking")
 
 sce_pseudo <- aggregateAcrossCells(sce,
                                  ids = paste0(sce$Sample ,"-", sce[[cellType]]))
@@ -31,7 +31,7 @@ table(sce_pseudo$ncells < 10)
 sce_pseudo <- sce_pseudo[, sce_pseudo$ncells >= 10]
 
 ## Need to normalize
-message(Sys.time(), "- Normalize")
+message(Sys.time(), " - Normalize")
 
 logcounts(sce_pseudo) <-
   edgeR::cpm(edgeR::calcNormFactors(sce_pseudo),
@@ -39,7 +39,7 @@ logcounts(sce_pseudo) <-
              prior.count = 1
   )
 
-message(Sys.time(), "- Save Data")
+message(Sys.time(), " - Save Data")
 save(sce_pseudo, file = here(data_dir, file = paste0("sce_pseudo-", cellType, ".Rdata")))
 
 # sgejobs::job_single('08_pseudobulk_cellType_layer', create_shell = TRUE, memory = '25G', command = "Rscript 08_pseudobulk_cellType.R cellType_hc")
