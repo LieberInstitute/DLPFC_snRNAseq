@@ -559,7 +559,6 @@ layer_markers <- left_join(markers_1vALL_enrich, markers_mean_ratio)
 ## version from spatialDLPFC from Nick
 marker_stats_spatial_layer <- readRDS(file = "/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/processed-data/spot_deconvo/05-shared_utilities/marker_stats_layer.rds")
 marker_stats_spatial_broad <- readRDS(file = "/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/processed-data/spot_deconvo/05-shared_utilities/marker_stats_broad.rds")
-head(marker_stats_spatial)
 
 ## do stats match?
 all_equal(markers_mean_ratio[colnames(markers_mean_ratio)], markers_mean_ratio)
@@ -642,9 +641,11 @@ layer_markers_top <- layer_marker_stats_anno |>
   filter(adj_rank_ratio <= 5) |>
   arrange(cellType.target)
 
+sce_pseudo <- sce_pseudo[,order(sce_pseudo$cellType_layer)]
+
 marker_logcounts <- logcounts(sce_pseudo)[layer_markers_top$symbol,]
 dim(marker_logcounts)
-marker_logcounts[1:5,1:5]
+marker_logcounts[1:5,100:110]
 
 row_ha <- rowAnnotation(
     cell_type = layer_markers_top$cellType.target,
@@ -661,15 +662,51 @@ column_ha <- HeatmapAnnotation(
 
 png(here(plot_dir, "markers_heatmap_layer.png"), height = 1000, width = 1000)
 Heatmap(marker_logcounts,
-    cluster_rows = TRUE,
-    cluster_columns = TRUE,
-    right_annotation = row_ha,
-    top_annotation = column_ha,
-    show_column_names = FALSE,
-    show_row_names = TRUE,
-    col = viridis::viridis(100)
+        name = "logcounts",
+        cluster_rows = TRUE,
+        cluster_columns = TRUE,
+        right_annotation = row_ha,
+        top_annotation = column_ha,
+        show_column_names = FALSE,
+        show_row_names = TRUE,
+        col = viridis::viridis(100)
 )
 dev.off()
+
+png(here(plot_dir, "markers_heatmap_layer-clusterCol.png"), height = 1000, width = 1000)
+# pdf(here(plot_dir, "markers_heatmap_layer-clusterCol.pdf"),height = 10, width = 10)
+Heatmap(marker_logcounts,
+        name = "logcounts",
+        row_split = layer_markers_top$cellType.target,
+        cluster_rows = FALSE,
+        cluster_columns = TRUE,
+        right_annotation = row_ha,
+        top_annotation = column_ha,
+        show_column_names = FALSE,
+        show_row_names = TRUE,
+        col = viridis::viridis(100)
+)
+dev.off()
+
+
+png(here(plot_dir, "markers_heatmap_layer-uncluster.png"), height = 1000, width = 1000)
+Heatmap(marker_logcounts,
+        name = "logcounts",
+        row_split = layer_markers_top$cellType.target,
+        column_split = sce_pseudo$cellType_layer,
+        cluster_rows = FALSE,
+        cluster_columns = FALSE,
+        right_annotation = row_ha,
+        top_annotation = column_ha,
+        show_column_names = FALSE,
+        show_row_names = TRUE,
+        col = viridis::viridis(100)
+)
+dev.off()
+
+## test
+test <- table(sce$Sample, sce$cellType_layer)
+
 
 ## mean of cell type 
 ctIndexes = splitit(sce_pseudo$cellType_layer)
@@ -689,10 +726,12 @@ column_ha_mean <- HeatmapAnnotation(
 
 png(here(plot_dir, "markers_heatmap_layer_mean.png"), height = 1000, width = 1000)
 Heatmap(mean_logcounts,
+        name = "Mean logcount",
         cluster_rows = FALSE,
-        cluster_columns = TRUE,
+        cluster_columns = FALSE,
         right_annotation = row_ha,
         top_annotation = column_ha_mean,
+        row_split = layer_markers_top$cellType.target,
         # show_column_names = FALSE,
         # show_row_names = TRUE,
         col = viridis::viridis(100)
