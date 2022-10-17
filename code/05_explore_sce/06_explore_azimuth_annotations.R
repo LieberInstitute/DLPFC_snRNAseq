@@ -2,7 +2,7 @@ library("SingleCellExperiment")
 library("patchwork")
 library("tidyverse")
 library("viridis")
-# library("pheatmap")
+library("pheatmap")
 library("ComplexHeatmap")
 library("scater")
 library("bluster")
@@ -136,37 +136,28 @@ dev.off()
 
 #### Annotate the Heatmap ####
 ## Number of markers
-load(here("processed-data", "03_build_sce", "cell_type_markers.Rdata"), verbose = TRUE)
-n_markers <- sapply(markers_1vALL, function(x) sum(x$FDR < 0.05))
+# load(here("processed-data", "03_build_sce", "cell_type_markers.Rdata"), verbose = TRUE)
+# n_markers <- sapply(markers_1vALL, function(x) sum(x$FDR < 0.05))
 
 ## Spatial Registration
+layer_anno_all <- read.csv("/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/processed-data/rdata/spe/12_spatial_registration_sn/cellType_layer_annotations.csv",
+                           row.names = 1)
 
-## build annotation df
-hc_anno <- data.frame(
-    cellType_broad = gsub("\\.|_[0-9]+", "", names(n_markers)),
-    n_markers = n_markers
-)
-rownames(hc_anno) <- gsub("\\.", "", rownames(hc_anno)) ## EndoMural rename
+hc_anno <- layer_anno_all |>
+  column_to_rownames("cluster") |> 
+  transmute(Layer = ifelse(layer_confidence == "good", layer_annotation, "None"))
 
-excit_layer[rownames(hc_anno), ]
-
-hc_anno <- cbind(hc_anno, hc_layer[rownames(hc_anno), ])
-
-write.csv(hc_anno, file = here("processed-data", "05_explore_sce", "hc_annotation.csv"))
+# write.csv(hc_anno, file = here("processed-data", "05_explore_sce", "hc_annotation.csv"))
 
 ## azimuth annotation
 azimuth_anno <- azimuth_cellType_notes |>
-    column_to_rownames("azimuth") |>
-    select(-Layer)
-
-azimuth_anno <- cbind(azimuth_anno, azimuth_layer[rownames(azimuth_anno), ])
+    column_to_rownames("azimuth") 
 
 ## factor layers
-layers <- c("L1", "L2", "L3", "L4", "L5", "L6", "WM")
-# layers <- c("WM", "L1", "L2", "L2/3", "L3","L4","L5","L5/6","L6")
+layers <- sort(unique(c(azimuth_anno$Layer, hc_anno$Layer)))
 
-azimuth_anno$max_layer <- factor(azimuth_anno$max_layer, levels = layers)
-hc_anno$max_layer <- factor(hc_anno$max_layer, levels = layers)
+azimuth_anno$Layer <- factor(azimuth_anno$Layer, levels = layers)
+hc_anno$Layer <- factor(hc_anno$Layer, levels = layers)
 
 ## layer colors
 layer_colors <- viridis(length(layers))
