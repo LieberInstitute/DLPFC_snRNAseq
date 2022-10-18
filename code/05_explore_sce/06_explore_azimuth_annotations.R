@@ -70,29 +70,6 @@ azimuth_cellType_notes <- data.frame(
 ) |>
     mutate(Layer = ifelse(grepl("L[1-6]", azimuth), gsub("(L[1-6]|L[1-6]/[1-6]).*", "\\1", azimuth), NA))
 
-#### Layer Data ####
-load(here("processed-data", "05_explore_sce", "07_spatial_registration", "layer_cor.Rdata"), verbose = TRUE)
-# cor_hc_top100
-# cor_excit_top100
-# cor_azimuth_top100
-
-## HC Cor
-make_layer_tab <- function(cor) {
-    max_cor <- apply(cor, 1, max)
-    max_layer <- colnames(cor)[apply(cor, 1, which.max)]
-    max_layer <- gsub("ayer", "", max_layer)
-    layer_tab <- data.frame(max_layer, max_cor)
-    # layer_tab <- data.frame(cell_type = rownames(cor),max_layer, max_cor)
-    return(layer_tab)
-}
-
-hc_layer <- make_layer_tab(cor_hc_top100)
-excit_layer <- make_layer_tab(cor_excit_top100)
-azimuth_layer <- make_layer_tab(cor_azimuth_top100)
-
-rownames(azimuth_layer) <- gsub("\\.", " ", gsub("([0-9])\\.([0-9])", "\\1/\\2", rownames(azimuth_layer)))
-rownames(azimuth_layer)[[7]] <- "Micro-PVM"
-
 #### Plot Heat Maps ####
 ## Simple Compare to HC annotations
 ct_annos <- table(sce$cellType_hc, sce$cellType_azimuth)
@@ -140,38 +117,62 @@ dev.off()
 # n_markers <- sapply(markers_1vALL, function(x) sum(x$FDR < 0.05))
 
 ## Spatial Registration
-layer_anno_all <- read.csv("/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/spatialDLPFC/processed-data/rdata/spe/12_spatial_registration_sn/cellType_layer_annotations.csv",
-                           row.names = 1)
+layer_anno_hc <- read.csv(here("processed-data","05_explore_sce","spatial_registration_sn","cellType_layer_annotations.csv"), row.names = 1)
 
-hc_anno <- layer_anno_all |>
-  column_to_rownames("cluster") |> 
-  transmute(Layer = ifelse(layer_confidence == "good", layer_annotation, "None"))
-
-# write.csv(hc_anno, file = here("processed-data", "05_explore_sce", "hc_annotation.csv"))
-
+hc_anno <- layer_anno_hc |>
+  mutate(cellType_broad = gsub("_[0-9]+","",cluster),
+         Layer = ifelse(layer_confidence == "good", layer_annotation, NA)) |>
+  column_to_rownames("cluster") |>
+  select(cellType_broad, Layer)
+  
 ## azimuth annotation
 azimuth_anno <- azimuth_cellType_notes |>
     column_to_rownames("azimuth") 
 
 ## factor layers
-layers <- sort(unique(c(azimuth_anno$Layer, hc_anno$Layer)))
+(layers <- sort(unique(c(azimuth_anno$Layer, hc_anno$Layer))))
 
 azimuth_anno$Layer <- factor(azimuth_anno$Layer, levels = layers)
 hc_anno$Layer <- factor(hc_anno$Layer, levels = layers)
 
-## layer colors
-layer_colors <- viridis(length(layers))
-names(layer_colors) <- layers
+azimuth_anno <- azimuth_anno[colnames(jacc.mat),]
+hc_anno <- hc_anno[rownames(jacc.mat),]
 
+## layer colors from spatialLIBD + intermediate layers
+layer_colors <- spatialLIBD::libd_layer_colors
+names(layer_colors) <- gsub("ayer", "", names(layer_colors))
+layer_intermediate_colors <- c(`WM/L1` = "#650136", `L2/3` = "#00CC9C", `L3/4/5` = "#7D80CA", `L5/6` = "#CC6752")
+
+layer_colors <- c(layer_colors, layer_intermediate_colors)[layers]
+
+## Plot annotated heatmap 
 png(here(plot_dir, "azimuth_v_hc_annotation.png"), height = 800, width = 800)
 pheatmap(jacc.mat,
     color = inferno(100),
     annotation_row = hc_anno,
     annotation_col = azimuth_anno,
-    annotation_colors = list(max_layer = layer_colors, cellType_broad = cell_type_colors_broad),
+    annotation_colors = list(Layer = layer_colors, cellType_broad = cell_type_colors_broad),
     main = "Strength of the correspondence between Azimuth & HC"
 )
 dev.off()
+
+#### Complex Heatmap ####
+
+row_ha = rowAnnotation(df = hc_anno, col = list(Layer = layer_colors, cellType_broad = cell_type_colors_broad))
+hc_count = rowAnnotation(n_nuc = anno_barplot(as.numeric(table(sce$cellType_hc))))
+az_count = columnAnnotation(n_nuc = anno_barplot(as.numeric(table(sce$cellType_azimuth))))
+col_ha = HeatmapAnnotation(df = azimuth_anno, col = list(Layer = layer_colors, cellType_broad = cell_type_colors_broad))
+
+png(here(plot_dir, "azimuth_v_hc_annotation_complex.png"), height = 800, width = 800)
+Heatmap(jacc.mat,
+        name = "Correspondence",
+        left_annotation = row_ha,
+        right_annotation = hc_count,
+        top_annotation = col_ha,
+        bottom_annotation = az_count,
+        col = inferno(100))
+dev.off()
+
 
 ## Prop of prelim annotations
 
