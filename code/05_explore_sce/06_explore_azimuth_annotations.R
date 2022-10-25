@@ -117,17 +117,19 @@ dev.off()
 # n_markers <- sapply(markers_1vALL, function(x) sum(x$FDR < 0.05))
 
 ## Spatial Registration
-layer_anno_hc <- read.csv(here("processed-data","05_explore_sce","spatial_registration_sn","cellType_layer_annotations.csv"), row.names = 1)
+layer_anno_hc <- read.csv(here("processed-data", "05_explore_sce", "spatial_registration_sn", "cellType_layer_annotations.csv"), row.names = 1)
 
 hc_anno <- layer_anno_hc |>
-  mutate(cellType_broad = gsub("_[0-9]+","",cluster),
-         Layer = ifelse(layer_confidence == "good", layer_annotation, NA)) |>
-  column_to_rownames("cluster") |>
-  select(cellType_broad, Layer)
-  
+    mutate(
+        cellType_broad = gsub("_[0-9]+", "", cluster),
+        Layer = ifelse(layer_confidence == "good", layer_annotation, NA)
+    ) |>
+    column_to_rownames("cluster") |>
+    select(cellType_broad, Layer)
+
 ## azimuth annotation
 azimuth_anno <- azimuth_cellType_notes |>
-    column_to_rownames("azimuth") 
+    column_to_rownames("azimuth")
 
 ## factor layers
 (layers <- sort(unique(c(azimuth_anno$Layer, hc_anno$Layer))))
@@ -135,8 +137,8 @@ azimuth_anno <- azimuth_cellType_notes |>
 azimuth_anno$Layer <- factor(azimuth_anno$Layer, levels = layers)
 hc_anno$Layer <- factor(hc_anno$Layer, levels = layers)
 
-azimuth_anno <- azimuth_anno[colnames(jacc.mat),]
-hc_anno <- hc_anno[rownames(jacc.mat),]
+azimuth_anno <- azimuth_anno[colnames(jacc.mat), ]
+hc_anno <- hc_anno[rownames(jacc.mat), ]
 
 ## layer colors from spatialLIBD + intermediate layers
 layer_colors <- spatialLIBD::libd_layer_colors
@@ -145,7 +147,7 @@ layer_intermediate_colors <- c(`WM/L1` = "#650136", `L2/3` = "#00CC9C", `L3/4/5`
 
 layer_colors <- c(layer_colors, layer_intermediate_colors)[layers]
 
-## Plot annotated heatmap 
+## Plot annotated heatmap
 png(here(plot_dir, "azimuth_v_hc_annotation.png"), height = 800, width = 800)
 pheatmap(jacc.mat,
     color = inferno(100),
@@ -158,19 +160,20 @@ dev.off()
 
 #### Complex Heatmap ####
 
-row_ha = rowAnnotation(df = hc_anno, col = list(Layer = layer_colors, cellType_broad = cell_type_colors_broad))
-hc_count = rowAnnotation(n_nuc = anno_barplot(as.numeric(table(sce$cellType_hc))))
-az_count = columnAnnotation(n_nuc = anno_barplot(as.numeric(table(sce$cellType_azimuth))))
-col_ha = HeatmapAnnotation(df = azimuth_anno, col = list(Layer = layer_colors, cellType_broad = cell_type_colors_broad))
+row_ha <- rowAnnotation(df = hc_anno, col = list(Layer = layer_colors, cellType_broad = cell_type_colors_broad))
+hc_count <- rowAnnotation(n_nuc = anno_barplot(as.numeric(table(sce$cellType_hc))))
+az_count <- columnAnnotation(n_nuc = anno_barplot(as.numeric(table(sce$cellType_azimuth))))
+col_ha <- HeatmapAnnotation(df = azimuth_anno, col = list(Layer = layer_colors, cellType_broad = cell_type_colors_broad))
 
 png(here(plot_dir, "azimuth_v_hc_annotation_complex.png"), height = 800, width = 800)
 Heatmap(jacc.mat,
-        name = "Correspondence",
-        left_annotation = row_ha,
-        right_annotation = hc_count,
-        top_annotation = col_ha,
-        bottom_annotation = az_count,
-        col = inferno(100))
+    name = "Correspondence",
+    left_annotation = row_ha,
+    right_annotation = hc_count,
+    top_annotation = col_ha,
+    bottom_annotation = az_count,
+    col = inferno(100)
+)
 dev.off()
 
 
