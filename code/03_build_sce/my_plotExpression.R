@@ -63,7 +63,7 @@ my_plotMarkers <- function(sce, marker_list, assay = "logcounts", cat = "cellTyp
         markers <- m[m %in% rownames(sce)]
 
         # if(m != markers) message("Missing...",paste(m[!m %in% markers], collapse = ", "))
-        if (m != markers) message("Missing markers...")
+        if(!identical(m, markers)) message("Missing markers...")
         print(
             my_plotExpression(sce,
                 genes = markers,
