@@ -72,10 +72,12 @@ ggsave(medianDoublet_histo, filename = here(plot_dir, "medianDoublet_histogram.p
 # 25      156      166      199      247      258      264
 # 3.024884 8.395549 2.338546 2.330919 2.034900 2.159430 2.094400
 
-## Over 5 but does not drive clustering
+## Prelim cluster 156 Over 5 but does not drive clustering
 (doublet_clust <- prelimCluster.medianDoublet[prelimCluster.medianDoublet > 5])
 # 156
 # 8.395549
+sum(sce$prelimCluster == 156)
+# [1] 68
 summary(sce$doubletScore[sce$prelimCluster == 156])
 # Min. 1st Qu.  Median    Mean 3rd Qu.    Max.
 # 0.3844  1.6301  8.3955  7.9715 13.7577 18.0338
@@ -86,9 +88,11 @@ table(sce$prelimCluster)[names(doublet_clust)]
 
 ## Cluster in 07_hierachiacal_cluster.R - need to organize
 load(here("processed-data", "03_build_sce", "HC_dend.Rdata"), verbose = TRUE)
+# dend
+# tree.clusCollapsed
+# dist.clusCollapsed
 
 ## Try different cut heights
-
 h_list <- seq(100, 2000, 25)
 
 h_n_clust <- sapply(h_list, function(h) {
@@ -189,15 +193,45 @@ filename = here(plot_dir, "TSNE_HC-29_clusters.png"), width = 10
 )
 
 
-# get logcounts
-sce <- logNormCounts(sce)
-rownames(sce) <- rowData(sce)$gene_name
-
 #### compare w/ mb k-means ####
 load(here("processed-data", "03_build_sce", "km_res.Rdata"), verbose = TRUE)
 k_list <- seq(5, 50) ## keep index
 sce$kmeans <- as.factor(paste0("mbk", numform::f_pad_zero(km_res[[which(k_list == 29)]]$Clusters)))
 table(sce$kmeans)
+
+
+#### QC prelim clusters with poor signal downstream ####
+# clusters from Oligo_01 32, 36, 180, 229, and 247 - poor signal 
+
+problem_clusters <- c(32, 36, 180, 229, 247)
+table(sce$prelimCluster %in% problem_clusters)
+# FALSE  TRUE 
+# 56447 21157 
+
+## Add QC_remove as a collapse level - signaling it will be dropped
+levels(sce$collapsedCluster) <- c(levels(sce$collapsedCluster), "QC_remove")
+
+## label probelm clusters "QC_remove"
+sce$collapsedCluster[sce$prelimCluster %in% problem_clusters] <- "QC_remove"
+table(sce$collapsedCluster)
+
+## Replot TSNE/UMAP 
+cluster_colors <- c(cluster_colors, c(`QC_remove` = "grey")) 
+
+TSNE_clusters <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = collapsedCluster)) +
+  geom_point(size = 0.2, alpha = 0.3) +
+  scale_color_manual(values = cluster_colors) +
+  my_theme +
+  coord_equal()
+
+ggsave(TSNE_clusters +
+         guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+       filename = here(plot_dir, "TSNE_HC-29qc_clusters.png"), width = 10
+)
+
+####  get logcounts ####
+sce <- logNormCounts(sce)
+rownames(sce) <- rowData(sce)$gene_name
 
 
 #### Load data ####
@@ -219,7 +253,7 @@ my_plotMarkers(
     marker_list = markers.mathys.tran,
     cat = "collapsedCluster",
     fill_colors = cluster_colors,
-    pdf_fn = here(plot_dir, "HC_mathys_markers.pdf")
+    pdf_fn = here(plot_dir, "markers_mathys_hc_29.pdf")
 )
 
 my_plotMarkers(
@@ -227,7 +261,7 @@ my_plotMarkers(
     marker_list = markers.mathys.tran,
     cat = "kmeans",
     fill_colors = iWantHue_k29,
-    pdf_fn = here(plot_dir, "mb_kmeans_29_Tran_markers.pdf")
+    pdf_fn = here(plot_dir, "markers_mathys_mb_kmeans_29.pdf")
 )
 
 ## Tran
