@@ -14,7 +14,6 @@ my_theme <- theme_bw() +
     theme(text = element_text(size = 15))
 
 plot_dir <- here("plots", "03_build_sce", "08_cluster_annotation")
-
 if (!dir.exists(plot_dir)) dir.create(plot_dir)
 
 load(here("processed-data", "03_build_sce", "cell_type_colors.Rdata"), verbose = TRUE)
@@ -215,7 +214,7 @@ levels(sce$collapsedCluster) <- c(levels(sce$collapsedCluster), "QC_remove")
 sce$collapsedCluster[sce$prelimCluster %in% problem_clusters] <- "QC_remove"
 table(sce$collapsedCluster)
 
-## Replot TSNE/UMAP 
+## Replot TSNE/UMAP, need to add color for QC_remove 
 cluster_colors <- c(cluster_colors, c(`QC_remove` = "grey")) 
 
 TSNE_clusters <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = collapsedCluster)) +
@@ -264,52 +263,38 @@ my_plotMarkers(
     pdf_fn = here(plot_dir, "markers_mathys_mb_kmeans_29.pdf")
 )
 
-## Tran
-dlpfc_markers <- read.csv("/dcl01/lieber/ajaffe/Matt/MNT_thesis/snRNAseq/10x_pilot_FINAL/tables/revision/top40genesLists_DLPFC-n3_cellType_SN-LEVEL-tests_LAH2020.csv")
-dlpfc_markers_list <- as.list(dlpfc_markers[1:4, grepl("_1vAll", colnames(dlpfc_markers))])
+#### Other markers to check ####
+# dlpfc_markers <- read.csv("/dcl01/lieber/ajaffe/Matt/MNT_thesis/snRNAseq/10x_pilot_FINAL/tables/revision/top40genesLists_DLPFC-n3_cellType_SN-LEVEL-tests_LAH2020.csv")
+# dlpfc_markers_list <- as.list(dlpfc_markers[1:4, grepl("_1vAll", colnames(dlpfc_markers))])
+# 
+# my_plotMarkers(
+#     sce = sce,
+#     marker_list = dlpfc_markers_list,
+#     cat = "collapsedCluster",
+#     fill_colors = cluster_colors,
+#     pdf_fn = here(plot_dir, "HC_Tran_markers.pdf")
+# )
+# 
+# ## Mean Ratio Top Markers
+# load("/dcl01/lieber/ajaffe/lab/deconvolution_bsp2/data/marker_stats_pan.v2.Rdata", verbose = TRUE)
+# 
+# mr_list <- marker_stats %>%
+#     ungroup() %>%
+#     arrange(cellType.target) %>%
+#     filter(rank_ratio < 5) %>%
+#     select(rank_ratio, cellType.target, Symbol) %>%
+#     tidyr::pivot_wider(names_from = "cellType.target", values_from = "Symbol") %>%
+#     select(-rank_ratio) %>%
+#     as.list()
+# 
+# my_plotMarkers(
+#     sce = sce,
+#     marker_list = mr_list,
+#     cat = "collapsedCluster",
+#     fill_colors = cluster_colors,
+#     pdf_fn = here(plot_dir, "HC_MeanRatio_markers.pdf")
+# )
 
-my_plotMarkers(
-    sce = sce,
-    marker_list = dlpfc_markers_list,
-    cat = "collapsedCluster",
-    fill_colors = cluster_colors,
-    pdf_fn = here(plot_dir, "HC_Tran_markers.pdf")
-)
-
-## Mean Ratio Top Markers
-load("/dcl01/lieber/ajaffe/lab/deconvolution_bsp2/data/marker_stats_pan.v2.Rdata", verbose = TRUE)
-
-mr_list <- marker_stats %>%
-    ungroup() %>%
-    arrange(cellType.target) %>%
-    filter(rank_ratio < 5) %>%
-    select(rank_ratio, cellType.target, Symbol) %>%
-    tidyr::pivot_wider(names_from = "cellType.target", values_from = "Symbol") %>%
-    select(-rank_ratio) %>%
-    as.list()
-
-my_plotMarkers(
-    sce = sce,
-    marker_list = mr_list,
-    cat = "collapsedCluster",
-    fill_colors = cluster_colors,
-    pdf_fn = here(plot_dir, "HC_MeanRatio_markers.pdf")
-)
-
-
-my_plotClusterMarkers(
-    sce = sce,
-    marker_list = mr_list,
-    cat = "collapsedCluster",
-    pdf_fn = here(plot_dir, "pcm_MR.pdf")
-)
-
-pdf(here(plot_dir, "pcm_test.pdf"), height = 6, width = 8)
-my_plotExpression_flip(sce[, sce$kmeans == "mbk05"],
-    marker_list = markers.mathys.tran,
-    assay = "logcounts"
-)
-dev.off()
 
 #### Assign annotation ####
 ## mbkm annotation
@@ -331,13 +316,14 @@ anno_k2 <- anno_k %>%
 anno_k2 %>%
     select(broad, ct, cellType) %>%
     arrange(cellType)
+
 anno_k2 %>% filter(n == 1)
 
 ## HC annotation
 anno_hc <- read.csv(here("processed-data", "03_build_sce", "DLPFC_HC_anno.csv"))
 table(anno_hc$broad)
-# Astro EndoMural      Excit      Inhib      Micro      Oligo        OPC
-# 1          2         15          6          1          3          1
+# Astro      drop EndoMural     Excit     Inhib     Micro     Oligo       OPC 
+# 1         1         2        15         6         1         3         1
 
 
 anno_hc2 <- anno_hc %>%
@@ -353,9 +339,6 @@ order_cell_types <- function(cell_types) {
     neun_mask <- grepl("Excit|Inhib", cell_types)
     neun_ct <- cell_types[neun_mask]
     glia_ct <- cell_types[!neun_mask]
-
-
-
     ordered_cell_types <- c(sort(glia_ct), sort(neun_ct))
     return(ordered_cell_types)
 }
@@ -384,18 +367,18 @@ hc_broad_levels <- order_cell_types(unique(anno_hc2$broad))
 sce$cellType_broad_hc <- factor(anno_hc$broad[match(sce$collapsedCluster, anno_hc$cluster)], levels = hc_broad_levels)
 sce$cellType_hc <- factor(anno_hc2$cellType[match(sce$collapsedCluster, anno_hc2$cluster)], levels = hc_levels)
 table(sce$cellType_broad_hc)
-# Astro EndoMural     Micro     Oligo       OPC     Excit     Inhib
-# 3979      2157      1601     32051      1940     24809     11067
+# Astro      drop EndoMural     Micro     Oligo       OPC     Excit     Inhib 
+# 3979     21157      2157      1601     10894      1940     24809     11067 
 
 table(sce$cellType_hc)
-# Astro EndoMural_01 EndoMural_02        Micro     Oligo_01     Oligo_02     Oligo_03          OPC     Excit_01
-# 3979          446         1711         1601        23025         4732         4294         1940         7927
-# Excit_02     Excit_03     Excit_04     Excit_05     Excit_06     Excit_07     Excit_08     Excit_09     Excit_10
-# 2487         1309         2171         2532          329          334         1463         2561         1079
-# Excit_11     Excit_12     Excit_13     Excit_14     Excit_15     Inhib_01     Inhib_02     Inhib_03     Inhib_04
-# 482          420         1567           82           66         5366         1267         1310          565
-# Inhib_05     Inhib_06
-# 1192         1367
+# Astro         drop EndoMural_01 EndoMural_02        Micro     Oligo_01     Oligo_02     Oligo_03          OPC 
+# 3979        21157          446         1711         1601         1868         4732         4294         1940 
+# Excit_01     Excit_02     Excit_03     Excit_04     Excit_05     Excit_06     Excit_07     Excit_08     Excit_09 
+# 7927         2487         1309         2171         2532          329          334         1463         2561 
+# Excit_10     Excit_11     Excit_12     Excit_13     Excit_14     Excit_15     Inhib_01     Inhib_02     Inhib_03 
+# 1079          482          420         1567           82           66         5366         1267         1310 
+# Inhib_04     Inhib_05     Inhib_06 
+# 565         1192         1367 
 
 ## Check out prop
 (prop_k <- 100 * round(table(sce$cellType_broad_k) / ncol(sce), 3))
@@ -403,20 +386,20 @@ table(sce$cellType_hc)
 # 4.6         0.0         1.7        27.4        13.4         7.1        43.4         2.3
 
 (prop_hc <- 100 * round(table(sce$cellType_broad_hc) / ncol(sce), 3))
-# Astro EndoMural      Excit      Inhib      Micro      Oligo        OPC
-# 5.1        2.8       32.0       14.3        2.1       41.3        2.5
+# Astro      drop EndoMural     Micro     Oligo       OPC     Excit     Inhib 
+# 5.1      27.3       2.8       2.1      14.0       2.5      32.0      14.3
 
 as.data.frame(prop_k) %>% full_join(as.data.frame(prop_hc) %>% rename(Freq_HC = Freq))
-#          Var1 Freq Freq_HC
-# 1       Astro  4.6     5.1
-# 2        drop  0.0      NA
+#         Var1 Freq Freq_HC
+# 1      Astro  4.6     5.1
+# 2       drop  0.0    27.3
 # 3  EndoMural  1.7     2.8
-# 4       Excit 27.4    32.0
-# 5       Inhib 13.4    14.3
+# 4      Excit 27.4    32.0
+# 5      Inhib 13.4    14.3
 # 6 MicroOligo  7.1      NA
-# 7       Oligo 43.4    41.3
-# 8         OPC  2.3     2.5
-# 9       Micro   NA     2.1
+# 7      Oligo 43.4    14.0 * QC looses lots of Oligo nuc
+# 8        OPC  2.3     2.5
+# 9      Micro   NA     2.1
 
 ## Tran, Maynard DLPFC dataset for refrence
 # Astro      Excit      Inhib Macrophage      Micro      Mural      Oligo        OPC      Tcell
@@ -433,9 +416,14 @@ table(sce$Sample) # good!
 # 3101        5911        2861        2723        5205        4282        3898        4067        3059        3212
 # Br6471_mid  Br6522_mid Br6522_post  Br8325_ant  Br8325_mid  Br8492_mid Br8492_post  Br8667_ant  Br8667_mid
 # 4724        4004        4275        4707        4020        4997        2661        5774        4123
+
 table(sce$region) # need to swap to sentence case and change col name to "Position"
 # anterior    middle posterior
 # 28716     31974     16914
+
+sce$region <- stringr::str_to_title(sce$region)
+
+
 table(sce$region_short) # need to change colname to "pos"
 # ant   mid  post
 # 28716 31974 16914
@@ -448,7 +436,7 @@ table(sce$file_id) # need to change colname to "SAMPLE_ID"
 ## Fix colnames
 cn <- names(colData(sce))
 cn[match(c("subject", "region", "region_short", "file_id"), cn)] <- c("BrNum", "Position", "pos", "SAMPLE_ID")
-names(colData(sce)) <- cn
+colnames(colData(sce)) <- cn
 
 sce$Position <- tools::toTitleCase(sce$Position)
 
@@ -466,6 +454,12 @@ table(sce$BrNum, sce$Position)
 # Br8667     5774   4123         0
 
 
+#### DROP QC'ed HC cells ####
+
+# sce <- sce[, sce$cellType_hc != "drop"]
+# 
+# sce$cellType_hc <- droplevels(sce$cellType_hc)
+# levels(sce$cellType_hc)
 #### SAVE ANNOTATED SCE ####
 ## add cell type colors as metadata
 metadata(sce)$cell_type_colors <- cell_type_colors
