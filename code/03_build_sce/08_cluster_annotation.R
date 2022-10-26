@@ -13,7 +13,7 @@ library("pheatmap")
 my_theme <- theme_bw() +
     theme(text = element_text(size = 15))
 
-plot_dir <- here("plots", "03_build_sce", "08_cluster_annotation")
+plot_dir <- here("plots", "03_build_sce", "08_cluster_explore")
 if (!dir.exists(plot_dir)) dir.create(plot_dir)
 
 load(here("processed-data", "03_build_sce", "cell_type_colors.Rdata"), verbose = TRUE)
@@ -254,6 +254,9 @@ my_plotMarkers(
     fill_colors = cluster_colors,
     pdf_fn = here(plot_dir, "markers_mathys_hc_29.pdf")
 )
+
+## iWantHue 29 colors
+load(here("processed-data", "03_build_sce", "color_palletes.Rdata"), verbose = TRUE)
 
 my_plotMarkers(
     sce = sce,

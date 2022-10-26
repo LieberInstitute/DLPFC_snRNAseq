@@ -1,0 +1,885 @@
+Adding LIBD modules
+Loading git
+Loading LIBD module for git-status-size/github
+Loading LIBD module for git-lfs/2.8.0
+Loading LIBD module for rmate/1.5.9
+Loading LIBD module for ruby/2.6.4p104
+Loading conda_R/4.2
+**** Job starts ****
+Wed Oct 26 14:48:59 EDT 2022
+**** JHPCE info ****
+User: lhuuki
+Job id: 339125
+Job name: cluster_annotation
+Hostname: compute-098.cm.cluster
+Task id: undefined
+Unloading conda_R/4.2
+Loading conda_R/4.2
+
+Currently Loaded Modules:
+  1) matlab/R2019a     6) COMMUNITY_CENTOS7_DEFAULT_ENV  11) ruby/2.6.4p104
+  2) stata/17          7) JHPCE_CENTOS7_DEFAULT_ENV      12) rmate/1.5.9
+  3) JHPCE_tools/1.0   8) git-status-size/github         13) conda/3-4.11.0
+  4) sge/8.1.9         9) git/2.28.0                     14) conda_R/4.2
+  5) gcc/4.4.7        10) git-lfs/2.8.0
+
+ 
+
+Loading required package: SummarizedExperiment
+Loading required package: MatrixGenerics
+Loading required package: matrixStats
+
+Attaching package: ‘MatrixGenerics’
+
+The following objects are masked from ‘package:matrixStats’:
+
+    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
+    colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+    colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
+    colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
+    colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+    colWeightedMeans, colWeightedMedians, colWeightedSds,
+    colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+    rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+    rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+    rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
+    rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+    rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
+    rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+    rowWeightedSds, rowWeightedVars
+
+Loading required package: GenomicRanges
+Loading required package: stats4
+Loading required package: BiocGenerics
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, append, as.data.frame, basename, cbind, colnames,
+    dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,
+    grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,
+    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
+    rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,
+    union, unique, unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+
+Attaching package: ‘S4Vectors’
+
+The following objects are masked from ‘package:base’:
+
+    expand.grid, I, unname
+
+Loading required package: IRanges
+Loading required package: GenomeInfoDb
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+
+Attaching package: ‘Biobase’
+
+The following object is masked from ‘package:MatrixGenerics’:
+
+    rowMedians
+
+The following objects are masked from ‘package:matrixStats’:
+
+    anyMissing, rowMedians
+
+Loading required package: scuttle
+Loading required package: ggplot2
+Loading required package: rafalib
+
+---------------------
+Welcome to dendextend version 1.16.0
+Type citation('dendextend') for how to cite the package.
+
+Type browseVignettes(package = 'dendextend') for the package vignette.
+The github page is: https://github.com/talgalili/dendextend/
+
+Suggestions and bug-reports can be submitted at: https://github.com/talgalili/dendextend/issues
+You may ask questions at stackoverflow, use the r and dendextend tags: 
+	 https://stackoverflow.com/questions/tagged/dendextend
+
+	To suppress this message use:  suppressPackageStartupMessages(library(dendextend))
+---------------------
+
+
+Attaching package: ‘dendextend’
+
+The following object is masked from ‘package:stats’:
+
+    cutree
+
+here() starts at /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq
+
+Attaching package: ‘dplyr’
+
+The following object is masked from ‘package:Biobase’:
+
+    combine
+
+The following objects are masked from ‘package:GenomicRanges’:
+
+    intersect, setdiff, union
+
+The following object is masked from ‘package:GenomeInfoDb’:
+
+    intersect
+
+The following objects are masked from ‘package:IRanges’:
+
+    collapse, desc, intersect, setdiff, slice, union
+
+The following objects are masked from ‘package:S4Vectors’:
+
+    first, intersect, rename, setdiff, setequal, union
+
+The following objects are masked from ‘package:BiocGenerics’:
+
+    combine, intersect, setdiff, union
+
+The following object is masked from ‘package:matrixStats’:
+
+    count
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading objects:
+  cell_type_colors_broad
+  cell_type_colors
+Loading objects:
+  sce
+Loading objects:
+  clusters
+Loading required package: HDF5Array
+Loading required package: DelayedArray
+Loading required package: Matrix
+
+Attaching package: ‘Matrix’
+
+The following object is masked from ‘package:S4Vectors’:
+
+    expand
+
+
+Attaching package: ‘DelayedArray’
+
+The following objects are masked from ‘package:base’:
+
+    aperm, apply, rowsum, scale, sweep
+
+Loading required package: rhdf5
+
+Attaching package: ‘HDF5Array’
+
+The following object is masked from ‘package:rhdf5’:
+
+    h5ls
+
+[1] 296
+
+   1    2    3    4    5    6    7    8    9   10   11   12   13   14   15   16 
+ 223  609  221   72  370  317  964  118   24  196  600   61   56  144 1547   65 
+  17   18   19   20   21   22   23   24   25   26   27   28   29   30   31   32 
+ 570 1283  279  471  571  356   89 1540  162  199  299  462  359  414   69  662 
+  33   34   35   36   37   38   39   40   41   42   43   44   45   46   47   48 
+  96  116   43 7720  788  123   69  176  519   95  501  155  203  151 1252   72 
+  49   50   51   52   53   54   55   56   57   58   59   60   61   62   63   64 
+  84 1020   80  173  229  121  211   35  299  222  790  132  220   49  506  168 
+  65   66   67   68   69   70   71   72   73   74   75   76   77   78   79   80 
+1512  194   29   73  796 1486  326   62  505  638  204 1982  206  300  311  117 
+  81   82   83   84   85   86   87   88   89   90   91   92   93   94   95   96 
+  71  210  159   64   93  345  575   49  257   75  118  107   87  148   46  222 
+  97   98   99  100  101  102  103  104  105  106  107  108  109  110  111  112 
+ 175  473   67   35   50  108  297  373   64  268   72   64  142   95  187  102 
+ 113  114  115  116  117  118  119  120  121  122  123  124  125  126  127  128 
+ 370   57  215   39  186  188   43  103   56   65   68   73   85   79  119   37 
+ 129  130  131  132  133  134  135  136  137  138  139  140  141  142  143  144 
+  62  408   39   99  446   37  104   61   82   83   63  152   96   46  166  177 
+ 145  146  147  148  149  150  151  152  153  154  155  156  157  158  159  160 
+  57  140  124   57  249   41   91  271   62   14  131   68   54   29   42   37 
+ 161  162  163  164  165  166  167  168  169  170  171  172  173  174  175  176 
+ 449  363  136   44   69   94  342  110  131  111  246  119  150  108  328   28 
+ 177  178  179  180  181  182  183  184  185  186  187  188  189  190  191  192 
+ 142  152   26 8757   38  382  288  249  619  171  255   37   18   73  170  161 
+ 193  194  195  196  197  198  199  200  201  202  203  204  205  206  207  208 
+  14  257  106   35  652   28    8  116   88  122   76  145   43  224  155  133 
+ 209  210  211  212  213  214  215  216  217  218  219  220  221  222  223  224 
+  73   58   66   48  242   61  233  167  525  432   52  111   19   46    8   17 
+ 225  226  227  228  229  230  231  232  233  234  235  236  237  238  239  240 
+  36  190   60   18 2765  293  189  177   46   22   62  162   80   44   71   54 
+ 241  242  243  244  245  246  247  248  249  250  251  252  253  254  255  256 
+  59   32  117   32   39  253 1253  174  102  116  118  108   55    5   28  124 
+ 257  258  259  260  261  262  263  264  265  266  267  268  269  270  271  272 
+ 102   44  104   33   56   42   37    3   43   25   63  295  134   71   46  388 
+ 273  274  275  276  277  278  279  280  281  282  283  284  285  286  287  288 
+  65   22   19  181   45  192   26   30   31  165   52  150   10   43   22   26 
+ 289  290  291  292  293  294  295  296 
+  27   33  121   32   24    7   41   44 
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+    3.0    54.0   109.0   262.2   222.2  8757.0 
+     
+      round0 round1 round2 round3 round4 round5
+  3        0    221      0      0      0      0
+  4        0     72      0      0      0      0
+  9        0     24      0      0      0      0
+  14       0    144      0      0      0      0
+  16       0     65      0      0      0      0
+  29       0    359      0      0      0      0
+  33       0     96      0      0      0      0
+  51       0     80      0      0      0      0
+  57       0    299      0      0      0      0
+  62       0     49      0      0      0      0
+  68       0      0      0     73      0      0
+  100      0     35      0      0      0      0
+  105      0     64      0      0      0      0
+  107      0     72      0      0      0      0
+  108      0     64      0      0      0      0
+  118      0    188      0      0      0      0
+  128      0     37      0      0      0      0
+  134      0     37      0      0      0      0
+  156      0     68      0      0      0      0
+  157      0     54      0      0      0      0
+  162      0    363      0      0      0      0
+  167      0    342      0      0      0      0
+  186      0    171      0      0      0      0
+  196      0     35      0      0      0      0
+  212      0     48      0      0      0      0
+  233      0     46      0      0      0      0
+  236      0      0      0      0    162      0
+  237      0     80      0      0      0      0
+  240      0     54      0      0      0      0
+  241      0     59      0      0      0      0
+  250      0    116      0      0      0      0
+  253      0     55      0      0      0      0
+  257      0      0      0      0    102      0
+  260      0     33      0      0      0      0
+  264      0      0      0      3      0      0
+  267      0     63      0      0      0      0
+  268      0    295      0      0      0      0
+  270      0     71      0      0      0      0
+  287      0     22      0      0      0      0
+  291      0      0      0      0    121      0
+  295      0      0      0     41      0      0
+  296      0      0      0      0      0     44
+[1] 252
+     
+      Br2720_mid Br2720_post Br2743_ant Br2743_mid Br3942_ant Br3942_mid
+  9            0           0          0          0          0          0
+  68           0           0          0          0         73          0
+  105         64           0          0          0          0          0
+  108          0           0          0          0          0          0
+  212          0           0          0          0          0          0
+  233          0           0          0          0          0          0
+  237          0           0          0          0          0          0
+  250          0           0          0          0          0          0
+  253          0           0          0          0          0          0
+  267         63           0          0          0          0          0
+  291          0           0          0          0          0          0
+  295          0          41          0          0          0          0
+  296          0           0          0          0          0          0
+     
+      Br6423_ant Br6423_post Br6432_ant Br6471_ant Br6471_mid Br6522_mid
+  9            0           0          0         24          0          0
+  68           0           0          0          0          0          0
+  105          0           0          0          0          0          0
+  108          0           0          0         64          0          0
+  212          0           0          0         48          0          0
+  233          0           0          0         46          0          0
+  237          0           0          0         80          0          0
+  250          0           0          0        116          0          0
+  253          0           0          0         55          0          0
+  267          0           0          0          0          0          0
+  291          0           0          0          0          0          0
+  295          0           0          0          0          0          0
+  296          0           0          0          0          0          0
+     
+      Br6522_post Br8325_ant Br8325_mid Br8492_mid Br8492_post Br8667_ant
+  9             0          0          0          0           0          0
+  68            0          0          0          0           0          0
+  105           0          0          0          0           0          0
+  108           0          0          0          0           0          0
+  212           0          0          0          0           0          0
+  233           0          0          0          0           0          0
+  237           0          0          0          0           0          0
+  250           0          0          0          0           0          0
+  253           0          0          0          0           0          0
+  267           0          0          0          0           0          0
+  291           0          0          0          0           0          0
+  295           0          0          0          0           0          0
+  296           0          0          0          0           0         44
+     
+      Br8667_mid
+  9            0
+  68           0
+  105          0
+  108          0
+  212          0
+  233          0
+  237          0
+  250          0
+  253          0
+  267          0
+  291        121
+  295          0
+  296          0
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+0.02508 0.21548 0.46631 0.57597 0.74344 8.39555 
+Saving 7 x 7 in image
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+      25      156      166      199      247      258      264 
+3.024884 8.395549 2.338546 2.330919 2.034900 2.159430 2.094400 
+     156 
+8.395549 
+[1] 68
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ 0.3844  1.6301  8.3955  7.9715 13.7577 18.0338 
+156 
+ 68 
+Loading objects:
+  dend
+  tree.clusCollapsed
+  dist.clusCollapsed
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+ ..done.
+Saving 7 x 7 in image
+ ..done.
+clust.treeCut
+ 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 
+22 19 17 16 16 15 14 13 13 11 10 10 10 10  9  9  9  8  8  8  7  7  7  6  6  5 
+27 28 29 
+ 5  3  3 
+  [1]  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1  1 12 12 12
+ [26] 12 12 12 12 12 12 12  6  6  6  6  6  6  6  6  6  6  6  6  6  6  6 11 11 11
+ [51] 11 11 11 11 11 11 11  8  8  8  8  8  8  8  8  8  8  8  8  8 14 14 14 14 14
+ [76] 14 14 14 14 14  9  9  9  9  9  9  9  9  9  9  9  9  9 22 22 22 22 22 22 22
+[101]  7  7  7  7  7  7  7  7  7  7  7  7  7  7 29 29 29 25 25 25 25 25 25 18 18
+[126] 18 18 18 18 18 18  5  5  5  5  5  5  5  5  5  5  5  5  5  5  5  5 19 19 19
+[151] 19 19 19 19 19  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  2  4
+[176]  4  4  4  4  4  4  4  4  4  4  4  4  4  4  4 23 23 23 23 23 23 23 13 13 13
+[201] 13 13 13 13 13 13 13 17 17 17 17 17 17 17 17 17  3  3  3  3  3  3  3  3  3
+[226]  3  3  3  3  3  3  3  3 10 15 15 15 15 15 15 15 15 15 26 26 26 26 26 10 10
+[251] 10 10 10 10 10 10 10 10 28 28 28 16 16 16 16 16 16 16 16 16 27 27 27 27 27
+[276] 24 24 24 24 24 24 21 21 21 21 21 21 21 20 20 20 20 20 20 20 20
+  [1] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+ [13] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+ [25] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+ [37] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+ [49] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+ [61] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+ [73] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+ [85] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+ [97] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[109] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[121] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[133] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[145] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[157] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[169] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[181] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[193] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[205] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[217] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[229] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[241] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[253] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[265] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[277] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+[289] FALSE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+null device 
+          1 
+null device 
+          1 
+  origClust merged
+1       249   HC18
+2        84   HC18
+3       244   HC18
+4       222   HC18
+5       129   HC18
+6       214   HC18
+
+ HC01  HC02  HC03  HC04  HC05  HC06  HC07  HC08  HC09  HC10  HC11  HC12  HC13 
+23025  7927  2487  5366  1309  2171  4732  1267  2532   329  4294  1940   334 
+ HC14  HC15  HC16  HC17  HC18  HC19  HC20  HC21  HC22  HC23  HC24  HC25  HC26 
+ 1463  1310   565  2561  3979  1192  1367  1079   482   420  1601  1567   446 
+ HC27  HC28  HC29 
+ 1711    82    66 
+     
+      HC01 HC02 HC03 HC04 HC05 HC06 HC07 HC08 HC09 HC10 HC11 HC12 HC13 HC14
+  277    0    0    0    0    0    0    0    0    0   45    0    0    0    0
+  278    0    0    0    0    0    0    0    0  192    0    0    0    0    0
+  279    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+  280    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+  281    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+  282    0  165    0    0    0    0    0    0    0    0    0    0    0    0
+  283    0    0    0    0    0    0    0   52    0    0    0    0    0    0
+  284    0    0    0    0  150    0    0    0    0    0    0    0    0    0
+  285    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+  286    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+  287    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+  288    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+  289    0    0    0    0    0    0    0    0    0    0    0   27    0    0
+  290    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+  291    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+  292    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+  293    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+  294    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+  295    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+  296    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+     
+      HC15 HC16 HC17 HC18 HC19 HC20 HC21 HC22 HC23 HC24 HC25 HC26 HC27 HC28
+  277    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+  278    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+  279    0    0    0    0    0    0   26    0    0    0    0    0    0    0
+  280    0    0    0    0    0    0    0    0    0    0    0   30    0    0
+  281    0    0    0    0    0    0    0    0    0   31    0    0    0    0
+  282    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+  283    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+  284    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+  285    0    0    0    0    0    0    0    0    0    0    0    0    0   10
+  286    0    0    0    0    0   43    0    0    0    0    0    0    0    0
+  287    0    0    0    0    0    0    0    0   22    0    0    0    0    0
+  288    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+  289    0    0    0    0    0    0    0    0    0    0    0    0    0    0
+  290    0    0    0    0   33    0    0    0    0    0    0    0    0    0
+  291    0    0    0    0    0    0    0    0    0    0  121    0    0    0
+  292    0    0    0    0    0    0   32    0    0    0    0    0    0    0
+  293    0    0    0    0    0   24    0    0    0    0    0    0    0    0
+  294    0    0    0    0    0    0    0    0    0    0    0    0    0    7
+  295    0    0    0    0    0    0    0    0    0    0   41    0    0    0
+  296    0    0    0    0    0    0    0    0    0    0    0    0    0   44
+     
+      HC29
+  277    0
+  278    0
+  279    0
+  280    0
+  281    0
+  282    0
+  283    0
+  284    0
+  285    0
+  286    0
+  287    0
+  288   26
+  289    0
+  290    0
+  291    0
+  292    0
+  293    0
+  294    0
+  295    0
+  296    0
+Saving 10 x 7 in image
+Loading objects:
+  km_res
+  km_metrics
+
+mbk01 mbk02 mbk03 mbk04 mbk05 mbk06 mbk07 mbk08 mbk09 mbk10 mbk11 mbk12 mbk13 
+ 1330  5879  1058 28085    11   548  1791  1188   132    82  5631   461   633 
+mbk14 mbk15 mbk16 mbk17 mbk18 mbk19 mbk20 mbk21 mbk22 mbk23 mbk24 mbk25 mbk26 
+ 3198  2851  5541   896     3  1581  1732  3557  2242  1292     2  6018  1311 
+mbk27 mbk28 mbk29 
+  295   249     7 
+
+FALSE  TRUE 
+56447 21157 
+
+     HC01      HC02      HC03      HC04      HC05      HC06      HC07      HC08 
+     1868      7927      2487      5366      1309      2171      4732      1267 
+     HC09      HC10      HC11      HC12      HC13      HC14      HC15      HC16 
+     2532       329      4294      1940       334      1463      1310       565 
+     HC17      HC18      HC19      HC20      HC21      HC22      HC23      HC24 
+     2561      3979      1192      1367      1079       482       420      1601 
+     HC25      HC26      HC27      HC28      HC29 QC_remove 
+     1567       446      1711        82        66     21157 
+Saving 10 x 7 in image
+Loading objects:
+  markers.mathys.tran
+[1] TRUE
+plotting: /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/plots/03_build_sce/08_cluster_annotation/markers_mathys_hc_29.pdf
+neuron
+excit_neuron
+inhib_neuron
+neuron.NE
+neuron.5HT
+monoamine.metab
+MSNs.pan
+MSNs.D1
+MSNs.D2
+oligodendrocyte
+oligo_precursor
+microglia
+astrocyte
+endothelial
+differn_committed_OPC
+Tcell
+Mural
+Macro
+null device 
+          1 
+Loading objects:
+  iWantHue_k29
+plotting: /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/plots/03_build_sce/08_cluster_annotation/markers_mathys_mb_kmeans_29.pdf
+neuron
+excit_neuron
+inhib_neuron
+neuron.NE
+neuron.5HT
+monoamine.metab
+MSNs.pan
+MSNs.D1
+MSNs.D2
+oligodendrocyte
+oligo_precursor
+microglia
+astrocyte
+endothelial
+differn_committed_OPC
+Tcell
+Mural
+Macro
+null device 
+          1 
+
+     Astro       drop  EndoMural      Excit      Inhib MicroOligo      Oligo 
+         1          4          1         13          6          1          2 
+       OPC 
+         1 
+# A tibble: 29 × 3
+   broad     ct           cellType 
+   <chr>     <chr>        <fct>    
+ 1 Astro     Astro_01     Astro    
+ 2 drop      drop_01      drop_01  
+ 3 drop      drop_02      drop_02  
+ 4 drop      drop_03      drop_03  
+ 5 drop      drop_04      drop_04  
+ 6 EndoMural EndoMural_01 EndoMural
+ 7 Excit     Excit_01     Excit_01 
+ 8 Excit     Excit_02     Excit_02 
+ 9 Excit     Excit_03     Excit_03 
+10 Excit     Excit_04     Excit_04 
+# … with 19 more rows
+# A tibble: 4 × 9
+  cluster cell_type_mathys note_mathys   MR    MR_note broad ct        n cellT…¹
+  <chr>   <chr>            <chr>         <chr> <chr>   <chr> <chr> <int> <fct>  
+1 mbk01   Endo             "Mural"       Mural ""      Endo… Endo…     1 EndoMu…
+2 mbk07   OPC              ""            OPC   ""      OPC   OPC_…     1 OPC    
+3 mbk16   Micro            "Astro/Micro" Oligo "Micro… Micr… Micr…     1 MicroO…
+4 mbk21   Astro            ""            Astro ""      Astro Astr…     1 Astro  
+# … with abbreviated variable name ¹​cellType
+
+    Astro      drop EndoMural     Excit     Inhib     Micro     Oligo       OPC 
+        1         1         2        15         6         1         3         1 
+
+     Astro       drop  EndoMural      Excit      Inhib MicroOligo      Oligo 
+      3557         23       1330      21233      10413       5541      33716 
+       OPC 
+      1791 
+
+     Astro    drop_01    drop_02    drop_03    drop_04  EndoMural   Excit_01 
+      3557         11          3          2          7       1330       5879 
+  Excit_02   Excit_03   Excit_04   Excit_05   Excit_06   Excit_07   Excit_08 
+      1058        548       1188         82        633       3198       2851 
+  Excit_09   Excit_10   Excit_11   Excit_12   Excit_13   Inhib_01   Inhib_02 
+       896       1581       1732       1292        295        132        461 
+  Inhib_03   Inhib_04   Inhib_05   Inhib_06 MicroOligo   Oligo_01   Oligo_02 
+      2242       6018       1311        249       5541      28085       5631 
+       OPC 
+      1791 
+
+    Astro      drop EndoMural     Micro     Oligo       OPC     Excit     Inhib 
+     3979     21157      2157      1601     10894      1940     24809     11067 
+
+       Astro         drop EndoMural_01 EndoMural_02        Micro     Oligo_01 
+        3979        21157          446         1711         1601         1868 
+    Oligo_02     Oligo_03          OPC     Excit_01     Excit_02     Excit_03 
+        4732         4294         1940         7927         2487         1309 
+    Excit_04     Excit_05     Excit_06     Excit_07     Excit_08     Excit_09 
+        2171         2532          329          334         1463         2561 
+    Excit_10     Excit_11     Excit_12     Excit_13     Excit_14     Excit_15 
+        1079          482          420         1567           82           66 
+    Inhib_01     Inhib_02     Inhib_03     Inhib_04     Inhib_05     Inhib_06 
+        5366         1267         1310          565         1192         1367 
+
+     Astro       drop  EndoMural      Excit      Inhib MicroOligo      Oligo 
+       4.6        0.0        1.7       27.4       13.4        7.1       43.4 
+       OPC 
+       2.3 
+
+    Astro      drop EndoMural     Micro     Oligo       OPC     Excit     Inhib 
+      5.1      27.3       2.8       2.1      14.0       2.5      32.0      14.3 
+Joining, by = "Var1"
+        Var1 Freq Freq_HC
+1      Astro  4.6     5.1
+2       drop  0.0    27.3
+3  EndoMural  1.7     2.8
+4      Excit 27.4    32.0
+5      Inhib 13.4    14.3
+6 MicroOligo  7.1      NA
+7      Oligo 43.4    14.0
+8        OPC  2.3     2.5
+9      Micro   NA     2.1
+ [1] "Astro"        "drop"         "drop_01"      "drop_02"      "drop_03"     
+ [6] "drop_04"      "EndoMural"    "EndoMural_01" "EndoMural_02" "Excit_01"    
+[11] "Excit_02"     "Excit_03"     "Excit_04"     "Excit_05"     "Excit_06"    
+[16] "Excit_07"     "Excit_08"     "Excit_09"     "Excit_10"     "Excit_11"    
+[21] "Excit_12"     "Excit_13"     "Excit_14"     "Excit_15"     "Inhib_01"    
+[26] "Inhib_02"     "Inhib_03"     "Inhib_04"     "Inhib_05"     "Inhib_06"    
+[31] "Micro"        "MicroOligo"   "Oligo_01"     "Oligo_02"     "Oligo_03"    
+[36] "OPC"         
+
+ Br2720_mid Br2720_post  Br2743_ant  Br2743_mid  Br3942_ant  Br3942_mid 
+       3101        5911        2861        2723        5205        4282 
+ Br6423_ant Br6423_post  Br6432_ant  Br6471_ant  Br6471_mid  Br6522_mid 
+       3898        4067        3059        3212        4724        4004 
+Br6522_post  Br8325_ant  Br8325_mid  Br8492_mid Br8492_post  Br8667_ant 
+       4275        4707        4020        4997        2661        5774 
+ Br8667_mid 
+       4123 
+
+ anterior    middle posterior 
+    28716     31974     16914 
+
+  ant   mid  post 
+28716 31974 16914 
+
+ 10c_k  11c_k  12c_k  13c_k  14c_k  15c_k  16c_k  17c_k  18c_k   1c-k   2c-k 
+  4997   5205   4067   4123   3898   4282   4707   4020   5774   3101   3059 
+  3c-k   4c_k   5c_k   6c_k   7c_k   8c_k   9c_k round0 
+  3212   4004   4275   4724   2661   2861   5911   2723 
+        
+         Anterior Middle Posterior
+  Br2720        0   3101      5911
+  Br2743     2861   2723         0
+  Br3942     5205   4282         0
+  Br6423     3898      0      4067
+  Br6432     3059      0         0
+  Br6471     3212   4724         0
+  Br6522        0   4004      4275
+  Br8325     4707   4020         0
+  Br8492        0   4997      2661
+  Br8667     5774   4123         0
+[1] "Reproducibility information:"
+[1] "2022-10-26 15:00:52 EDT"
+   user  system elapsed 
+691.489   6.084 709.370 
+─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
+ setting  value
+ version  R version 4.2.1 Patched (2022-08-30 r82775)
+ os       CentOS Linux 7 (Core)
+ system   x86_64, linux-gnu
+ ui       X11
+ language (EN)
+ collate  en_US.UTF-8
+ ctype    en_US.UTF-8
+ tz       US/Eastern
+ date     2022-10-26
+ pandoc   2.19.2 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2/bin/pandoc
+
+─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+ package              * version  date (UTC) lib source
+ assertthat             0.2.1    2019-03-21 [2] CRAN (R 4.2.1)
+ beachmat               2.12.0   2022-04-26 [2] Bioconductor
+ beeswarm               0.4.0    2021-06-01 [2] CRAN (R 4.2.1)
+ Biobase              * 2.56.0   2022-04-26 [2] Bioconductor
+ BiocGenerics         * 0.42.0   2022-04-26 [2] Bioconductor
+ BiocNeighbors          1.14.0   2022-04-26 [2] Bioconductor
+ BiocParallel           1.30.3   2022-06-05 [2] Bioconductor
+ BiocSingular           1.12.0   2022-04-26 [2] Bioconductor
+ bitops                 1.0-7    2021-04-24 [2] CRAN (R 4.2.1)
+ bluster                1.6.0    2022-04-26 [2] Bioconductor
+ cli                    3.4.1    2022-09-23 [1] CRAN (R 4.2.1)
+ cluster                2.1.4    2022-08-22 [3] CRAN (R 4.2.1)
+ codetools              0.2-18   2020-11-04 [3] CRAN (R 4.2.1)
+ colorspace             2.0-3    2022-02-21 [2] CRAN (R 4.2.1)
+ DBI                    1.1.3    2022-06-18 [2] CRAN (R 4.2.1)
+ DeconvoBuddies         0.99.0   2022-09-06 [1] Github (lahuuki/DeconvoBuddies@1454932)
+ DelayedArray         * 0.22.0   2022-04-26 [2] Bioconductor
+ DelayedMatrixStats     1.18.2   2022-10-13 [1] Bioconductor
+ dendextend           * 1.16.0   2022-07-04 [2] CRAN (R 4.2.1)
+ digest                 0.6.29   2021-12-01 [2] CRAN (R 4.2.1)
+ dplyr                * 1.0.10   2022-09-01 [1] CRAN (R 4.2.1)
+ dqrng                  0.3.0    2021-05-01 [2] CRAN (R 4.2.1)
+ dynamicTreeCut       * 1.63-1   2016-03-11 [1] CRAN (R 4.2.1)
+ edgeR                  3.38.4   2022-08-07 [2] Bioconductor
+ fansi                  1.0.3    2022-03-24 [2] CRAN (R 4.2.1)
+ farver                 2.1.1    2022-07-06 [2] CRAN (R 4.2.1)
+ fs                     1.5.2    2021-12-08 [2] CRAN (R 4.2.1)
+ gargle                 1.2.0    2021-07-02 [2] CRAN (R 4.2.1)
+ generics               0.1.3    2022-07-05 [2] CRAN (R 4.2.1)
+ GenomeInfoDb         * 1.32.4   2022-09-06 [1] Bioconductor
+ GenomeInfoDbData       1.2.8    2022-08-30 [2] Bioconductor
+ GenomicRanges        * 1.48.0   2022-04-26 [2] Bioconductor
+ ggbeeswarm             0.6.0    2017-08-07 [2] CRAN (R 4.2.1)
+ ggplot2              * 3.3.6    2022-05-03 [2] CRAN (R 4.2.1)
+ ggrepel                0.9.1    2021-01-15 [2] CRAN (R 4.2.1)
+ glue                   1.6.2    2022-02-24 [2] CRAN (R 4.2.1)
+ googledrive            2.0.0    2021-07-08 [2] CRAN (R 4.2.1)
+ gridExtra              2.3      2017-09-09 [2] CRAN (R 4.2.1)
+ gtable                 0.3.1    2022-09-01 [1] CRAN (R 4.2.1)
+ HDF5Array            * 1.24.2   2022-08-02 [2] Bioconductor
+ here                 * 1.0.1    2020-12-13 [2] CRAN (R 4.2.1)
+ igraph                 1.3.4    2022-07-19 [2] CRAN (R 4.2.1)
+ IRanges              * 2.30.1   2022-08-18 [2] Bioconductor
+ irlba                  2.3.5.1  2022-10-03 [1] CRAN (R 4.2.1)
+ jaffelab             * 0.99.32  2022-09-06 [1] Github (LieberInstitute/jaffelab@7b7afe3)
+ labeling               0.4.2    2020-10-20 [2] CRAN (R 4.2.1)
+ lattice                0.20-45  2021-09-22 [3] CRAN (R 4.2.1)
+ lifecycle              1.0.3    2022-10-07 [1] CRAN (R 4.2.1)
+ limma                  3.52.4   2022-09-27 [1] Bioconductor
+ locfit                 1.5-9.6  2022-07-11 [2] CRAN (R 4.2.1)
+ magrittr               2.0.3    2022-03-30 [2] CRAN (R 4.2.1)
+ MASS                   7.3-58.1 2022-08-03 [3] CRAN (R 4.2.1)
+ Matrix               * 1.5-1    2022-09-13 [1] CRAN (R 4.2.1)
+ MatrixGenerics       * 1.8.1    2022-06-26 [2] Bioconductor
+ matrixStats          * 0.62.0   2022-04-19 [2] CRAN (R 4.2.1)
+ metapod                1.4.0    2022-04-26 [2] Bioconductor
+ munsell                0.5.0    2018-06-12 [2] CRAN (R 4.2.1)
+ nlme                   3.1-158  2022-06-15 [3] CRAN (R 4.2.1)
+ numform              * 0.7.0    2021-10-09 [1] CRAN (R 4.2.1)
+ pheatmap             * 1.0.12   2019-01-04 [1] CRAN (R 4.2.1)
+ pillar                 1.8.1    2022-08-19 [2] CRAN (R 4.2.1)
+ pkgconfig              2.0.3    2019-09-22 [2] CRAN (R 4.2.1)
+ plyr                   1.8.7    2022-03-24 [2] CRAN (R 4.2.1)
+ purrr                  0.3.5    2022-10-06 [1] CRAN (R 4.2.1)
+ R6                     2.5.1    2021-08-19 [2] CRAN (R 4.2.1)
+ rafalib              * 1.0.0    2015-08-09 [1] CRAN (R 4.2.1)
+ ragg                   1.2.2    2022-02-21 [2] CRAN (R 4.2.1)
+ RColorBrewer           1.1-3    2022-04-03 [2] CRAN (R 4.2.1)
+ Rcpp                   1.0.9    2022-07-08 [2] CRAN (R 4.2.1)
+ RCurl                  1.98-1.9 2022-10-03 [1] CRAN (R 4.2.1)
+ reshape2               1.4.4    2020-04-09 [2] CRAN (R 4.2.1)
+ rhdf5                * 2.40.0   2022-04-26 [2] Bioconductor
+ rhdf5filters           1.8.0    2022-04-26 [2] Bioconductor
+ Rhdf5lib               1.18.2   2022-05-15 [2] Bioconductor
+ rlang                  1.0.6    2022-09-24 [1] CRAN (R 4.2.1)
+ rprojroot              2.0.3    2022-04-02 [2] CRAN (R 4.2.1)
+ rsvd                   1.0.5    2021-04-16 [2] CRAN (R 4.2.1)
+ S4Vectors            * 0.34.0   2022-04-26 [2] Bioconductor
+ ScaledMatrix           1.4.1    2022-09-11 [1] Bioconductor
+ scales                 1.2.1    2022-08-20 [2] CRAN (R 4.2.1)
+ scater               * 1.24.0   2022-04-26 [2] Bioconductor
+ scran                  1.24.0   2022-04-26 [2] Bioconductor
+ scry                   1.8.0    2022-04-26 [2] Bioconductor
+ scuttle              * 1.6.3    2022-08-23 [2] Bioconductor
+ segmented              1.6-0    2022-05-31 [1] CRAN (R 4.2.1)
+ sessioninfo          * 1.2.2    2021-12-06 [2] CRAN (R 4.2.1)
+ SingleCellExperiment * 1.18.1   2022-10-02 [1] Bioconductor
+ sparseMatrixStats      1.8.0    2022-04-26 [2] Bioconductor
+ statmod                1.4.37   2022-08-12 [2] CRAN (R 4.2.1)
+ stringi                1.7.8    2022-07-11 [2] CRAN (R 4.2.1)
+ stringr                1.4.1    2022-08-20 [2] CRAN (R 4.2.1)
+ SummarizedExperiment * 1.26.1   2022-04-29 [2] Bioconductor
+ systemfonts            1.0.4    2022-02-11 [2] CRAN (R 4.2.1)
+ textshaping            0.3.6    2021-10-13 [2] CRAN (R 4.2.1)
+ tibble                 3.1.8    2022-07-22 [2] CRAN (R 4.2.1)
+ tidyselect             1.2.0    2022-10-10 [1] CRAN (R 4.2.1)
+ utf8                   1.2.2    2021-07-24 [2] CRAN (R 4.2.1)
+ vctrs                  0.4.2    2022-09-29 [1] CRAN (R 4.2.1)
+ vipor                  0.4.5    2017-03-22 [2] CRAN (R 4.2.1)
+ viridis                0.6.2    2021-10-13 [2] CRAN (R 4.2.1)
+ viridisLite            0.4.1    2022-08-22 [2] CRAN (R 4.2.1)
+ withr                  2.5.0    2022-03-03 [2] CRAN (R 4.2.1)
+ XVector                0.36.0   2022-04-26 [2] Bioconductor
+ zlibbioc               1.42.0   2022-04-26 [2] Bioconductor
+
+ [1] /users/lhuuki/R/4.2
+ [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2/R/4.2/lib64/R/site-library
+ [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2/R/4.2/lib64/R/library
+
+──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+**** Job ends ****
+Wed Oct 26 15:00:53 EDT 2022
