@@ -14,6 +14,11 @@ plot_dir <- here("plots", "05_explore_sce", "02_cellType_prop")
 
 #### Load SCE ####
 load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
+
+## Exclude drop cells
+sce <- sce[,sce$cellType_hc != "drop"]
+sce$cellType_hc <- droplevels(sce$cellType_hc)
+
 cell_type_colors <- metadata(sce)$cell_type_colors[levels(sce$cellType_hc)]
 cell_type_colors_broad <- metadata(sce)$cell_type_colors[levels(sce$cellType_broad_hc)]
 cell_type_colors_layer <- metadata(sce)$cell_type_colors_layer[levels(sce$cellType_layer)]
@@ -276,3 +281,12 @@ layer_prop_bar_position <- ggplot(data = prop_layer, aes(x = Sample, y = prop, f
 
 ggsave(layer_prop_bar_position, filename = here(plot_dir, "prop_bar_layer_position.png"), width = 12)
 ggsave(layer_prop_bar_position, filename = here(plot_dir, "prop_bar_layer_position.pdf"), width = 12)
+
+# sgejobs::job_single('02_cellType_props', create_shell = TRUE, queue= 'bluejay', memory = '10G', command = "Rscript 02_cellType_prop.R")
+
+## Reproducibility information
+print("Reproducibility information:")
+Sys.time()
+proc.time()
+options(width = 120)
+session_info()

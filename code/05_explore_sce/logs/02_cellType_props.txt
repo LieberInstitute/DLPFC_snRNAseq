@@ -6,11 +6,11 @@ Loading LIBD module for rmate/1.5.9
 Loading LIBD module for ruby/2.6.4p104
 Loading conda_R/4.2
 **** Job starts ****
-Fri Oct 28 15:41:10 EDT 2022
+Fri Oct 28 16:35:35 EDT 2022
 **** JHPCE info ****
 User: lhuuki
-Job id: 443744
-Job name: reduced_dim_plots
+Job id: 446001
+Job name: cellType_prop
 Hostname: compute-095.cm.cluster
 Task id: undefined
 Unloading conda_R/4.2
@@ -96,9 +96,24 @@ The following objects are masked from ‘package:matrixStats’:
 
     anyMissing, rowMedians
 
-Loading required package: scuttle
-Loading required package: ggplot2
-Loading required package: rafalib
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+✔ ggplot2 3.3.6      ✔ purrr   0.3.5 
+✔ tibble  3.1.8      ✔ dplyr   1.0.10
+✔ tidyr   1.2.1      ✔ stringr 1.4.1 
+✔ readr   2.1.2      ✔ forcats 0.5.2 
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::collapse()   masks IRanges::collapse()
+✖ dplyr::combine()    masks Biobase::combine(), BiocGenerics::combine()
+✖ dplyr::count()      masks matrixStats::count()
+✖ dplyr::desc()       masks IRanges::desc()
+✖ tidyr::expand()     masks S4Vectors::expand()
+✖ dplyr::filter()     masks stats::filter()
+✖ dplyr::first()      masks S4Vectors::first()
+✖ dplyr::lag()        masks stats::lag()
+✖ ggplot2::Position() masks BiocGenerics::Position(), base::Position()
+✖ purrr::reduce()     masks GenomicRanges::reduce(), IRanges::reduce()
+✖ dplyr::rename()     masks S4Vectors::rename()
+✖ dplyr::slice()      masks IRanges::slice()
 here() starts at /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq
 Loading objects:
   sce
@@ -108,12 +123,20 @@ Loading required package: Matrix
 
 Attaching package: ‘Matrix’
 
+The following objects are masked from ‘package:tidyr’:
+
+    expand, pack, unpack
+
 The following object is masked from ‘package:S4Vectors’:
 
     expand
 
 
 Attaching package: ‘DelayedArray’
+
+The following object is masked from ‘package:purrr’:
+
+    simplify
 
 The following objects are masked from ‘package:base’:
 
@@ -127,23 +150,43 @@ The following object is masked from ‘package:rhdf5’:
 
     h5ls
 
-Saving 9 x 7 in image
-Saving 9 x 7 in image
+
+    Astro      drop EndoMural     Micro     Oligo       OPC     Excit     Inhib 
+     3979         0      2157      1601     10894      1940     24809     11067 
+`summarise()` has grouped output by 'Sample', 'BrNum', 'round', 'Position',
+'sex'. You can override using the `.groups` argument.
+Joining, by = "Sample"
+Joining, by = "Sample"
 Saving 7 x 7 in image
 Saving 7 x 7 in image
 Saving 7 x 7 in image
 Saving 7 x 7 in image
-Saving 13 x 7 in image
-Saving 13 x 7 in image
-Saving 9 x 7 in image
-Saving 9 x 7 in image
+Saving 7 x 7 in image
+Saving 12 x 7 in image
+Saving 12 x 7 in image
+Saving 12 x 7 in image
+Saving 12 x 7 in image
+Saving 12 x 7 in image
+Saving 12 x 7 in image
 Saving 7 x 7 in image
 Saving 7 x 7 in image
-Saving 7 x 7 in image
-Saving 7 x 7 in image
-Saving 13 x 7 in image
-Saving 13 x 7 in image
-Saving 9 x 7 in image
+
+       Astro    EndoMural        Micro        Oligo          OPC   Excit_L2/3 
+        3979         2157         1601        10894         1940           82 
+    Excit_L3 Excit_L3/4/5     Excit_L4     Excit_L5   Excit_L5/6     Excit_L6 
+       10459         3043         2388         2505         2487         1792 
+       Inhib 
+       11067 
+
+    L1    L1*     L2    L2*   L2/3     L3   L3/4  L3/4* L3/4/5     L4  L4/5* 
+  6136     66   1192   1932   5448  10459   1310   1567   3043   3655    420 
+    L5   L5/6     L6     WM  WM/L1 
+  2505   2487   1792  10894   3541 
+`summarise()` has grouped output by 'cellType_hc'. You can override using the
+`.groups` argument.
+Saving 12 x 7 in image
+Joining, by = "Sample"
+Saving 3 x 7 in image
 Error in `f()`:
 ! Insufficient values in manual scale. 13 needed but only 0 provided.
 Backtrace:
@@ -171,4 +214,4 @@ Backtrace:
  21.                                 └─rlang::abort(glue("Insufficient values in manual scale. {n} needed but only {length(values)} provided."))
 Execution halted
 **** Job ends ****
-Fri Oct 28 15:44:09 EDT 2022
+Fri Oct 28 16:36:37 EDT 2022

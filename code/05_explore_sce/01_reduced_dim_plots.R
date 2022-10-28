@@ -22,6 +22,11 @@ my_theme <- theme_bw() +
 plot_dir <- here("plots", "05_explore_sce", "01_reduced_dim_plots")
 if (!dir.exists(plot_dir)) dir.create(plot_dir)
 
+## Exclude drop cells
+sce <- sce[,sce$cellType_hc != "drop"]
+sce$cellType_hc <- droplevels(sce$cellType_hc)
+
+## Adjust color pallets
 cell_type_colors <- metadata(sce)$cell_type_colors[levels(sce$cellType_hc)]
 cell_type_colors_layer <- metadata(sce)$cell_type_colors_layer[levels(sce$cellType_layer)]
 
