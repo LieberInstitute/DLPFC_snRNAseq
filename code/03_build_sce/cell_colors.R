@@ -1,6 +1,7 @@
 library("here")
 library("jaffelab")
 library("RColorBrewer")
+library("SingleCellExperiment")
 
 iwanthue_k29 <- c(
     "#ff6785",
