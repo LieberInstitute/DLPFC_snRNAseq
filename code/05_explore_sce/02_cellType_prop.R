@@ -18,6 +18,7 @@ load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
 ## Exclude drop cells
 sce <- sce[,sce$cellType_hc != "drop"]
 sce$cellType_hc <- droplevels(sce$cellType_hc)
+sce$cellType_broad_hc <- droplevels(sce$cellType_broad_hc)
 
 cell_type_colors <- metadata(sce)$cell_type_colors[levels(sce$cellType_hc)]
 cell_type_colors_broad <- metadata(sce)$cell_type_colors[levels(sce$cellType_broad_hc)]
@@ -279,7 +280,7 @@ layer_prop_bar_position <- ggplot(data = prop_layer, aes(x = Sample, y = prop, f
     my_theme +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
-ggsave(layer_prop_bar_position, filename = here(plot_dir, "prop_bar_layer_position.png"), width = 12)
+ggsave(layer_prop_bar_position, filename = here(plot_dir, "prop_bar_layer_position.png"), width = 12, height = 5)
 ggsave(layer_prop_bar_position, filename = here(plot_dir, "prop_bar_layer_position.pdf"), width = 12)
 
 # sgejobs::job_single('02_cellType_props', create_shell = TRUE, queue= 'bluejay', memory = '10G', command = "Rscript 02_cellType_prop.R")
