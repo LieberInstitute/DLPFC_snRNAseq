@@ -5,15 +5,12 @@ library("sessioninfo")
 ## load data
 load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
 
-counts(sce)
-# names(3): counts binomial_deviance_residuals logcounts
+names(assays(sce))
+# counts binomial_deviance_residuals logcounts
 
-# Just save log counts
-assays(sce)$counts <- NULL
-assays(sce)$binomial_deviance_residuals <- NULL
-
-message("Object Size: ", lobstr::obj_size(sce))
-# 181.85 MB
+message("Size with all assasy: ")
+lobstr::obj_size(sce)
+# 311.00 MB
 
 ## print details
 message("\n **** SCE details ****")
@@ -25,8 +22,19 @@ colData(sce)
 message("\n **** rowData ****")
 rowData(sce)
 
+message(Sys.time(), "- Saving Data")
 saveHDF5SummarizedExperiment(sce, here("processed-data", "sce", "sce_DLPFC_annotated"), replace = TRUE)
 
+# Just save log counts
+assays(sce)$counts <- NULL
+assays(sce)$binomial_deviance_residuals <- NULL
+
+message("Size with only logcounts: ")
+lobstr::obj_size(sce)
+# 181.85 MB
+
+message(Sys.time(), "- Saving Data")
+saveHDF5SummarizedExperiment(sce, here("processed-data", "sce", "sce_DLPFC_annotated-logcounts_only"), replace = TRUE)
 # sgejobs::job_single('07_convert_SCE_HDF5', create_shell = TRUE, memory = '25G', command = "Rscript 07_convert_SCE_HDF5.R")
 
 ## Reproducibility information
