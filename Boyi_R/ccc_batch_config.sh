@@ -33,7 +33,7 @@ mkdir -p $logPath $resPath
 ## TODO: Replace with your simulation parameters
 ###      The $ sign helps to fetch the simulation parameters passed from start_sim.R
 ## TODO: Replace path here
-R CMD BATCH  --vanilla "--args crn_sec=$crn_sec" ~/GitHub/DLPFC_snRNAseq/Boyi_R/CCC_with_LIANA.R  $logPath${crn_sec}.out
+R CMD BATCH  --vanilla "--args crn_sec='$crn_sec'" ~/GitHub/DLPFC_snRNAseq/Boyi_R/CCC_with_LIANA.R  $logPath${crn_sec}.out
 
 
 echo "**** Job ends ****"
