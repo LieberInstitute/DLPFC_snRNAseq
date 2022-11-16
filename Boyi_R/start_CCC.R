@@ -6,6 +6,8 @@ prmt <- expand.grid(
 
 if(!dir.exists("~/CCC_snRNA")) dir.create("~/CCC_snRNA/")
 setwd("~/CCC_snRNA/")
+dir.create("~/CCC_snRNA/log/", recursive = TRUE)
+
 
 # Helper Function for Setting Up Job --------------------------------------
 start.sim <- function(
