@@ -32,7 +32,7 @@ mkdir -p $logPath $resPath
 # Run simulation with simulation parameters using R batch --args flag
 ###      The $ sign helps to fetch the simulation parameters passed from start_sim.R\
 ###      If the parameter is a string (a vector of string), you need to quote the string with single quote `
-R CMD BATCH  --vanilla "--args crn_sec='$crn_sec'" ~/GitHub/DLPFC_snRNAseq/Boyi_R/CCC_with_LIANA.R
+R CMD BATCH  --vanilla "--args crn_sec='$crn_sec'" ~/GitHub/DLPFC_snRNAseq/Boyi_R/CCC_with_LIANA.R  $logPath${crn_sec}.Rout
 
 
 echo "**** Job ends ****"
