@@ -1,6 +1,6 @@
 #!/bin/bash
 ## TODO: edit this section
-##$ -l mem_free=6G,h_vmem=6G,h_fsize=10G
+#$ -l mem_free=10G,h_vmem=10G,h_fsize=10G
 #$ -cwd
 #$ -m e
 #$ -M bguo6@jhu.edu
