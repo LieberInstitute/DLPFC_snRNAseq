@@ -18,9 +18,9 @@ start.sim <- function(
     ## DO NOT USE GENERIC JOB NAME FOR CONVENIENCE
     job.flag <- paste0("-N ",job.name)
 
-    err.flag <- paste0("-e ",job.name,".err")
+    err.flag <- paste0("-e ~/CCC_snRNA/log/",job.name,".txt")
 
-    out.flag <- paste0("-o ",job.name,".out")
+    out.flag <- paste0("-o ~/CCC_snRNA/log/",job.name,".txt")
 
     # Pass simulation parameters to jobs using export flag
     arg.flag <- paste0("-v crn_sec=", crn_sec)
