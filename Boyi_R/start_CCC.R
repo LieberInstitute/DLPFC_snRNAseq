@@ -11,7 +11,7 @@ start.sim <- function(
         crn_sec
 ) {
     #Compose job name
-    job.name <- paste("CCC_snRNA_", crn_sec)
+    job.name <- paste0("CCC_snRNA_", crn_sec)
 
     # NOTE:
     ## Job name has to be unique for each of your simulation settings
@@ -28,13 +28,12 @@ start.sim <- function(
     # Create Jobs
     system(
         paste("qsub", job.flag, err.flag, out.flag, arg.flag,
-              "~/GitHub/DLPFC_snRNAseq/Boyi_R/ccc_bath_config.sh")
+              "~/GitHub/DLPFC_snRNAseq/Boyi_R/ccc_batch_config.sh")
     )
 }
 
 
 
 # Set up job for all simulation settings ----------------------------------
-for(i in 1:NROW(prmt)){
-    do.call(start.sim, prmt[i,])
-}
+
+with(prmt, start.sim(crn_sec))
