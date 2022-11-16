@@ -31,3 +31,10 @@ start.sim <- function(
               "~/GitHub/DLPFC_snRNAseq/Boyi_R/ccc_bath_config.sh")
     )
 }
+
+
+
+# Set up job for all simulation settings ----------------------------------
+for(i in 1:NROW(prmt)){
+    do.call(start.sim, prmt[i,])
+}
