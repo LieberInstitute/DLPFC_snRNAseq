@@ -32,9 +32,9 @@ dir.create(fdl_path, recursive = TRUE)
 setwd("/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/processed-data/sce/sce_DLPFC_annotated/")
 sce <- readRDS("se.rds")
 
-# Sample Summary Statistics
-# col_data <- colData(sce) |> as.data.frame()
-# col_data |> group_by(BrNum) |> summarize(n = n_distinct(pos))
+# Summary stat for coronary sections
+# colData(sce) |> as.data.frame() |>
+# group_by(Position) |> summarize(n = n())
 
 # Subset cells from each coronal section
 sce_crn <- sce[, sce$Position==crn_sec]
@@ -72,7 +72,7 @@ colLabels(sce_crn) <- colData(sce_crn)$cellType_broad_hc
 
 # TEST: small scale
 # TODO: remove this when scaling up the analysis
-sce_crn <- sce_crn[, 1:1000]
+# sce_crn <- sce_crn[, 1:1000]
 
 
 # Run liana
