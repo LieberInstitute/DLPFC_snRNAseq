@@ -4,6 +4,7 @@ prmt <- expand.grid(
     crn_sec = c("Anterior", "Middle", "Posterior")
 )
 
+if(!dir.exists("~/CCC_snRNA")) dir.create("~/CCC_snRNA/")
 setwd("~/CCC_snRNA/")
 
 # Helper Function for Setting Up Job --------------------------------------
