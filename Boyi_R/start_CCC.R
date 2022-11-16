@@ -36,4 +36,5 @@ start.sim <- function(
 
 # Set up job for all simulation settings ----------------------------------
 
-with(prmt, start.sim(crn_sec))
+for(i in 1:nrow(prmt))
+    do.call(start.sim, prmt[i,,drop =FALSE])
