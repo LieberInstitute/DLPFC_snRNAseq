@@ -9,7 +9,6 @@ if(length(args)==0){
     print("No arguments supplied.")
 }else{
     for(i in 1:length(args)){
-        print(args[[i]])
         eval(parse(text=args[[i]]))
     }
 }
