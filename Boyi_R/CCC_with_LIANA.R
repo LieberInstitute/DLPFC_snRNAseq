@@ -36,6 +36,15 @@ sce <- readRDS("se.rds")
 # colData(sce) |> as.data.frame() |>
 # group_by(Position) |> summarize(n = n())
 
+
+## Check celltype columns definition
+# cData <- colData(sce) |> data.frame()
+#
+# colData(sce) |> data.frame() |>
+#     select(starts_with("cellType")) |>
+#     summarize(across(.fns = n_distinct))
+# xtabs(~ cellType_broad_k + cellType_layer, cData, addNA = TRUE)
+
 # Subset cells from each coronal section
 sce_crn <- sce[, sce$Position==crn_sec]
 
@@ -46,6 +55,9 @@ sce_crn <- sce[, sce$Position==crn_sec]
 # https://jhu-genomics.slack.com/archives/C01EA7VDJNT/p1668530673111519?thread_ts=1668530634.509189&cid=C01EA7VDJNT
 sce_crn <- sce_crn[,sce_crn$cellType_hc != "drop"]
 sce_crn$cellType_hc <- droplevels(sce_crn$cellType_hc)
+
+
+
 
 ## See if batch effect is large
 # library(scater)
@@ -68,7 +80,9 @@ sce_crn$cellType_hc <- droplevels(sce_crn$cellType_hc)
 library(liana)
 # Prep
 ## Assigning cellType to sce label (Required by LIANA)
-colLabels(sce_crn) <- colData(sce_crn)$cellType_broad_hc
+## Remove NA cellType
+sce_crn <- sce_crn[, !is.na(colData(sce_crn)$cellType_layer)]
+colLabels(sce_crn) <- colData(sce_crn)$cellType_layer
 
 # TEST: small scale
 # TODO: remove this when scaling up the analysis
