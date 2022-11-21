@@ -35,8 +35,10 @@ lobstr::obj_size(sce)
 
 message(Sys.time(), "- Saving Data")
 saveHDF5SummarizedExperiment(sce, here("processed-data", "sce", "sce_DLPFC_annotated-logcounts_only"), replace = TRUE)
-# sgejobs::job_single('07_convert_SCE_HDF5', create_shell = TRUE, memory = '25G', command = "Rscript 07_convert_SCE_HDF5.R")
+## to load
+# sce <- HDF5Array::loadHDF5SummarizedExperiment(here("processed-data", "sce", "sce_DLPFC_annotated-logcounts_only"))
 
+# sgejobs::job_single('07_convert_SCE_HDF5', create_shell = TRUE, memory = '25G', command = "Rscript 07_convert_SCE_HDF5.R")
 ## Reproducibility information
 print("Reproducibility information:")
 Sys.time()
