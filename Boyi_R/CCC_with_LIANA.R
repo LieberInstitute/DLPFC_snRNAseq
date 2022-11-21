@@ -17,7 +17,6 @@ if(length(args)==0){
 # crn_Positions <- c("Anterior", "Middle", "Posterior")
 # crn_sec <- crn_Positions[1]
 
-
 # Create section specific folders to contain results
 # TODO: change this to LIBD drive
 if(!dir.exists("~/CCC_snRNA")) dir.create("~/CCC_snRNA")
@@ -33,8 +32,8 @@ setwd("/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/processed
 sce <- readRDS("se.rds")
 
 # Summary stat for coronary sections
-# colData(sce) |> as.data.frame() |>
-# group_by(Position) |> summarize(n = n())
+colData(sce) |> as.data.frame() |>
+group_by(Sample) |> summarize(n = n())
 
 
 ## Check celltype columns definition
@@ -46,8 +45,8 @@ sce <- readRDS("se.rds")
 # xtabs(~ cellType_broad_k + cellType_layer, cData, addNA = TRUE)
 
 # Subset cells from each coronal section
-sce_crn <- sce[, sce$Position==crn_sec]
-
+# sce_crn <- sce[, sce$Position==crn_sec]
+sce_crn <- sce[, sce$Sample==crn_sec]
 # if(ncol(sce_crn) <=0) stop
 
 # QC: Remove bad cells----------------------------------------------------------------------
