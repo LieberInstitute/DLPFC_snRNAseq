@@ -6,12 +6,12 @@ Loading LIBD module for rmate/1.5.9
 Loading LIBD module for ruby/2.6.4p104
 Loading conda_R/4.2
 **** Job starts ****
-Fri Oct  7 16:05:31 EDT 2022
+Mon Nov 14 15:23:12 EST 2022
 **** JHPCE info ****
 User: lhuuki
-Job id: 182282
+Job id: 1215432
 Job name: convert_SCE_HDF5
-Hostname: compute-054.cm.cluster
+Hostname: compute-076.cm.cluster
 Task id: undefined
 Unloading conda_R/4.2
 Loading conda_R/4.2
@@ -124,38 +124,28 @@ The following object is masked from ‘package:rhdf5’:
 
     h5ls
 
-<36601 x 77604> sparse matrix of class DelayedMatrix and type "double":
-             1_AAACCCAAGTTCTCTT-1 ... 19_TTTGTTGTCTTAAGGC-1
-MIR1302-2HG                     0   .                     0
-    FAM138A                     0   .                     0
-      OR4F5                     0   .                     0
- AL627309.1                     0   .                     0
- AL627309.3                     0   .                     0
-        ...                     .   .                     .
- AC141272.1                     0   .                     0
- AC023491.2                     0   .                     0
- AC007325.1                     0   .                     0
- AC007325.4                     0   .                     0
- AC007325.2                     0   .                     0
-Object Size: 183705360
+[1] "counts"                      "binomial_deviance_residuals"
+[3] "logcounts"                  
+Size with all assasy: 
+311.00 MB
 
  **** SCE details ****
 class: SingleCellExperiment 
 dim: 36601 77604 
 metadata(4): Samples cell_type_colors cell_type_colors_broad
   cell_type_colors_layer
-assays(1): logcounts
+assays(3): counts binomial_deviance_residuals logcounts
 rownames(36601): MIR1302-2HG FAM138A ... AC007325.4 AC007325.2
-rowData names(9): source type ... marker_layer marker_broad_spatial
+rowData names(7): source type ... gene_type binomial_deviance
 colnames(77604): 1_AAACCCAAGTTCTCTT-1 1_AAACCCACAAGGTCTT-1 ...
   19_TTTGTTGTCTCATTGT-1 19_TTTGTTGTCTTAAGGC-1
-colData names(33): Sample Barcode ... cellType_layer layer_annotation
+colData names(32): Sample Barcode ... cellType_layer layer_annotation
 reducedDimNames(4): GLMPCA_approx TSNE UMAP HARMONY
 mainExpName: NULL
 altExpNames(0):
 
  **** colData ****
-DataFrame with 77604 rows and 33 columns
+DataFrame with 77604 rows and 32 columns
                            Sample            Barcode                    key
                       <character>        <character>            <character>
 1_AAACCCAAGTTCTCTT-1   Br2720_mid AAACCCAAGTTCTCTT-1 AAACCCAAGTTCTCTT-1_B..
@@ -234,61 +224,48 @@ DataFrame with 77604 rows and 33 columns
 19_TTTGTTGTCCCTGGTT-1            FALSE            FALSE        FALSE
 19_TTTGTTGTCTCATTGT-1            FALSE            FALSE        FALSE
 19_TTTGTTGTCTTAAGGC-1            FALSE            FALSE        FALSE
-                      doubletScore prelimCluster   kmeans sizeFactor
-                         <numeric>      <factor> <factor>  <numeric>
-1_AAACCCAAGTTCTCTT-1      1.399882           76     mbk25   13.27935
-1_AAACCCACAAGGTCTT-1      0.157206           18     mbk11    2.32842
-1_AAACCCATCAAAGACA-1      0.209608           272    mbk07    4.08826
-1_AAACCCATCATGACAC-1      0.381786           57     mbk25   16.12801
-1_AAACCCATCATTGCGA-1      0.074860           18     mbk11    1.67064
-...                            ...           ...      ...        ...
-19_TTTGTTGGTAGGGAGG-1     0.102780           41     mbk15    5.98596
-19_TTTGTTGGTCTTCATT-1     1.945968           48     mbk25   19.11900
-19_TTTGTTGTCCCTGGTT-1     1.062060           20     mbk03   25.28592
-19_TTTGTTGTCTCATTGT-1     0.301488           41     mbk15   13.27247
-19_TTTGTTGTCTTAAGGC-1     0.397416           103    mbk19   31.43089
-                      collapsedCluster cellType_k cellType_hc cellType_broad_k
-                              <factor>   <factor>    <factor>         <factor>
-1_AAACCCAAGTTCTCTT-1              HC04   Inhib_04    Inhib_01            Inhib
-1_AAACCCACAAGGTCTT-1              HC07   Oligo_02    Oligo_02            Oligo
-1_AAACCCATCAAAGACA-1              HC12   OPC         OPC                 OPC  
-1_AAACCCATCATGACAC-1              HC04   Inhib_04    Inhib_01            Inhib
-1_AAACCCATCATTGCGA-1              HC07   Oligo_02    Oligo_02            Oligo
-...                                ...        ...         ...              ...
-19_TTTGTTGGTAGGGAGG-1             HC02   Excit_08    Excit_01            Excit
-19_TTTGTTGGTCTTCATT-1             HC19   Inhib_04    Inhib_05            Inhib
-19_TTTGTTGTCCCTGGTT-1             HC02   Excit_02    Excit_01            Excit
-19_TTTGTTGTCTCATTGT-1             HC02   Excit_08    Excit_01            Excit
-19_TTTGTTGTCTTAAGGC-1             HC03   Excit_10    Excit_02            Excit
-                      cellType_broad_hc cellType_azimuth cellType_layer
-                               <factor>      <character>       <factor>
-1_AAACCCAAGTTCTCTT-1              Inhib              Sst          Inhib
-1_AAACCCACAAGGTCTT-1              Oligo            Oligo          Oligo
-1_AAACCCATCAAAGACA-1              OPC                OPC          OPC  
-1_AAACCCATCATGACAC-1              Inhib              Vip          Inhib
-1_AAACCCATCATTGCGA-1              Oligo            Oligo          Oligo
-...                                 ...              ...            ...
-19_TTTGTTGGTAGGGAGG-1             Excit          L2/3 IT     Excit_L3  
-19_TTTGTTGGTCTTCATT-1             Inhib              Vip     Inhib     
-19_TTTGTTGTCCCTGGTT-1             Excit          L2/3 IT     Excit_L3  
-19_TTTGTTGTCTCATTGT-1             Excit          L2/3 IT     Excit_L3  
-19_TTTGTTGTCTTAAGGC-1             Excit            L6 IT     Excit_L5/6
-                      layer_annotation
-                              <factor>
-1_AAACCCAAGTTCTCTT-1                L2
-1_AAACCCACAAGGTCTT-1                WM
-1_AAACCCATCAAAGACA-1                WM
-1_AAACCCATCATGACAC-1                L2
-1_AAACCCATCATTGCGA-1                WM
-...                                ...
-19_TTTGTTGGTAGGGAGG-1             L3  
-19_TTTGTTGGTCTTCATT-1             L2  
-19_TTTGTTGTCCCTGGTT-1             L3  
-19_TTTGTTGTCTCATTGT-1             L3  
-19_TTTGTTGTCTTAAGGC-1             L5/6
+                      doubletScore prelimCluster collapsedCluster   kmeans
+                         <numeric>      <factor>         <factor> <factor>
+1_AAACCCAAGTTCTCTT-1      1.399882           76              HC04    mbk25
+1_AAACCCACAAGGTCTT-1      0.157206           18              HC07    mbk11
+1_AAACCCATCAAAGACA-1      0.209608           272             HC12    mbk07
+1_AAACCCATCATGACAC-1      0.381786           57              HC04    mbk25
+1_AAACCCATCATTGCGA-1      0.074860           18              HC07    mbk11
+...                            ...           ...              ...      ...
+19_TTTGTTGGTAGGGAGG-1     0.102780           41              HC02    mbk15
+19_TTTGTTGGTCTTCATT-1     1.945968           48              HC19    mbk25
+19_TTTGTTGTCCCTGGTT-1     1.062060           20              HC02    mbk03
+19_TTTGTTGTCTCATTGT-1     0.301488           41              HC02    mbk15
+19_TTTGTTGTCTTAAGGC-1     0.397416           103             HC03    mbk19
+                      sizeFactor cellType_broad_k cellType_k cellType_broad_hc
+                       <numeric>         <factor>   <factor>          <factor>
+1_AAACCCAAGTTCTCTT-1    1.689259            Inhib   Inhib_04             Inhib
+1_AAACCCACAAGGTCTT-1    0.296197            Oligo   Oligo_02             Oligo
+1_AAACCCATCAAAGACA-1    0.520065            OPC     OPC                  OPC  
+1_AAACCCATCATGACAC-1    2.051635            Inhib   Inhib_04             Inhib
+1_AAACCCATCATTGCGA-1    0.212521            Oligo   Oligo_02             Oligo
+...                          ...              ...        ...               ...
+19_TTTGTTGGTAGGGAGG-1   0.738588            Excit   Excit_08             Excit
+19_TTTGTTGGTCTTCATT-1   2.359032            Inhib   Inhib_04             Inhib
+19_TTTGTTGTCCCTGGTT-1   3.119949            Excit   Excit_02             Excit
+19_TTTGTTGTCTCATTGT-1   1.637647            Excit   Excit_08             Excit
+19_TTTGTTGTCTTAAGGC-1   3.878157            Excit   Excit_10             Excit
+                      cellType_hc cellType_layer layer_annotation
+                         <factor>       <factor>         <factor>
+1_AAACCCAAGTTCTCTT-1     Inhib_01          Inhib            L2/3 
+1_AAACCCACAAGGTCTT-1     Oligo_02          Oligo            WM   
+1_AAACCCATCAAAGACA-1     OPC               OPC              WM/L1
+1_AAACCCATCATGACAC-1     Inhib_01          Inhib            L2/3 
+1_AAACCCATCATTGCGA-1     Oligo_02          Oligo            WM   
+...                           ...            ...              ...
+19_TTTGTTGGTAGGGAGG-1    Excit_01     Excit_L3               L3  
+19_TTTGTTGGTCTTCATT-1    Inhib_05     Inhib                  L2  
+19_TTTGTTGTCCCTGGTT-1    Excit_01     Excit_L3               L3  
+19_TTTGTTGTCTCATTGT-1    Excit_01     Excit_L3               L3  
+19_TTTGTTGTCTTAAGGC-1    Excit_02     Excit_L5/6             L5/6
 
  **** rowData ****
-DataFrame with 36601 rows and 9 columns
+DataFrame with 36601 rows and 7 columns
               source     type         gene_id gene_version   gene_name
             <factor> <factor>     <character>  <character> <character>
 MIR1302-2HG   HAVANA     gene ENSG00000243485            5 MIR1302-2HG
@@ -302,23 +279,26 @@ AC023491.2   ENSEMBL     gene ENSG00000278633            1  AC023491.2
 AC007325.1   ENSEMBL     gene ENSG00000276017            1  AC007325.1
 AC007325.4   ENSEMBL     gene ENSG00000278817            1  AC007325.4
 AC007325.2   ENSEMBL     gene ENSG00000277196            4  AC007325.2
-                 gene_type binomial_deviance marker_layer marker_broad_spatial
-               <character>         <numeric>  <character>          <character>
-MIR1302-2HG         lncRNA               NaN           NA                   NA
-FAM138A             lncRNA               NaN           NA                   NA
-OR4F5       protein_coding               NaN           NA                   NA
-AL627309.1          lncRNA          8778.744           NA                   NA
-AL627309.3          lncRNA           914.703           NA                   NA
-...                    ...               ...          ...                  ...
-AC141272.1  protein_coding               NaN           NA                   NA
-AC023491.2  protein_coding               NaN           NA                   NA
-AC007325.1  protein_coding               NaN           NA                   NA
-AC007325.4  protein_coding          19594.89           NA                   NA
-AC007325.2  protein_coding           6269.42           NA                   NA
+                 gene_type binomial_deviance
+               <character>         <numeric>
+MIR1302-2HG         lncRNA               NaN
+FAM138A             lncRNA               NaN
+OR4F5       protein_coding               NaN
+AL627309.1          lncRNA          8778.744
+AL627309.3          lncRNA           914.703
+...                    ...               ...
+AC141272.1  protein_coding               NaN
+AC023491.2  protein_coding               NaN
+AC007325.1  protein_coding               NaN
+AC007325.4  protein_coding          19594.89
+AC007325.2  protein_coding           6269.42
+There were 50 or more warnings (use warnings() to see the first 50)
+Size with only logcounts: 
+186.82 MB
 [1] "Reproducibility information:"
-[1] "2022-10-07 19:07:31 EDT"
+[1] "2022-11-14 20:32:46 EST"
      user    system   elapsed 
-10548.824   313.009 10911.083 
+15033.596  3438.234 18566.682 
 ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
  setting  value
  version  R version 4.2.1 Patched (2022-08-30 r82775)
@@ -329,7 +309,7 @@ AC007325.2  protein_coding           6269.42           NA                   NA
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       US/Eastern
- date     2022-10-07
+ date     2022-11-14
  pandoc   2.19.2 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2/bin/pandoc
 
 ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -340,28 +320,29 @@ AC007325.2  protein_coding           6269.42           NA                   NA
  BiocParallel           1.30.3   2022-06-05 [2] Bioconductor
  BiocSingular           1.12.0   2022-04-26 [2] Bioconductor
  bitops                 1.0-7    2021-04-24 [2] CRAN (R 4.2.1)
- cli                    3.4.0    2022-09-08 [1] CRAN (R 4.2.1)
+ cli                    3.4.1    2022-09-23 [1] CRAN (R 4.2.1)
  codetools              0.2-18   2020-11-04 [3] CRAN (R 4.2.1)
  DelayedArray         * 0.22.0   2022-04-26 [2] Bioconductor
- DelayedMatrixStats     1.18.0   2022-04-26 [2] Bioconductor
+ DelayedMatrixStats     1.18.2   2022-10-13 [1] Bioconductor
  GenomeInfoDb         * 1.32.4   2022-09-06 [1] Bioconductor
  GenomeInfoDbData       1.2.8    2022-08-30 [2] Bioconductor
  GenomicRanges        * 1.48.0   2022-04-26 [2] Bioconductor
  HDF5Array            * 1.24.2   2022-08-02 [2] Bioconductor
  here                 * 1.0.1    2020-12-13 [2] CRAN (R 4.2.1)
  IRanges              * 2.30.1   2022-08-18 [2] Bioconductor
- irlba                  2.3.5    2021-12-06 [2] CRAN (R 4.2.1)
+ irlba                  2.3.5.1  2022-10-03 [1] CRAN (R 4.2.1)
  lattice                0.20-45  2021-09-22 [3] CRAN (R 4.2.1)
  lobstr                 1.1.2    2022-06-22 [2] CRAN (R 4.2.1)
- Matrix               * 1.4-1    2022-03-23 [3] CRAN (R 4.2.1)
+ Matrix               * 1.5-1    2022-09-13 [1] CRAN (R 4.2.1)
  MatrixGenerics       * 1.8.1    2022-06-26 [2] Bioconductor
  matrixStats          * 0.62.0   2022-04-19 [2] CRAN (R 4.2.1)
+ prettyunits            1.1.1    2020-01-24 [2] CRAN (R 4.2.1)
  Rcpp                   1.0.9    2022-07-08 [2] CRAN (R 4.2.1)
- RCurl                  1.98-1.8 2022-07-30 [2] CRAN (R 4.2.1)
+ RCurl                  1.98-1.9 2022-10-03 [1] CRAN (R 4.2.1)
  rhdf5                * 2.40.0   2022-04-26 [2] Bioconductor
  rhdf5filters           1.8.0    2022-04-26 [2] Bioconductor
  Rhdf5lib               1.18.2   2022-05-15 [2] Bioconductor
- rlang                  1.0.5    2022-08-31 [1] CRAN (R 4.2.1)
+ rlang                  1.0.6    2022-09-24 [1] CRAN (R 4.2.1)
  rprojroot              2.0.3    2022-04-02 [2] CRAN (R 4.2.1)
  rsvd                   1.0.5    2021-04-16 [2] CRAN (R 4.2.1)
  S4Vectors            * 0.34.0   2022-04-26 [2] Bioconductor
@@ -369,7 +350,7 @@ AC007325.2  protein_coding           6269.42           NA                   NA
  scry                   1.8.0    2022-04-26 [2] Bioconductor
  scuttle                1.6.3    2022-08-23 [2] Bioconductor
  sessioninfo          * 1.2.2    2021-12-06 [2] CRAN (R 4.2.1)
- SingleCellExperiment * 1.18.0   2022-04-26 [2] Bioconductor
+ SingleCellExperiment * 1.18.1   2022-10-02 [1] Bioconductor
  sparseMatrixStats      1.8.0    2022-04-26 [2] Bioconductor
  SummarizedExperiment * 1.26.1   2022-04-29 [2] Bioconductor
  XVector                0.36.0   2022-04-26 [2] Bioconductor
@@ -380,5 +361,7 @@ AC007325.2  protein_coding           6269.42           NA                   NA
  [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2/R/4.2/lib64/R/library
 
 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+Error: unexpected end of input
+Execution halted
 **** Job ends ****
-Fri Oct  7 19:07:35 EDT 2022
+Mon Nov 14 20:32:49 EST 2022
