@@ -142,6 +142,19 @@ sample_prop_bar_position <- ggplot(data = prop_all, aes(x = Sample, y = prop, fi
 ggsave(sample_prop_bar_position, filename = here(plot_dir, "prop_bar_Sample_position.png"), width = 12)
 ggsave(sample_prop_bar_position, filename = here(plot_dir, "prop_bar_Sample_position.pdf"), width = 12)
 
+sample_prop_bar_minimal <- ggplot(data = prop_all, aes(x = Sample, y = prop, fill = cellType_hc)) +
+  geom_bar(stat = "identity") +
+  # facet_grid(. ~ Position, scales = "free", space = "free") +
+  scale_fill_manual(values = cell_type_colors) +
+  theme+
+  theme(axis.text.x = element_blank(),
+        axis.ticks.x=element_blank(),
+        legend.position = "None") 
+
+ggsave(sample_prop_bar_minimal, filename = here(plot_dir, "prop_bar_Sample_minimal.png"),height = 5, width = 5)
+ggsave(sample_prop_bar__minimal, filename = here(plot_dir, "prop_bar_Sample_minimal.pdf"), width = 12)
+
+
 ## number nuclei
 sample_n_bar_position <- ggplot(data = prop_all, aes(x = Sample, y = n, fill = cellType_hc)) +
     geom_bar(stat = "identity") +
@@ -252,6 +265,14 @@ layer_prop_bar_all <- plot_composition_bar(prop_layer,
     theme_bw()
 ggsave(layer_prop_bar_all, filename = here(plot_dir, "prop_bar_layer_ALL.png"), width = 3)
 
+## compare hc v layer 
+
+prop_bar_fineVlayer <- prop_bar_all + theme(legend.position = "None") + labs(y = "Mean Proption - hc annotation k=29") + 
+  layer_prop_bar_all+ labs(y = "Mean Proption - layer annotation k=13")
+
+ggsave(prop_bar_fineVlayer, filename = here(plot_dir, "prop_bar_fineVlayer_ALL.png"))
+ggsave(prop_bar_fineVlayer, filename = here(plot_dir, "prop_bar_fineVlayer_ALL.pdf"))
+
 ## Sample prop bar
 layer_sample_prop_bar <- plot_composition_bar(prop_layer,
     sample_col = "Sample",
@@ -282,6 +303,8 @@ layer_prop_bar_position <- ggplot(data = prop_layer, aes(x = Sample, y = prop, f
 
 ggsave(layer_prop_bar_position, filename = here(plot_dir, "prop_bar_layer_position.png"), width = 12, height = 5)
 ggsave(layer_prop_bar_position, filename = here(plot_dir, "prop_bar_layer_position.pdf"), width = 12)
+
+
 
 # sgejobs::job_single('02_cellType_props', create_shell = TRUE, queue= 'bluejay', memory = '10G', command = "Rscript 02_cellType_prop.R")
 
