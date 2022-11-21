@@ -146,13 +146,13 @@ sample_prop_bar_minimal <- ggplot(data = prop_all, aes(x = Sample, y = prop, fil
   geom_bar(stat = "identity") +
   # facet_grid(. ~ Position, scales = "free", space = "free") +
   scale_fill_manual(values = cell_type_colors) +
-  theme+
+  my_theme+
   theme(axis.text.x = element_blank(),
         axis.ticks.x=element_blank(),
         legend.position = "None") 
 
-ggsave(sample_prop_bar_minimal, filename = here(plot_dir, "prop_bar_Sample_minimal.png"),height = 5, width = 5)
-ggsave(sample_prop_bar__minimal, filename = here(plot_dir, "prop_bar_Sample_minimal.pdf"), width = 12)
+ggsave(sample_prop_bar_minimal, filename = here(plot_dir, "prop_bar_Sample_minimal.png"),height = 5, width = 6)
+ggsave(sample_prop_bar_minimal, filename = here(plot_dir, "prop_bar_Sample_minimal.pdf"),height = 5, width = 6)
 
 
 ## number nuclei
