@@ -25,7 +25,7 @@ module load conda_R/4.2
 ## List current modules for reproducibility
 module list
 
-Rscript ~/GitHub/DLPFC_snRNAseq/Boyi_R/VisiumCCC/01-Prep_Data.R
+Rscript --no-save ~/GitHub/DLPFC_snRNAseq/Boyi_R/VisiumCCC/01-Prep_Data.R
 
 
 echo "**** Job ends ****"
