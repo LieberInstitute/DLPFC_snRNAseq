@@ -20,7 +20,7 @@ success_run_3.1 <- runs_R3.1 |>
     filter(n == 2)
 
 failed_run_R3.1 <- setdiff(all_run, success_run_3.1$Sample)
-
+# Br8667_mid
 
 failed_runs_R3.1 <- runs_R3.1 |>
     group_by(Sample) |>
@@ -36,14 +36,14 @@ runs_R3.0 <- list.files(path = "~/CCC_snRNA_archive/CCC_snRNA_R3.0/",
 success_runs_R3.0 <- runs_R3.0 |> group_by(Sample) |>
     summarize(n = n()) |> filter(n==2)
 
-if(length(base::intersect(success_runs_R3.0$Sample, failed_run_R3.1)>0){
+if(length(base::intersect(success_runs_R3.0$Sample, failed_run_R3.1))>0){
     map(base::intersect(success_runs_R3.0$Sample, failed_run_R3.1),
         .f = function(name){
-            folder_name <- paste0("~/CCC_snRNA_archive/CCC_snRNA_R3.1/", name, "/"))
-    if(! dir.exists(folder_name)
-       dir.create(folder_name, recursive = TRUE)
-       file.copy(from = paste0("~/CCC_snRNA_archive/CCC_snRNA_R3.0/", name, "/"),
-                 to = paste0("~/CCC_snRNA_archive/CCC_snRNA_R3.1/", name, "/"),
-                 recursive = TRUE)
+            folder_name <- paste0("~/CCC_snRNA_archive/CCC_snRNA_R3.1/", name, "/")
+            if(!dir.exists(folder_name))
+                dir.create(folder_name, recursive = TRUE)
+            file.copy(from = paste0("~/CCC_snRNA_archive/CCC_snRNA_R3.0/", name, "/"),
+                      to = paste0("~/CCC_snRNA_archive/CCC_snRNA_R3.1/", name, "/"),
+                      recursive = TRUE)
         })
 }
