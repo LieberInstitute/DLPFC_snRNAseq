@@ -43,7 +43,7 @@ if(length(base::intersect(success_runs_R3.0$Sample, failed_run_R3.1))>0){
             if(!dir.exists(folder_name))
                 dir.create(folder_name, recursive = TRUE)
             file.copy(from = paste0("~/CCC_snRNA_archive/CCC_snRNA_R3.0/", name, "/"),
-                      to = paste0("~/CCC_snRNA_archive/CCC_snRNA_R3.1/", name, "/"),
+                      to = paste0("~/CCC_snRNA_archive/CCC_snRNA_R3.1/"),
                       recursive = TRUE)
         })
 }
