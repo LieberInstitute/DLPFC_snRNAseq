@@ -1,6 +1,6 @@
 #!/bin/bash
 ## TODO: edit this section
-#$ -l mem_free=15G,h_vmem=15G,h_fsize=5G
+#$ -l mem_free=10G,h_vmem=10G,h_fsize=5G
 #$ -cwd
 #$ -N CCC_Visium_prep
 #$ -o ~/CCC_Visium/log/prep.txt
