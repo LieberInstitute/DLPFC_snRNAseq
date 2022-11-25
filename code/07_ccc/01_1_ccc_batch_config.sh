@@ -25,13 +25,13 @@ module list
 
 # Create a directory to store your log files
 # Import to debuging
-logPath=/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/code/07_CCC_LIANA/logs/
+logPath=/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/code/07_ccc/logs/
 mkdir -p $logPath
 
 # Run simulation with simulation parameters using R batch --args flag
 ###      The $ sign helps to fetch the simulation parameters passed from start_sim.R\
 ###      If the parameter is a string (a vector of string), you need to quote the string with single quote `
-R CMD BATCH --no-save "--args crn_sec='$crn_sec'" /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/code/07_CCC_LIANA/01_2_CCC_with_LIANA.R  $logPath${crn_sec}.Rout
+R CMD BATCH --no-save "--args crn_sec='$crn_sec'" /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/code/07_ccc/01_2_CCC_with_LIANA.R  $logPath${crn_sec}.Rout
 
 
 echo "**** Job ends ****"

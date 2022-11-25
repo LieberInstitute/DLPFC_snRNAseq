@@ -23,9 +23,9 @@ start.sim <- function(
     ## DO NOT USE GENERIC JOB NAME FOR CONVENIENCE
     job.flag <- paste0("-N ",job.name)
 
-    err.flag <- paste0("-e /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/code/07_CCC_LIANA/logs/",job.name,".txt")
+    err.flag <- paste0("-e /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/code/07_ccc/logs/",job.name,".txt")
 
-    out.flag <- paste0("-o /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/code/07_CCC_LIANA/logs/",job.name,".txt")
+    out.flag <- paste0("-o /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/code/07_ccc/logs/",job.name,".txt")
 
     # Pass simulation parameters to jobs using export flag
     arg.flag <- paste0("-v crn_sec=", crn_sec)
@@ -33,7 +33,7 @@ start.sim <- function(
     # Create Jobs
     system(
         paste("qsub", job.flag, err.flag, out.flag, arg.flag,
-              "/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/code/07_CCC_LIANA/01_1_ccc_batch_config.sh")
+              "/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/code/07_ccc/01_1_ccc_batch_config.sh")
     )
 }
 

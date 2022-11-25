@@ -18,7 +18,7 @@ if(length(args)==0){
 # crn_sec <- crn_Positions[1]
 
 # Create section specific folders to contain results
-CCC_res_path <- "/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/processed-data/07_CCC_LIANA/"
+CCC_res_path <- "/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/processed-data/07_ccc/"
 if(!dir.exists(CCC_res_path)) dir.create(CCC_res_path, recursive = TRUE)
 fdl_path <- paste0(CCC_res_path, crn_sec, "/")
 if(!dir.exists(fdl_path)) dir.create(fdl_path, recursive = TRUE)
