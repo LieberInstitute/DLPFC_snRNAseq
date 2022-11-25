@@ -8,9 +8,10 @@ prmt <- expand.grid(
       "Br8492_mid",  "Br8492_post", "Br8667_ant",  "Br8667_mid" )
 )
 
-if(!dir.exists("~/CCC_snRNA")) dir.create("~/CCC_snRNA/")
-setwd("~/CCC_snRNA/")
-dir.create("~/CCC_snRNA/log/", recursive = TRUE)
+# NOTE: these code is for running analysis that saves to Boyi's drive
+# if(!dir.exists("~/CCC_snRNA")) dir.create("~/CCC_snRNA/")
+# setwd("~/CCC_snRNA/")
+# dir.create("~/CCC_snRNA/log/", recursive = TRUE)
 
 
 # Helper Function for Setting Up Job --------------------------------------
@@ -25,9 +26,9 @@ start.sim <- function(
     ## DO NOT USE GENERIC JOB NAME FOR CONVENIENCE
     job.flag <- paste0("-N ",job.name)
 
-    err.flag <- paste0("-e ~/CCC_snRNA/log/",job.name,".txt")
+    err.flag <- paste0("-e /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/code/07_CCC_LIANA/log/",job.name,".txt")
 
-    out.flag <- paste0("-o ~/CCC_snRNA/log/",job.name,".txt")
+    out.flag <- paste0("-o /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/code/07_CCC_LIANA/log/",job.name,".txt")
 
     # Pass simulation parameters to jobs using export flag
     arg.flag <- paste0("-v crn_sec=", crn_sec)
@@ -35,7 +36,7 @@ start.sim <- function(
     # Create Jobs
     system(
         paste("qsub", job.flag, err.flag, out.flag, arg.flag,
-              "~/GitHub/DLPFC_snRNAseq/Boyi_R/ccc_batch_config.sh")
+              "/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/code/07_CCC_LIANA/ccc_batch_config.sh")
     )
 }
 
