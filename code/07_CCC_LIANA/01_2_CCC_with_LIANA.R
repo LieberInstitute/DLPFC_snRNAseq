@@ -18,8 +18,6 @@ if(length(args)==0){
 # crn_sec <- crn_Positions[1]
 
 # Create section specific folders to contain results
-# TODO: change this to LIBD drive
-
 CCC_res_path <- "/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/processed-data/07_CCC_LIANA/"
 if(!dir.exists(CCC_res_path)) dir.create(CCC_res_path, recursive = TRUE)
 fdl_path <- paste0(CCC_res_path, crn_sec, "/")
@@ -47,12 +45,14 @@ group_by(Sample) |> summarize(n = n())
 # xtabs(~ cellType_broad_k + cellType_layer, cData, addNA = TRUE)
 
 # Subset cells from each coronal section
+# R2 Code
 # sce_crn <- sce[, sce$Position==crn_sec]
+# R3 Code
 sce_crn <- sce[, sce$Sample==crn_sec]
 # if(ncol(sce_crn) <=0) stop
 
 # QC: Remove bad cells----------------------------------------------------------------------
-# TODO: ask Louise why
+# Following Louise's suggstion, remove drop cells
 # https://jhu-genomics.slack.com/archives/C01EA7VDJNT/p1668530673111519?thread_ts=1668530634.509189&cid=C01EA7VDJNT
 sce_crn <- sce_crn[,sce_crn$cellType_hc != "drop"]
 sce_crn$cellType_hc <- droplevels(sce_crn$cellType_hc)
@@ -85,8 +85,7 @@ library(liana)
 sce_crn <- sce_crn[, !is.na(colData(sce_crn)$cellType_layer)]
 colLabels(sce_crn) <- colData(sce_crn)$cellType_layer
 
-# TEST: small scale
-# TODO: remove this when scaling up the analysis
+# TEST CODE: small scale
 # sce_crn <- sce_crn[, 1:1000]
 
 
@@ -94,28 +93,16 @@ colLabels(sce_crn) <- colData(sce_crn)$cellType_layer
 liana_test <- liana_wrap(sce_crn)
 saveRDS(liana_test,
         file = paste0(fdl_path, "liana_test.rds"))
-# TODO: save this result
 
 
-# If segfault happens, remove that list in the list.
-#  tmp <- liana_test
-# tmp$cellphonedb <- NULL
+# If segfault happens, remove that list in the list, e.g.
+# liana_test <- liana_test
+# liana_test$cellphonedb <- NULL
 
 # Consensus Ranks
-# TODO: save this result
 liana_res <- liana_test %>%
     liana_aggregate()
 saveRDS(liana_res,
         file = paste0(fdl_path, "liana_consensus.rds"))
 
 sessionInfo()
-
-
-# # Plot
-# # library(circlize)
-# # pdf(file = "~/CCC_toy.pdf")
-# # chord_freq(tmp#,
-# #                 # source_groups = c("CD8 T", "NK", "B"),
-# #                 # target_groups = c("CD8 T", "NK", "B")
-# #                 )
-# # dev.off()

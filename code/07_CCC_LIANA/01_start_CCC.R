@@ -1,17 +1,14 @@
 
 # Analysis Parameters ---------------------------------------------------
 prmt <- expand.grid(
+    # R2 Code
     # crn_sec = c("Anterior", "Middle", "Posterior")
+    # R3 Code
     crn_sec = c("Br2720_mid", "Br2720_post", "Br2743_ant", "Br2743_mid", "Br3942_ant",
       "Br3942_mid",  "Br6423_ant",  "Br6423_post", "Br6432_ant",  "Br6471_ant",
       "Br6471_mid",  "Br6522_mid",  "Br6522_post", "Br8325_ant",  "Br8325_mid",
       "Br8492_mid",  "Br8492_post", "Br8667_ant",  "Br8667_mid" )
 )
-
-# NOTE: these code is for running analysis that saves to Boyi's drive
-# if(!dir.exists("~/CCC_snRNA")) dir.create("~/CCC_snRNA/")
-# setwd("~/CCC_snRNA/")
-# dir.create("~/CCC_snRNA/log/", recursive = TRUE)
 
 
 # Helper Function for Setting Up Job --------------------------------------
