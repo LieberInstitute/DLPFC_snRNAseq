@@ -19,9 +19,11 @@ if(length(args)==0){
 
 # Create section specific folders to contain results
 # TODO: change this to LIBD drive
-if(!dir.exists("~/CCC_snRNA")) dir.create("~/CCC_snRNA")
-fdl_path <- paste0("~/CCC_snRNA/", crn_sec, "/")
-dir.create(fdl_path, recursive = TRUE)
+
+CCC_res_path <- "/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/processed-data/07_CCC_LIANA/"
+if(!dir.exists(CCC_res_path)) dir.create(CCC_res_path, recursive = TRUE)
+fdl_path <- paste0(CCC_res_path, crn_sec, "/")
+if(!dir.exists(fdl_path)) dir.create(fdl_path, recursive = TRUE)
 
 # Data Prep ---------------------------------------------------------------
 
