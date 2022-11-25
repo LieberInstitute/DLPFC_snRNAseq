@@ -2,10 +2,10 @@ library(liana)
 library(tidyverse)
 library(unglue)
 
-plot_path <- "/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/plots/07_CCC_LIANA/"
+plot_path <- "/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/plots/07_ccc/"
 
 # Per-Section lots -------------------------------------------------------
-scn_fld_path <- "/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/processed-data/07_CCC_LIANA/CCC_snRNA_R2.1/"
+scn_fld_path <- "/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/processed-data/07_ccc/CCC_snRNA_R2.1/"
 crn_scn <- c("Anterior", "Middle", "Posterior")
 crn_scn |>
     map(.f = function(scn){
@@ -25,7 +25,7 @@ crn_scn |>
     })
 
 # Per-Sample lots -------------------------------------------------------
-smp_fld_path <- "/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/processed-data/07_CCC_LIANA/CCC_snRNA_R3.1/"
+smp_fld_path <- "/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/processed-data/07_ccc/CCC_snRNA_R3.1/"
 file_dic <- data.frame(fl_name = list.files(smp_fld_path)) |>
     unglue_unnest(fl_name, "{Br}_{sec}", remove = FALSE) |>
     filter(substr(fl_name, start = 1, stop = 2) == "Br") |>
