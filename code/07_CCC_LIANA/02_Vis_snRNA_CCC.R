@@ -2,10 +2,10 @@ library(liana)
 library(tidyverse)
 library(unglue)
 
-plot_path <- "/users/bguo/CCC_snRNA_archive/plots/"
+plot_path <- "/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/plots/07_CCC_LIANA/"
 
 # Per-Section lots -------------------------------------------------------
-scn_fld_path <- "/users/bguo/CCC_snRNA_archive/CCC_snRNA_R2.1/"
+scn_fld_path <- "/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/processed-data/07_CCC_LIANA/CCC_snRNA_R2.1/"
 crn_scn <- c("Anterior", "Middle", "Posterior")
 crn_scn |>
     map(.f = function(scn){
@@ -17,7 +17,7 @@ crn_scn |>
         # Create Folder
         if(!dir.exists(paste0(plot_path, scn)))
             dir.create(paste0(plot_path,scn), recursive = TRUE)
-        # browser()
+
         # Save Heatmap
         jpeg(filename = paste0(plot_path, scn, "/overall.jpeg"))
         print(heat_freq(liana_trunc))
@@ -25,7 +25,7 @@ crn_scn |>
     })
 
 # Per-Sample lots -------------------------------------------------------
-smp_fld_path <- "/users/bguo/CCC_snRNA_archive/CCC_snRNA_R3.1/"
+smp_fld_path <- "/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/processed-data/07_CCC_LIANA/CCC_snRNA_R3.1/"
 file_dic <- data.frame(fl_name = list.files(smp_fld_path)) |>
     unglue_unnest(fl_name, "{Br}_{sec}", remove = FALSE) |>
     filter(substr(fl_name, start = 1, stop = 2) == "Br") |>
@@ -40,11 +40,6 @@ file_dic <- data.frame(fl_name = list.files(smp_fld_path)) |>
 map2(.x = file_dic$fl_name,
      .y = file_dic$Section,
      .f = function(name, scn){
-         # for(i in 1:nrow(file_dic)){
-
-         # name <- file_dic$fl_name[i]
-         # scn <- file_dic$Section[i]
-
          liana_res <- readRDS(paste0(smp_fld_path, name, "/liana_consensus.rds"))
          liana_trunc <- liana_res %>%
              # only keep interactions concordant between methods
