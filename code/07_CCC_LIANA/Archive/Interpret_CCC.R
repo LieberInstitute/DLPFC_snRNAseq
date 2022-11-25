@@ -1,11 +1,34 @@
 library(liana)
 library(tidyverse)
 
-# fl_path <- "~/CCC_snRNA/Anterior/"
 
-liana_test <- readRDS(paste0(fl_path, "liana_test.rds"))
 
-liana_res <- readRDS(paste0(fl_path, "liana_consensus.rds"))
+plot_path <- "/users/bguo/CCC_snRNA_archive/plots/"
+
+scn_fld_path <- "/users/bguo/CCC_snRNA_archive/CCC_snRNA_R2.1/"
+crn_scn <- c("Anterior", "Middle", "Posterior")
+crn_scn |> map(
+    .f = function(scn){
+
+        liana_res <- readRDS(paste0(scn_fld_path, scn, "/liana_consensus.rds"))
+        liana_trunc <- liana_res %>%
+            # only keep interactions concordant between methods
+            filter(aggregate_rank <= 0.01)
+
+        # Create Folder
+        if(!dir.exists(paste0(plot_path, scn)))
+            dir.create(paste0(plot_path,scn), recursive = TRUE)
+
+        # Save Heatmap
+        jpeg(filename = paste0(plot_path,scn, "/overall.jpeg"))
+        heat_freq(liana_trunc)
+        dev.off()
+    }
+)
+
+liana_test <- readRDS(paste0(scn_fld_path, "liana_test.rds"))
+
+liana_res <- readRDS(paste0(scn_fld_path, "liana_consensus.rds"))
 
 
 liana_trunc <- liana_res %>%
@@ -74,7 +97,7 @@ trunc_src_tgt_dat <- full_dat |>
     mutate(
         ST_pair = glue("{source}-{target}"),
         LR_pair = glue("{ligand.complex}-{receptor.complex}"),
-           )
+    )
 
 
 # Most frequent LR Pair ------------------------------------------------------
