@@ -3,3 +3,5 @@
 sce/
 03_build_sce/sce_uncorrected/
 05_explore_sce/05_azimuth_validation/
+
+07_ccc/*
