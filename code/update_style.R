@@ -1,1 +1,5 @@
-styler::style_dir(here::here("code"), transformers = biocthis::bioc_style())
+styler::style_dir(
+    path = here::here("code"),
+    filetype = c("R", "Rmd"),
+    transformers = biocthis::bioc_style()
+)
