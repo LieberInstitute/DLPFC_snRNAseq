@@ -11,7 +11,6 @@ library("patchwork")
 #'
 #' @examples
 plot_reducedDim_facet <- function(sce, type = "TSNE", facet_by = "round", title = NULL) {
-
     # main_plot <- ggcells(sce, mapping=aes(x=paste0(type,".1"), y=TSNE.2, colour=round)) +
 
     my_x <- paste0(type, ".1")
@@ -32,7 +31,6 @@ plot_reducedDim_facet <- function(sce, type = "TSNE", facet_by = "round", title 
 
 
 plot_reducedDim_qc <- function(sce, type = "TSNE", color_by = "sum", title = "") {
-
     # main_plot <- ggcells(sce, mapping=aes(x=paste0(type,".1"), y=TSNE.2, colour=round)) +
 
     my_x <- paste0(type, ".1")

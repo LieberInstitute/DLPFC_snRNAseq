@@ -7,7 +7,7 @@ library("dplyr")
 # library("numform")
 library("pheatmap")
 library("scater")
-library("bluster") 
+library("bluster")
 library("patchwork")
 
 # Plotting set up
@@ -18,7 +18,7 @@ plot_dir <- here("plots", "03_build_sce", "08.5_cluster_annotation_plotting")
 if (!dir.exists(plot_dir)) dir.create(plot_dir)
 
 #### Load Data ####
-load(here("processed-data", "sce","sce_DLPFC.Rdata"), verbose = TRUE)
+load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
 
 cell_type_colors <- metadata(sce)$cell_type_colors
 cell_type_colors_broad <- cell_type_colors_broad
@@ -31,9 +31,10 @@ TSNE_HC_cellTypes <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour =
     my_theme +
     coord_equal()
 
-ggsave(TSNE_HC_cellTypes +
-    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
-filename = here(plot_dir, "TSNE_HC-29_cellType.png"), width = 10
+ggsave(
+    TSNE_HC_cellTypes +
+        guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+    filename = here(plot_dir, "TSNE_HC-29_cellType.png"), width = 10
 )
 
 
@@ -43,9 +44,10 @@ TSNE_HC_cellTypes <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2)) +
     my_theme +
     coord_equal()
 
-ggsave(TSNE_HC_cellTypes +
-    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
-filename = here(plot_dir, "TSNE_HC_broad_cellType.png"), width = 10
+ggsave(
+    TSNE_HC_cellTypes +
+        guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+    filename = here(plot_dir, "TSNE_HC_broad_cellType.png"), width = 10
 )
 
 
@@ -56,9 +58,10 @@ UMAP_HC_cellTypes <- ggcells(sce, mapping = aes(x = UMAP.1, y = UMAP.2, colour =
     my_theme +
     coord_equal()
 
-ggsave(UMAP_HC_cellTypes +
-    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
-filename = here(plot_dir, "UMAP_HC_cellType.png"), width = 10
+ggsave(
+    UMAP_HC_cellTypes +
+        guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+    filename = here(plot_dir, "UMAP_HC_cellType.png"), width = 10
 )
 
 UMAP_HC_cellTypes <- ggcells(sce, mapping = aes(x = UMAP.1, y = UMAP.2)) +
@@ -67,9 +70,10 @@ UMAP_HC_cellTypes <- ggcells(sce, mapping = aes(x = UMAP.1, y = UMAP.2)) +
     my_theme +
     coord_equal()
 
-ggsave(UMAP_HC_cellTypes +
-    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
-filename = here(plot_dir, "UMAP_HC_broad_cellType.png"), width = 10
+ggsave(
+    UMAP_HC_cellTypes +
+        guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+    filename = here(plot_dir, "UMAP_HC_broad_cellType.png"), width = 10
 )
 
 #### Plot KM TSNE + UMAP ####
@@ -79,9 +83,10 @@ TSNE_km_cellTypes <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour =
     my_theme +
     coord_equal()
 
-ggsave(TSNE_km_cellTypes +
-    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
-filename = here(plot_dir, "TSNE_mbkm-29_cellType.png"), width = 10
+ggsave(
+    TSNE_km_cellTypes +
+        guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+    filename = here(plot_dir, "TSNE_mbkm-29_cellType.png"), width = 10
 )
 
 
@@ -113,15 +118,15 @@ table(sce$collapsedCluster)
 cluster_compare <- table(sce$kmeans, sce$collapsedCluster)
 cluster_compare_prop <- sweep(cluster_compare, 2, colSums(cluster_compare), `/`)
 
-hc_anno <- colData(sce) |> 
-  as.data.frame() |> 
-  count(collapsedCluster, broad = cellType_broad_hc) |>
-  tibble::column_to_rownames("collapsedCluster")
+hc_anno <- colData(sce) |>
+    as.data.frame() |>
+    count(collapsedCluster, broad = cellType_broad_hc) |>
+    tibble::column_to_rownames("collapsedCluster")
 
-km_anno <- colData(sce) |> 
-  as.data.frame() |> 
-  count(kmeans, broad = cellType_broad_k) |>
-  tibble::column_to_rownames("kmeans")
+km_anno <- colData(sce) |>
+    as.data.frame() |>
+    count(kmeans, broad = cellType_broad_k) |>
+    tibble::column_to_rownames("kmeans")
 
 broad_pallet <- cell_type_colors_broad[unique(c(hc_anno$broad, km_anno$broad))]
 
@@ -170,7 +175,7 @@ png(here(plot_dir, "heatmap_cellType_compare.png"), height = 800, width = 800)
 pheatmap(ct_tab_prop,
     annotation_col = hc_ct_anno,
     annotation_row = km_ct_anno,
-    annotation_colors = list(ct = cell_type_colors )
+    annotation_colors = list(ct = cell_type_colors)
 )
 dev.off()
 
@@ -288,17 +293,17 @@ ggsave(dbs_ct_hc, filename = here(plot_dir, "qc_doubletScore_HC_cellType.pdf"), 
 
 #### Explore Mito rate ####
 mito_ct_hc <- ggcells(sce, mapping = aes(
-  x = reorder(cellType_hc, subsets_Mito_percent, FUN = median),
-  y = subsets_Mito_percent, fill = cellType_hc
+    x = reorder(cellType_hc, subsets_Mito_percent, FUN = median),
+    y = subsets_Mito_percent, fill = cellType_hc
 )) +
-  geom_boxplot() +
-  scale_fill_manual(values = cell_type_colors) +
-  my_theme +
-  theme(
-    legend.position = "None", axis.title.x = element_blank(),
-    axis.text.x = element_text(angle = 45, hjust = 1)
-  ) +
-  labs(y = "Percent Mito")
+    geom_boxplot() +
+    scale_fill_manual(values = cell_type_colors) +
+    my_theme +
+    theme(
+        legend.position = "None", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+    ) +
+    labs(y = "Percent Mito")
 
 ggsave(mito_ct_hc, filename = here(plot_dir, "qc_mitoRate_HC_cellType.png"), height = 3)
 ggsave(mito_ct_hc, filename = here(plot_dir, "qc_mitoRate_HC_cellType.pdf"), height = 3)
@@ -359,9 +364,9 @@ sapply(cellType.idx, function(x) {
 # 100% 179194.0 203794.0 188090.0   152333 296099.0
 
 sapply(cellType.idx, function(x) {
-  quantile(sce$subsets_Mito_percent[x])
+    quantile(sce$subsets_Mito_percent[x])
 })[, order(sapply(cellType.idx, function(x) {
-  quantile(sce$subsets_Mito_percent[x])["50%"]
+    quantile(sce$subsets_Mito_percent[x])["50%"]
 }))]
 #         Excit_06    Excit_08    Excit_02   Excit_07   Excit_01   Inhib_04   Excit_03   Inhib_05    Excit_04  Inhib_06
 # 0%   0.002438608 0.001886792 0.002068851 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000 0.003583716 0.0000000
@@ -439,10 +444,10 @@ ggsave(dbs_excit13, filename = here(plot_dir, "qc_Excit_13_doublet_scores.png"))
 #         legend.position = "None", axis.title.x = element_blank(),
 #         axis.text.x = element_text(angle = 90, hjust = 1)
 #     )
-# 
+#
 # ggsave(prelim_mito, filename = here(plot_dir, "prelim_mitoRate.png"), width = 30)
-# 
-# 
+#
+#
 # prelim_UMI <- ggcells(sce, mapping = aes(
 #     x = reorder(prelimCluster, sum, FUN = median),
 #     y = sum, color = cellType_hc
@@ -454,9 +459,9 @@ ggsave(dbs_excit13, filename = here(plot_dir, "qc_Excit_13_doublet_scores.png"))
 #         legend.position = "None", axis.title.x = element_blank(),
 #         axis.text.x = element_text(angle = 90, hjust = 1)
 #     )
-# 
+#
 # ggsave(mito_ct_hc, filename = here(plot_dir, "prelim_UMI.png"), width = 30)
-# 
+#
 # prelim_doublets <- ggcells(sce, mapping = aes(
 #     x = reorder(prelimCluster, doubletScore, FUN = median),
 #     y = doubletScore, color = cellType_hc
@@ -468,7 +473,7 @@ ggsave(dbs_excit13, filename = here(plot_dir, "qc_Excit_13_doublet_scores.png"))
 #         legend.position = "None", axis.title.x = element_blank(),
 #         axis.text.x = element_text(angle = 90, hjust = 1)
 #     )
-# 
+#
 # ggsave(prelim_doublets, filename = here(plot_dir, "prelim_doublets.png"), width = 30)
 
 # sgejobs::job_single('08_cluster_annotation', create_shell = TRUE, queue= 'bluejay', memory = '25G', command = "Rscript 08_cluster_annotation.R")

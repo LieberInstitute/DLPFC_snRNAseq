@@ -10,7 +10,7 @@ library("sessioninfo")
 load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
 
 ## Exclude drop cells
-sce <- sce[,sce$cellType_hc != "drop"]
+sce <- sce[, sce$cellType_hc != "drop"]
 sce$cellType_hc <- droplevels(sce$cellType_hc)
 sce$cellType_broad_hc <- droplevels(sce$cellType_broad_hc)
 
@@ -575,12 +575,12 @@ marker_list_broad <- readLines("/dcs04/lieber/lcolladotor/spatialDLPFC_LIBD4035/
 
 ## layer markers
 layer_marker_stats_anno <- marker_stats_spatial_layer |>
-  add_column(symbol = rownames(sce)[match(marker_stats_spatial_layer$gene, rowData(sce)$gene_id)]) |>
-  filter(gene %in% marker_list_layer & rank_ratio <= 50) |>
-  select(symbol, gene, cellType.target, rank_ratio) |>
-  group_by(cellType.target) |>
-  mutate(adj_rank_ratio = row_number()) |> ## adjust for removed MT genes
-  mutate(marker_anno = paste0(cellType.target, "-", adj_rank_ratio))
+    add_column(symbol = rownames(sce)[match(marker_stats_spatial_layer$gene, rowData(sce)$gene_id)]) |>
+    filter(gene %in% marker_list_layer & rank_ratio <= 50) |>
+    select(symbol, gene, cellType.target, rank_ratio) |>
+    group_by(cellType.target) |>
+    mutate(adj_rank_ratio = row_number()) |> ## adjust for removed MT genes
+    mutate(marker_anno = paste0(cellType.target, "-", adj_rank_ratio))
 
 setequal(layer_marker_stats_anno$gene, marker_list_layer)
 # [1] TRUE
@@ -696,16 +696,16 @@ dev.off()
 
 png(here(plot_dir, "markers_heatmap_layer-uncluster.png"), height = 500, width = 1500)
 Heatmap(marker_z_score,
-        name = "logcounts",
-        column_split = layer_markers_top$cellType.target,
-        cluster_rows = FALSE,
-        cluster_columns = FALSE,
-        right_annotation = row_ha,
-        top_annotation = column_ha,
-        show_column_names = TRUE,
-        show_row_names = FALSE
-        # ,
-        # col = viridis::viridis(100)
+    name = "logcounts",
+    column_split = layer_markers_top$cellType.target,
+    cluster_rows = FALSE,
+    cluster_columns = FALSE,
+    right_annotation = row_ha,
+    top_annotation = column_ha,
+    show_column_names = TRUE,
+    show_row_names = FALSE
+    # ,
+    # col = viridis::viridis(100)
 )
 dev.off()
 
@@ -745,15 +745,15 @@ dev.off()
 
 png(here(plot_dir, "markers_heatmap_layer_mean_cluster.png"), height = 500, width = 1500)
 Heatmap(mean_logcounts_z,
-        name = "Scaled Mean logcount",
-        cluster_rows = TRUE,
-        cluster_columns = TRUE,
-        right_annotation = row_ha_mean,
-        top_annotation = column_ha,
-        # column_split = layer_markers_top$cellType.target,
-        # show_column_names = FALSE,
-        # show_row_names = TRUE,
-        col = viridis::viridis(100)
+    name = "Scaled Mean logcount",
+    cluster_rows = TRUE,
+    cluster_columns = TRUE,
+    right_annotation = row_ha_mean,
+    top_annotation = column_ha,
+    # column_split = layer_markers_top$cellType.target,
+    # show_column_names = FALSE,
+    # show_row_names = TRUE,
+    col = viridis::viridis(100)
 )
 dev.off()
 

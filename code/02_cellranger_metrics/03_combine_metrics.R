@@ -5,12 +5,13 @@ library("sessioninfo")
 library("ggpubr")
 
 ## Load previous files
-load(here(
-    "processed-data",
-    "02_cellranger_metrics",
-    "tran_metrics.Rdata"
-),
-verbose = TRUE
+load(
+    here(
+        "processed-data",
+        "02_cellranger_metrics",
+        "tran_metrics.Rdata"
+    ),
+    verbose = TRUE
 )
 
 load(

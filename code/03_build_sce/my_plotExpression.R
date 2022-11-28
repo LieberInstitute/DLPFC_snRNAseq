@@ -51,5 +51,3 @@ custom_plotExpression <- function(sce, genes, assay = "logcounts", fill_cat = "c
     # expression_violin
     return(expression_violin)
 }
-
-

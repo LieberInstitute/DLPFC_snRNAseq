@@ -16,7 +16,7 @@ plot_dir <- here("plots", "05_explore_sce", "02_cellType_prop")
 load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
 
 ## Exclude drop cells
-sce <- sce[,sce$cellType_hc != "drop"]
+sce <- sce[, sce$cellType_hc != "drop"]
 sce$cellType_hc <- droplevels(sce$cellType_hc)
 sce$cellType_broad_hc <- droplevels(sce$cellType_broad_hc)
 
@@ -143,16 +143,18 @@ ggsave(sample_prop_bar_position, filename = here(plot_dir, "prop_bar_Sample_posi
 ggsave(sample_prop_bar_position, filename = here(plot_dir, "prop_bar_Sample_position.pdf"), width = 12)
 
 sample_prop_bar_minimal <- ggplot(data = prop_all, aes(x = Sample, y = prop, fill = cellType_hc)) +
-  geom_bar(stat = "identity") +
-  # facet_grid(. ~ Position, scales = "free", space = "free") +
-  scale_fill_manual(values = cell_type_colors) +
-  my_theme+
-  theme(axis.text.x = element_blank(),
-        axis.ticks.x=element_blank(),
-        legend.position = "None") 
+    geom_bar(stat = "identity") +
+    # facet_grid(. ~ Position, scales = "free", space = "free") +
+    scale_fill_manual(values = cell_type_colors) +
+    my_theme +
+    theme(
+        axis.text.x = element_blank(),
+        axis.ticks.x = element_blank(),
+        legend.position = "None"
+    )
 
-ggsave(sample_prop_bar_minimal, filename = here(plot_dir, "prop_bar_Sample_minimal.png"),height = 5, width = 6)
-ggsave(sample_prop_bar_minimal, filename = here(plot_dir, "prop_bar_Sample_minimal.pdf"),height = 5, width = 6)
+ggsave(sample_prop_bar_minimal, filename = here(plot_dir, "prop_bar_Sample_minimal.png"), height = 5, width = 6)
+ggsave(sample_prop_bar_minimal, filename = here(plot_dir, "prop_bar_Sample_minimal.pdf"), height = 5, width = 6)
 
 
 ## number nuclei
@@ -265,10 +267,10 @@ layer_prop_bar_all <- plot_composition_bar(prop_layer,
     theme_bw()
 ggsave(layer_prop_bar_all, filename = here(plot_dir, "prop_bar_layer_ALL.png"), width = 3)
 
-## compare hc v layer 
+## compare hc v layer
 
-prop_bar_fineVlayer <- prop_bar_all + theme(legend.position = "None") + labs(y = "Mean Proption - hc annotation k=29") + 
-  layer_prop_bar_all+ labs(y = "Mean Proption - layer annotation k=13")
+prop_bar_fineVlayer <- prop_bar_all + theme(legend.position = "None") + labs(y = "Mean Proption - hc annotation k=29") +
+    layer_prop_bar_all + labs(y = "Mean Proption - layer annotation k=13")
 
 ggsave(prop_bar_fineVlayer, filename = here(plot_dir, "prop_bar_fineVlayer_ALL.png"))
 ggsave(prop_bar_fineVlayer, filename = here(plot_dir, "prop_bar_fineVlayer_ALL.pdf"))

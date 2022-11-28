@@ -330,15 +330,17 @@ UMAP_azi_cellTypes <- ggcells(sce, mapping = aes(x = UMAP.1, y = UMAP.2, colour 
     theme_bw() +
     coord_equal()
 
-ggsave(UMAP_azi_cellTypes +
-    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))) +
-    labs(title = "DLPFC UMAP - Azimuth Annotation"),
-filename = here(plot_dir, "UMAP_azi_cellType.png"), width = 10
+ggsave(
+    UMAP_azi_cellTypes +
+        guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))) +
+        labs(title = "DLPFC UMAP - Azimuth Annotation"),
+    filename = here(plot_dir, "UMAP_azi_cellType.png"), width = 10
 )
 
-ggsave(UMAP_azi_cellTypes + theme(legend.position = "None") + labs(title = "DLPFC UMAP - Azimuth Annotation") +
-    UMAP_azi_cellTypes + theme(legend.position = "None") + facet_wrap(~azimuth_cellType),
-filename = here(plot_dir, "UMAP_azi_cellType_facet.png"), width = 12
+ggsave(
+    UMAP_azi_cellTypes + theme(legend.position = "None") + labs(title = "DLPFC UMAP - Azimuth Annotation") +
+        UMAP_azi_cellTypes + theme(legend.position = "None") + facet_wrap(~azimuth_cellType),
+    filename = here(plot_dir, "UMAP_azi_cellType_facet.png"), width = 12
 )
 
 
@@ -348,9 +350,10 @@ UMAP_hc_cellTypes <- ggcells(sce, mapping = aes(x = UMAP.1, y = UMAP.2, colour =
     theme_bw() +
     coord_equal()
 
-ggsave(UMAP_hc_cellTypes + theme(legend.position = "None") + labs(title = "DLPFC UMAP - Hierarchical Cluster") +
-    UMAP_hc_cellTypes + theme(legend.position = "None") + facet_wrap(~cellType_hc),
-filename = here(plot_dir, "UMAP_hc_cellType_facet.png"), width = 12
+ggsave(
+    UMAP_hc_cellTypes + theme(legend.position = "None") + labs(title = "DLPFC UMAP - Hierarchical Cluster") +
+        UMAP_hc_cellTypes + theme(legend.position = "None") + facet_wrap(~cellType_hc),
+    filename = here(plot_dir, "UMAP_hc_cellType_facet.png"), width = 12
 )
 
 #### Marker Plots ####
