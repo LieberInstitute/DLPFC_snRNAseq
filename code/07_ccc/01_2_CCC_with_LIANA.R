@@ -3,13 +3,13 @@ library(SingleCellExperiment)
 
 
 # Receive Arguments from Command Line
-args=(commandArgs(TRUE))
+args <- (commandArgs(TRUE))
 
-if(length(args)==0){
+if (length(args) == 0) {
     print("No arguments supplied.")
-}else{
-    for(i in 1:length(args)){
-        eval(parse(text=args[[i]]))
+} else {
+    for (i in 1:length(args)) {
+        eval(parse(text = args[[i]]))
     }
 }
 
@@ -19,9 +19,9 @@ if(length(args)==0){
 
 # Create section specific folders to contain results
 CCC_res_path <- "/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/processed-data/07_ccc/"
-if(!dir.exists(CCC_res_path)) dir.create(CCC_res_path, recursive = TRUE)
+if (!dir.exists(CCC_res_path)) dir.create(CCC_res_path, recursive = TRUE)
 fdl_path <- paste0(CCC_res_path, crn_sec, "/")
-if(!dir.exists(fdl_path)) dir.create(fdl_path, recursive = TRUE)
+if (!dir.exists(fdl_path)) dir.create(fdl_path, recursive = TRUE)
 
 # Data Prep ---------------------------------------------------------------
 
@@ -32,8 +32,10 @@ setwd("/dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/processed
 sce <- readRDS("se.rds")
 
 # Summary stat for coronary sections
-colData(sce) |> as.data.frame() |>
-group_by(Sample) |> summarize(n = n())
+colData(sce) |>
+    as.data.frame() |>
+    group_by(Sample) |>
+    summarize(n = n())
 
 
 ## Check celltype columns definition
@@ -48,13 +50,13 @@ group_by(Sample) |> summarize(n = n())
 # R2 Code
 # sce_crn <- sce[, sce$Position==crn_sec]
 # R3 Code
-sce_crn <- sce[, sce$Sample==crn_sec]
+sce_crn <- sce[, sce$Sample == crn_sec]
 # if(ncol(sce_crn) <=0) stop
 
 # QC: Remove bad cells----------------------------------------------------------------------
 # Following Louise's suggstion, remove drop cells
 # https://jhu-genomics.slack.com/archives/C01EA7VDJNT/p1668530673111519?thread_ts=1668530634.509189&cid=C01EA7VDJNT
-sce_crn <- sce_crn[,sce_crn$cellType_hc != "drop"]
+sce_crn <- sce_crn[, sce_crn$cellType_hc != "drop"]
 sce_crn$cellType_hc <- droplevels(sce_crn$cellType_hc)
 
 
@@ -92,7 +94,8 @@ colLabels(sce_crn) <- colData(sce_crn)$cellType_layer
 # Run liana
 liana_test <- liana_wrap(sce_crn)
 saveRDS(liana_test,
-        file = paste0(fdl_path, "liana_test.rds"))
+    file = paste0(fdl_path, "liana_test.rds")
+)
 
 
 # If segfault happens, remove that list in the list, e.g.
@@ -103,6 +106,7 @@ saveRDS(liana_test,
 liana_res <- liana_test %>%
     liana_aggregate()
 saveRDS(liana_res,
-        file = paste0(fdl_path, "liana_consensus.rds"))
+    file = paste0(fdl_path, "liana_consensus.rds")
+)
 
 sessionInfo()

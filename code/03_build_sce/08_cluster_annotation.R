@@ -186,9 +186,10 @@ TSNE_clusters <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = col
     my_theme +
     coord_equal()
 
-ggsave(TSNE_clusters +
-    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
-filename = here(plot_dir, "TSNE_HC-29_clusters.png"), width = 10
+ggsave(
+    TSNE_clusters +
+        guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+    filename = here(plot_dir, "TSNE_HC-29_clusters.png"), width = 10
 )
 
 
@@ -200,12 +201,12 @@ table(sce$kmeans)
 
 
 #### QC prelim clusters with poor signal downstream ####
-# clusters from Oligo_01 32, 36, 180, 229, and 247 - poor signal 
+# clusters from Oligo_01 32, 36, 180, 229, and 247 - poor signal
 
 problem_clusters <- c(32, 36, 180, 229, 247)
 table(sce$prelimCluster %in% problem_clusters)
-# FALSE  TRUE 
-# 56447 21157 
+# FALSE  TRUE
+# 56447 21157
 
 ## Add QC_remove as a collapse level - signaling it will be dropped
 levels(sce$collapsedCluster) <- c(levels(sce$collapsedCluster), "QC_remove")
@@ -214,18 +215,19 @@ levels(sce$collapsedCluster) <- c(levels(sce$collapsedCluster), "QC_remove")
 sce$collapsedCluster[sce$prelimCluster %in% problem_clusters] <- "QC_remove"
 table(sce$collapsedCluster)
 
-## Replot TSNE/UMAP, need to add color for QC_remove 
-cluster_colors <- c(cluster_colors, c(`QC_remove` = "grey")) 
+## Replot TSNE/UMAP, need to add color for QC_remove
+cluster_colors <- c(cluster_colors, c(`QC_remove` = "grey"))
 
 TSNE_clusters <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = collapsedCluster)) +
-  geom_point(size = 0.2, alpha = 0.3) +
-  scale_color_manual(values = cluster_colors) +
-  my_theme +
-  coord_equal()
+    geom_point(size = 0.2, alpha = 0.3) +
+    scale_color_manual(values = cluster_colors) +
+    my_theme +
+    coord_equal()
 
-ggsave(TSNE_clusters +
-         guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
-       filename = here(plot_dir, "TSNE_HC-29qc_clusters.png"), width = 10
+ggsave(
+    TSNE_clusters +
+        guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+    filename = here(plot_dir, "TSNE_HC-29qc_clusters.png"), width = 10
 )
 
 ####  get logcounts ####
@@ -269,7 +271,7 @@ my_plotMarkers(
 #### Other markers to check ####
 # dlpfc_markers <- read.csv("/dcl01/lieber/ajaffe/Matt/MNT_thesis/snRNAseq/10x_pilot_FINAL/tables/revision/top40genesLists_DLPFC-n3_cellType_SN-LEVEL-tests_LAH2020.csv")
 # dlpfc_markers_list <- as.list(dlpfc_markers[1:4, grepl("_1vAll", colnames(dlpfc_markers))])
-# 
+#
 # my_plotMarkers(
 #     sce = sce,
 #     marker_list = dlpfc_markers_list,
@@ -277,10 +279,10 @@ my_plotMarkers(
 #     fill_colors = cluster_colors,
 #     pdf_fn = here(plot_dir, "HC_Tran_markers.pdf")
 # )
-# 
+#
 # ## Mean Ratio Top Markers
 # load("/dcl01/lieber/ajaffe/lab/deconvolution_bsp2/data/marker_stats_pan.v2.Rdata", verbose = TRUE)
-# 
+#
 # mr_list <- marker_stats %>%
 #     ungroup() %>%
 #     arrange(cellType.target) %>%
@@ -289,7 +291,7 @@ my_plotMarkers(
 #     tidyr::pivot_wider(names_from = "cellType.target", values_from = "Symbol") %>%
 #     select(-rank_ratio) %>%
 #     as.list()
-# 
+#
 # my_plotMarkers(
 #     sce = sce,
 #     marker_list = mr_list,
@@ -325,7 +327,7 @@ anno_k2 %>% filter(n == 1)
 ## HC annotation
 anno_hc <- read.csv(here("processed-data", "03_build_sce", "DLPFC_HC_anno.csv"))
 table(anno_hc$broad)
-# Astro      drop EndoMural     Excit     Inhib     Micro     Oligo       OPC 
+# Astro      drop EndoMural     Excit     Inhib     Micro     Oligo       OPC
 # 1         1         2        15         6         1         3         1
 
 
@@ -370,18 +372,18 @@ hc_broad_levels <- order_cell_types(unique(anno_hc2$broad))
 sce$cellType_broad_hc <- factor(anno_hc$broad[match(sce$collapsedCluster, anno_hc$cluster)], levels = hc_broad_levels)
 sce$cellType_hc <- factor(anno_hc2$cellType[match(sce$collapsedCluster, anno_hc2$cluster)], levels = hc_levels)
 table(sce$cellType_broad_hc)
-# Astro      drop EndoMural     Micro     Oligo       OPC     Excit     Inhib 
-# 3979     21157      2157      1601     10894      1940     24809     11067 
+# Astro      drop EndoMural     Micro     Oligo       OPC     Excit     Inhib
+# 3979     21157      2157      1601     10894      1940     24809     11067
 
 table(sce$cellType_hc)
-# Astro         drop EndoMural_01 EndoMural_02        Micro     Oligo_01     Oligo_02     Oligo_03          OPC 
-# 3979        21157          446         1711         1601         1868         4732         4294         1940 
-# Excit_01     Excit_02     Excit_03     Excit_04     Excit_05     Excit_06     Excit_07     Excit_08     Excit_09 
-# 7927         2487         1309         2171         2532          329          334         1463         2561 
-# Excit_10     Excit_11     Excit_12     Excit_13     Excit_14     Excit_15     Inhib_01     Inhib_02     Inhib_03 
-# 1079          482          420         1567           82           66         5366         1267         1310 
-# Inhib_04     Inhib_05     Inhib_06 
-# 565         1192         1367 
+# Astro         drop EndoMural_01 EndoMural_02        Micro     Oligo_01     Oligo_02     Oligo_03          OPC
+# 3979        21157          446         1711         1601         1868         4732         4294         1940
+# Excit_01     Excit_02     Excit_03     Excit_04     Excit_05     Excit_06     Excit_07     Excit_08     Excit_09
+# 7927         2487         1309         2171         2532          329          334         1463         2561
+# Excit_10     Excit_11     Excit_12     Excit_13     Excit_14     Excit_15     Inhib_01     Inhib_02     Inhib_03
+# 1079          482          420         1567           82           66         5366         1267         1310
+# Inhib_04     Inhib_05     Inhib_06
+# 565         1192         1367
 
 ## Check out prop
 (prop_k <- 100 * round(table(sce$cellType_broad_k) / ncol(sce), 3))
@@ -389,7 +391,7 @@ table(sce$cellType_hc)
 # 4.6         0.0         1.7        27.4        13.4         7.1        43.4         2.3
 
 (prop_hc <- 100 * round(table(sce$cellType_broad_hc) / ncol(sce), 3))
-# Astro      drop EndoMural     Micro     Oligo       OPC     Excit     Inhib 
+# Astro      drop EndoMural     Micro     Oligo       OPC     Excit     Inhib
 # 5.1      27.3       2.8       2.1      14.0       2.5      32.0      14.3
 
 as.data.frame(prop_k) %>% full_join(as.data.frame(prop_hc) %>% rename(Freq_HC = Freq))
@@ -460,7 +462,7 @@ table(sce$BrNum, sce$Position)
 #### DROP QC'ed HC cells ####
 
 # sce <- sce[, sce$cellType_hc != "drop"]
-# 
+#
 # sce$cellType_hc <- droplevels(sce$cellType_hc)
 # levels(sce$cellType_hc)
 

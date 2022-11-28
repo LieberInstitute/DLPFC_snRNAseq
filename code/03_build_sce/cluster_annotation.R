@@ -66,15 +66,17 @@ TSNE_clusters <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = kme
     my_theme +
     coord_equal()
 
-ggsave(TSNE_clusters +
-    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 2))),
-filename = here(plot_dir, "clusters_mbkm-29.png"), width = 10
+ggsave(
+    TSNE_clusters +
+        guides(colour = guide_legend(override.aes = list(size = 2, alpha = 2))),
+    filename = here(plot_dir, "clusters_mbkm-29.png"), width = 10
 )
 
-ggsave(TSNE_clusters +
-    facet_wrap(~kmeans) +
-    theme(legend.position = "none"),
-filename = here(plot_dir, "clusters_mbkm-29_facet.png"), width = 10, height = 10
+ggsave(
+    TSNE_clusters +
+        facet_wrap(~kmeans) +
+        theme(legend.position = "none"),
+    filename = here(plot_dir, "clusters_mbkm-29_facet.png"), width = 10, height = 10
 )
 
 #### Marker Genes ####

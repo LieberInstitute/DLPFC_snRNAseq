@@ -42,7 +42,6 @@ walk2(sce_fn, names(sce_fn), function(sce_fn, name) {
     all(c("TSNE", "UMAP") %in% reducedDimNames(sce))
 
     for (t in c("TSNE", "UMAP")) {
-
         ## Catagorical plots
         for (cat in c("round", "subject", "Sample")) {
             fn <- paste0(t, "_", name, "-color_", cat)

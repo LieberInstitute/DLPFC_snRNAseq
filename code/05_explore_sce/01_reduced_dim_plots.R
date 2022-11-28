@@ -23,7 +23,7 @@ plot_dir <- here("plots", "05_explore_sce", "01_reduced_dim_plots")
 if (!dir.exists(plot_dir)) dir.create(plot_dir)
 
 ## Exclude drop cells
-sce <- sce[,sce$cellType_hc != "drop"]
+sce <- sce[, sce$cellType_hc != "drop"]
 sce$cellType_hc <- droplevels(sce$cellType_hc)
 
 ## Adjust color pallets
@@ -40,13 +40,15 @@ UMAP_cellTypes_hc <- ggcells(sce, mapping = aes(x = UMAP.1, y = UMAP.2, colour =
     labs(x = "UMAP Dimension 1", y = "UMAP Dimension 2")
 
 ## Add large legends
-ggsave(UMAP_cellTypes_hc +
-    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
-filename = here(plot_dir, "UMAP_cellType.png"), width = 9
+ggsave(
+    UMAP_cellTypes_hc +
+        guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+    filename = here(plot_dir, "UMAP_cellType.png"), width = 9
 )
-ggsave(UMAP_cellTypes_hc +
-    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
-filename = here(plot_dir, "UMAP_cellType.pdf"), width = 9
+ggsave(
+    UMAP_cellTypes_hc +
+        guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+    filename = here(plot_dir, "UMAP_cellType.pdf"), width = 9
 )
 
 ## No legends
@@ -73,18 +75,20 @@ ggsave(UMAP_cellTypes_hc_facet,
 )
 
 ## Add full + facet for cell types
-ggsave(UMAP_cellTypes_hc_no_legend +
-    UMAP_cellTypes_hc_facet +
-    theme(axis.title.y = element_blank()),
-filename = here(plot_dir, "UMAP_cellType_full_facet.png"),
-width = 13
+ggsave(
+    UMAP_cellTypes_hc_no_legend +
+        UMAP_cellTypes_hc_facet +
+        theme(axis.title.y = element_blank()),
+    filename = here(plot_dir, "UMAP_cellType_full_facet.png"),
+    width = 13
 )
 
-ggsave(UMAP_cellTypes_hc_no_legend +
-    UMAP_cellTypes_hc_facet +
-    theme(axis.title.y = element_blank()),
-filename = here(plot_dir, "UMAP_cellType_full_facet.pdf"),
-width = 13
+ggsave(
+    UMAP_cellTypes_hc_no_legend +
+        UMAP_cellTypes_hc_facet +
+        theme(axis.title.y = element_blank()),
+    filename = here(plot_dir, "UMAP_cellType_full_facet.pdf"),
+    width = 13
 )
 
 #### Plot clusters in TSNE ####
@@ -96,13 +100,15 @@ TSNE_cellTypes_hc <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour =
     labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
 
 ## Add large legends
-ggsave(TSNE_cellTypes_hc +
-    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
-filename = here(plot_dir, "TSNE_cellType.png"), width = 9
+ggsave(
+    TSNE_cellTypes_hc +
+        guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+    filename = here(plot_dir, "TSNE_cellType.png"), width = 9
 )
-ggsave(TSNE_cellTypes_hc +
-    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
-filename = here(plot_dir, "TSNE_cellType.pdf"), width = 9
+ggsave(
+    TSNE_cellTypes_hc +
+        guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+    filename = here(plot_dir, "TSNE_cellType.pdf"), width = 9
 )
 
 ## No legends
@@ -127,18 +133,20 @@ ggsave(TSNE_cellTypes_hc_facet,
 )
 
 ## Add full + facet for cell types
-ggsave(TSNE_cellTypes_hc_no_legend +
-    TSNE_cellTypes_hc_facet +
-    theme(axis.title.y = element_blank()),
-filename = here(plot_dir, "TSNE_cellType_full_facet.png"),
-width = 13
+ggsave(
+    TSNE_cellTypes_hc_no_legend +
+        TSNE_cellTypes_hc_facet +
+        theme(axis.title.y = element_blank()),
+    filename = here(plot_dir, "TSNE_cellType_full_facet.png"),
+    width = 13
 )
 
-ggsave(TSNE_cellTypes_hc_no_legend +
-    TSNE_cellTypes_hc_facet +
-    theme(axis.title.y = element_blank()),
-filename = here(plot_dir, "TSNE_cellType_full_facet.pdf"),
-width = 13
+ggsave(
+    TSNE_cellTypes_hc_no_legend +
+        TSNE_cellTypes_hc_facet +
+        theme(axis.title.y = element_blank()),
+    filename = here(plot_dir, "TSNE_cellType_full_facet.pdf"),
+    width = 13
 )
 
 #### TSNE layer annotations ####
@@ -149,24 +157,28 @@ TSNE_cellType_layer <- ggcells(sce[, !is.na(sce$cellType_layer)], mapping = aes(
     coord_equal() +
     labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
 
-ggsave(TSNE_cellType_layer +
-    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
-filename = here(plot_dir, "TSNE_cellType_layer.png"), width = 9
+ggsave(
+    TSNE_cellType_layer +
+        guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+    filename = here(plot_dir, "TSNE_cellType_layer.png"), width = 9
 )
 
-ggsave(TSNE_cellType_layer +
-    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
-filename = here(plot_dir, "TSNE_cellType_layer.pdf"), width = 9
+ggsave(
+    TSNE_cellType_layer +
+        guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+    filename = here(plot_dir, "TSNE_cellType_layer.pdf"), width = 9
 )
 
 ## no legend
-ggsave(TSNE_cellType_layer +
-    theme(legend.position = "None"),
-filename = here(plot_dir, "TSNE_cellType_layer_no_legend.png")
+ggsave(
+    TSNE_cellType_layer +
+        theme(legend.position = "None"),
+    filename = here(plot_dir, "TSNE_cellType_layer_no_legend.png")
 )
-ggsave(TSNE_cellType_layer +
-    theme(legend.position = "None"),
-filename = here(plot_dir, "TSNE_cellType_layer_no_legend.pdf")
+ggsave(
+    TSNE_cellType_layer +
+        theme(legend.position = "None"),
+    filename = here(plot_dir, "TSNE_cellType_layer_no_legend.pdf")
 )
 
 
