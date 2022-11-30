@@ -158,6 +158,9 @@ dev.off()
 # preview_colors(cell_type_colors_layer)
 # dev.off()
 
+## Save
+save(cell_type_colors_layer, file = here("processed-data", "03_build_sce", "cell_type_colors_layer.Rdata"))
+
 ## Save in metadata
 metadata(sce)$cell_type_colors_layer <- cell_type_colors_layer
 save(sce, file = here("processed-data", "sce", "sce_DLPFC.Rdata"))
