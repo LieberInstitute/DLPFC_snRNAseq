@@ -267,13 +267,51 @@ layer_prop_bar_all <- plot_composition_bar(prop_layer,
     theme_bw()
 ggsave(layer_prop_bar_all, filename = here(plot_dir, "prop_bar_layer_ALL.png"), width = 3)
 
-## compare hc v layer
+#### compare hc v layer ####
+prop_compare <- pd |>
+  group_by(cellType_layer) |>
+  summarize(prop = n()/nrow(pd)) |>
+  mutate(Annotation = "Layer", 
+         cellType = as.character(cellType_layer))  |>
+  bind_rows(pd |>
+              group_by(cellType_hc, cellType_layer) |>
+              summarize(prop = n()/nrow(pd)) |>
+              mutate(Annotation = "hc", 
+                     cellType = as.character(cellType_hc))) |>
+  replace_na(list(cellType = "Exclude")) |>
+  group_by(cellType_layer) |>
+  mutate(order = as.numeric(cellType_layer),
+         order2 = row_number()) |>
+  replace_na(list(order = 12.5)) |> ## cheat Excluded cells to be between Excit & Inhib
+  ungroup() |>
+  mutate(order = order + (order2*.1),
+         cellType = factor(cellType, levels=unique(cellType[order(order)])))
 
-prop_bar_fineVlayer <- prop_bar_all + theme(legend.position = "None") + labs(y = "Mean Proption - hc annotation k=29") +
-    layer_prop_bar_all + labs(y = "Mean Proption - layer annotation k=13")
+prop_compare |> filter(Annotation == "hc") |> arrange(cellType_layer)|> print(n=29)
+prop_compare |> filter(is.na(cellType_layer))
 
-ggsave(prop_bar_fineVlayer, filename = here(plot_dir, "prop_bar_fineVlayer_ALL.png"))
-ggsave(prop_bar_fineVlayer, filename = here(plot_dir, "prop_bar_fineVlayer_ALL.pdf"))
+
+prop_compare_bar <- ggplot(data = prop_compare, aes(x = Annotation, y = prop, fill = cellType)) +
+  geom_bar(stat = "identity", width = .99) +
+  geom_text(aes(label = ifelse(prop > 0.02, format(round(prop, 3), 3), "")),
+  # geom_text(aes(label = ifelse(prop > 0.02, cellType, "")),
+            size = 3,
+            position = position_stack(vjust = 0.5)
+  ) +
+  scale_fill_manual(values = c(cell_type_colors, cell_type_colors_layer)) +
+  labs(y = "Proportion", fill = "Cell Type") +
+  my_theme +
+  theme(legend.position = "None")
+
+ggsave(prop_compare_bar, filename = here(plot_dir, "prop_compare_bar.png"), width = 2, height = 8)
+ggsave(prop_compare_bar, filename = here(plot_dir, "prop_compare_bar.pdf"), width = 2, height = 8)
+
+
+# prop_bar_fineVlayer <- prop_bar_all + theme(legend.position = "None") + labs(y = "Mean Proption - hc annotation k=29") +
+#     layer_prop_bar_all + labs(y = "Mean Proption - layer annotation k=13")
+# 
+# ggsave(prop_bar_fineVlayer, filename = here(plot_dir, "prop_bar_fineVlayer_ALL.png"))
+# ggsave(prop_bar_fineVlayer, filename = here(plot_dir, "prop_bar_fineVlayer_ALL.pdf"))
 
 ## Sample prop bar
 layer_sample_prop_bar <- plot_composition_bar(prop_layer,
