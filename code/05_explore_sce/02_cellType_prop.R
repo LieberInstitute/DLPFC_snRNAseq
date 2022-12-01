@@ -294,14 +294,17 @@ prop_compare |> filter(is.na(cellType_layer))
 prop_compare_bar <- ggplot(data = prop_compare, aes(x = Annotation, y = prop, fill = cellType)) +
   geom_bar(stat = "identity", width = .99) +
   geom_text(aes(label = ifelse(prop > 0.02, format(round(prop, 3), 3), "")),
-  # geom_text(aes(label = ifelse(prop > 0.02, cellType, "")),
+            # geom_text(aes(label = ifelse(prop > 0.02, cellType, "")),
             size = 3,
             position = position_stack(vjust = 0.5)
   ) +
   scale_fill_manual(values = c(cell_type_colors, cell_type_colors_layer)) +
   labs(y = "Proportion", fill = "Cell Type") +
   my_theme +
-  theme(legend.position = "None")
+  scale_y_continuous(limits = c(0, 1), expand = expansion(mult = c(0.01,0.01))) + ## reduce white space in boarder 
+  theme(panel.grid = element_blank(), 
+        # panel.border = element_blank(),
+        legend.position = "None")
 
 ggsave(prop_compare_bar, filename = here(plot_dir, "prop_compare_bar.png"), width = 2, height = 8)
 ggsave(prop_compare_bar, filename = here(plot_dir, "prop_compare_bar.pdf"), width = 2, height = 8)
