@@ -29,7 +29,7 @@ sce <- registerAppOptions(sce, color.maxlevels = length(cell_type_colors))
 
 iSEE(
     sce,
-    appTitle = "DLPFC_snRNA-seq_2022",
+    appTitle = "spatialDLPFC, snRNA-seq",
     initial = initial,
     colormap = ExperimentColorMap(colData = list(
         # Sample = function(n) {
