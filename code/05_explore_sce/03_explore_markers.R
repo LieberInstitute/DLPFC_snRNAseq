@@ -1,5 +1,5 @@
 library("SingleCellExperiment")
-# library("scater")
+library("jaffelab")
 library("tidyverse")
 library("EnhancedVolcano")
 library("ComplexHeatmap")
@@ -639,7 +639,7 @@ load(here("processed-data", "05_explore_sce", "08_pseudobulk_cellTypes", "sce_ps
 dim(sce_pseudo)
 
 layer_markers_top <- layer_marker_stats_anno |>
-    filter(adj_rank_ratio <= 5) |>
+    filter(adj_rank_ratio <= 10) |>
     arrange(cellType.target)
 
 sce_pseudo <- sce_pseudo[, order(sce_pseudo$cellType_layer)]
@@ -653,7 +653,8 @@ corner(marker_z_score)
 
 column_ha <- HeatmapAnnotation(
     cell_type = layer_markers_top$cellType.target,
-    col = list(cell_type = metadata(sce)$cell_type_colors_layer)
+    col = list(cell_type = metadata(sce)$cell_type_colors_layer),
+    show_legend = FALSE
 )
 
 row_ha <- rowAnnotation(
@@ -664,7 +665,8 @@ row_ha <- rowAnnotation(
     col = list(cell_type = metadata(sce)$cell_type_colors_layer)
 )
 
-png(here(plot_dir, "markers_heatmap_layer.png"), height = 1000, width = 1000)
+pdf(here(plot_dir, "markers_heatmap_layer.pdf"), width = 12, height = 11)
+# png(here(plot_dir, "markers_heatmap_layer.png"), height = 1000, width = 100)
 Heatmap(marker_z_score,
     name = "logcounts",
     cluster_rows = TRUE,
@@ -672,29 +674,15 @@ Heatmap(marker_z_score,
     right_annotation = row_ha,
     top_annotation = column_ha,
     show_column_names = TRUE,
+    column_names_gp = gpar(fontsize = 6),
     show_row_names = FALSE
     # ,
     # col = viridis::viridis(100)
 )
 dev.off()
 
-png(here(plot_dir, "markers_heatmap_layer-clusterCol.png"), height = 500, width = 1500)
-# pdf(here(plot_dir, "markers_heatmap_layer-clusterCol.pdf"),height = 10, width = 10)
-Heatmap(marker_z_score,
-    name = "logcounts",
-    column_split = layer_markers_top$cellType.target,
-    cluster_rows = TRUE,
-    cluster_columns = FALSE,
-    right_annotation = row_ha,
-    top_annotation = column_ha,
-    show_column_names = TRUE,
-    show_row_names = FALSE
-    # ,
-    # col = viridis::viridis(100)
-)
-dev.off()
-
-png(here(plot_dir, "markers_heatmap_layer-uncluster.png"), height = 500, width = 1500)
+pdf(here(plot_dir, "markers_heatmap_layer-uncluster.pdf"), width = 12, height = 11)
+# png(here(plot_dir, "markers_heatmap_layer-uncluster.png"), height = 500, width = 1500)
 Heatmap(marker_z_score,
     name = "logcounts",
     column_split = layer_markers_top$cellType.target,
@@ -703,14 +691,12 @@ Heatmap(marker_z_score,
     right_annotation = row_ha,
     top_annotation = column_ha,
     show_column_names = TRUE,
+    column_names_gp = gpar(fontsize = 6),
     show_row_names = FALSE
     # ,
     # col = viridis::viridis(100)
 )
 dev.off()
-
-## test
-test <- table(sce$Sample, sce$cellType_layer)
 
 ## mean of cell type
 ctIndexes <- splitit(sce_pseudo$cellType_layer)
@@ -726,20 +712,22 @@ sum_cells <- table(sce$cellType_layer)
 row_ha_mean <- rowAnnotation(
     # ncells = anno_barplot(sum_cells),
     cell_type = colnames(mean_logcounts),
-    col = list(cell_type = metadata(sce)$cell_type_colors_layer)
+    col = list(cell_type = metadata(sce)$cell_type_colors_layer),
+    show_legend = FALSE
 )
 
-png(here(plot_dir, "markers_heatmap_layer_mean.png"), height = 500, width = 1500)
+# png(here(plot_dir, "markers_heatmap_layer_mean.png"), height = 500, width = 1500)
+pdf(here(plot_dir, "markers_heatmap_layer_mean.pdf"), height = 5, width = 16)
 Heatmap(mean_logcounts_z,
-    name = "Mean logcount",
+    name = "Scaled\nMean\nlogcount",
     cluster_rows = FALSE,
     cluster_columns = FALSE,
     right_annotation = row_ha_mean,
     top_annotation = column_ha,
-    # column_split = layer_markers_top$cellType.target,
+    column_split = layer_markers_top$cellType.target,
+    column_names_gp = gpar(fontsize = 10),
     # show_column_names = FALSE,
-    # show_row_names = TRUE,
-    col = viridis::viridis(100)
+    show_row_names = FALSE
 )
 dev.off()
 
