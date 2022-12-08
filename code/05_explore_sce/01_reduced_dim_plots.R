@@ -5,7 +5,8 @@ library("patchwork")
 library("here")
 
 #### Load Data ####
-load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
+# load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
+sce <- HDF5Array::loadHDF5SummarizedExperiment(here("processed-data", "sce", "sce_DLPFC_annotated"))
 
 #### Set Up Plotting ####
 # my_theme <- theme_classic() +
@@ -22,7 +23,44 @@ my_theme <- theme_bw() +
 plot_dir <- here("plots", "05_explore_sce", "01_reduced_dim_plots")
 if (!dir.exists(plot_dir)) dir.create(plot_dir)
 
-## Exclude drop cells
+#### TSNE with drop nuc ####
+levels(sce$cellType_hc)
+sce$cellType_hc <- forcats::fct_relevel(sce$cellType_hc, "drop", after = Inf)
+
+cell_type_colors <- metadata(sce)$cell_type_colors[levels(sce$cellType_hc)]
+
+TSNE_cellTypes_hc <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = cellType_hc)) +
+  geom_point(size = 0.2, alpha = 0.3) +
+  scale_color_manual(values = cell_type_colors) +
+  my_theme +
+  coord_equal() +
+  labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
+
+
+## No legends
+TSNE_cellTypes_hc_no_legend <- TSNE_cellTypes_hc + theme(legend.position = "None")
+
+TSNE_cellTypes_hc_facet <- TSNE_cellTypes_hc_no_legend +
+  facet_wrap(~cellType_hc)
+
+## Add full + facet for cell types
+ggsave(
+  TSNE_cellTypes_hc_no_legend +
+    TSNE_cellTypes_hc_facet +
+    theme(axis.title.y = element_blank()),
+  filename = here(plot_dir, "TSNE_cellType_full_facet-drop.png"),
+  width = 13
+)
+
+ggsave(
+  TSNE_cellTypes_hc_no_legend +
+    TSNE_cellTypes_hc_facet +
+    theme(axis.title.y = element_blank()),
+  filename = here(plot_dir, "TSNE_cellType_full_facet-drop.pdf"),
+  width = 13
+)
+
+## Exclude drop nuc
 sce <- sce[, sce$cellType_hc != "drop"]
 sce$cellType_hc <- droplevels(sce$cellType_hc)
 
