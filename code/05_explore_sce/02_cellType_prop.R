@@ -15,6 +15,17 @@ plot_dir <- here("plots", "05_explore_sce", "02_cellType_prop")
 #### Load SCE ####
 sce <- HDF5Array::loadHDF5SummarizedExperiment(here("processed-data", "sce", "sce_DLPFC_annotated"))
 
+## get proptions before drop
+# forcats::fct_relevel(sce$cellType_hc, "drop", after = Inf)
+prop_drop <- as.data.frame(colData(sce)) |>
+  group_by(cellType_hc, Sample, Position) |>
+  summarize(n = n()) |>
+  group_by(Sample) |>
+  mutate(prop = n / sum(n),
+         cellType_hc = forcats::fct_relevel(cellType_hc, "drop", after = Inf)) 
+
+cell_type_colors_drop <- metadata(sce)$cell_type_colors[levels(prop_drop$cellType_hc)]
+
 ## Exclude drop cells
 sce <- sce[, sce$cellType_hc != "drop"]
 sce$cellType_hc <- droplevels(sce$cellType_hc)
@@ -27,8 +38,8 @@ cell_type_colors_layer <- metadata(sce)$cell_type_colors_layer[levels(sce$cellTy
 pd <- as.data.frame(colData(sce))
 
 table(pd$cellType_broad_hc)
-# Astro Endo.Mural      Excit      Inhib      Micro      Oligo        OPC
-# 3979       2157      24809      11067       1601      32051       1940
+# Astro EndoMural     Micro     Oligo       OPC     Excit     Inhib 
+# 3979      2157      1601     10894      1940     24809     11067
 
 n_nuc <- pd |>
     group_by(Sample, BrNum, round, Position, sex, age) |>
@@ -210,6 +221,33 @@ broad_prop_bar_pos <- plot_composition_bar(prop_broad,
     labs(x = "Position")
 
 ggsave(broad_prop_bar_pos, filename = here(plot_dir, "prop_bar_broad_Position.png"))
+
+#### Plots Drop Plots ####
+prop_drop_plus <- prop_drop |>
+  mutate(drop = "Pre-drop") |>
+  bind_rows(prop_all |> mutate(drop = "Post-drop")) 
+
+
+prop_drop_bar <- ggplot(data = prop_drop_plus, aes(x = Sample, y = prop, fill = cellType_hc)) +
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = ifelse(prop > 0.02, format(round(prop, 3), 3), ""),
+                color = as.character(cellType_hc) == "drop"),
+            # geom_text(aes(label = ifelse(prop > 0.02, cellType, "")),
+            size = 2.5,
+            position = position_stack(vjust = 0.5)
+            # color = "gray35"
+  ) +
+  scale_fill_manual(values = c(cell_type_colors_drop)) +
+  scale_color_manual(values = c(`TRUE` = "white", `FALSE` = "black")) +
+  labs(y = "Proportion", fill = "Cell Type") +
+  facet_grid(fct_rev(drop) ~ Position, scales = "free", space = "free") +
+  # my_theme +
+  theme_bw()+
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+  guides(color = FALSE, fill=guide_legend(ncol =1))
+
+ggsave(prop_drop_bar, filename = here(plot_dir,"prop_bar_drop_Position.png"), width = 11, height = 9)
+ggsave(prop_drop_bar, filename = here(plot_dir,"prop_bar_drop_Position.pdf"), width = 11, height = 9)
 
 #### Layer Annotation Proportions ####
 table(pd$cellType_layer)
