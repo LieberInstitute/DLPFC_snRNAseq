@@ -13,7 +13,7 @@ plot_dir <- here("plots", "05_explore_sce", "02_cellType_prop")
 # load(here("processed-data", "03_build_sce","cell_type_colors.Rdata"), verbose = TRUE)
 
 #### Load SCE ####
-load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
+sce <- HDF5Array::loadHDF5SummarizedExperiment(here("processed-data", "sce", "sce_DLPFC_annotated"))
 
 ## Exclude drop cells
 sce <- sce[, sce$cellType_hc != "drop"]
