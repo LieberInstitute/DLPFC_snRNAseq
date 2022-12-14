@@ -56,8 +56,9 @@ cell_type_colors_broad <- c(
     Micro = "#663894", # Rebecca purple
     EndoMural = "#FF56AF", # pink
     MicroOligo = "#AB0091", # magenta
-    drop = "black",
-    Other = "#4E586A"
+    Ambiguous = "#A9998F", # light brown-grey
+    drop = "black"
+    # Other = "#4E586A",
 )
 
 
@@ -111,7 +112,15 @@ expand_cell_colors <- function(cell_colors, cell_types, split = "_") {
 ## All cell types
 cell_types <- readLines(here("processed-data", "03_build_sce", "cell_types.txt"))
 cell_type_colors <- expand_cell_colors(cell_type_colors_broad, cell_types)
-
+(cell_type_colors <- cell_type_colors[cell_types])
+# Astro    EndoMural EndoMural_01 EndoMural_02        Micro   MicroOligo     Oligo_01     Oligo_02     Oligo_03 
+# "#3BB273"    "#FF56AF"    "#FF56AF"    "#FFAAD7"    "#663894"    "#AB0091"    "#E07000"    "#EA9F55"    "#F4CFAA" 
+# OPC     Excit_01     Excit_02     Excit_03     Excit_04     Excit_05     Excit_06     Excit_07     Excit_08 
+# "#D2B037"    "#247FBC"    "#3287C0"    "#4190C4"    "#4F98C9"    "#5EA1CD"    "#6DA9D2"    "#7BB2D6"    "#8ABADB" 
+# Excit_09     Excit_10     Excit_11     Excit_12     Excit_13     Excit_14     Excit_15     Inhib_01     Inhib_02 
+# "#98C3DF"    "#A7CBE4"    "#B5D4E8"    "#C4DCED"    "#D3E5F1"    "#E1EDF6"    "#F0F6FA"    "#E94F37"    "#EC6C58" 
+# Inhib_03     Inhib_04     Inhib_05     Inhib_06    Ambiguous      drop_01      drop_02      drop_03      drop_04 
+# "#F08979"    "#F3A79B"    "#F7C4BC"    "#FBE1DD"    "#A9998F"    "#000000"    "#3F3F3F"    "#7F7F7F"    "#BFBFBF"
 
 ## plot previews of pallets
 png(here("plots", "cell_colors", "cell_colors.png"), height = 800)
@@ -126,7 +135,7 @@ dev.off()
 save(cell_type_colors_broad, cell_type_colors, file = here("processed-data", "03_build_sce", "cell_type_colors.Rdata"))
 
 ## Add colors for layer annotation cell types
-library(SingleCellExperiment)
+library("SingleCellExperiment")
 load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
 (cell_types_layer <- levels(sce$cellType_layer))
 # [1] "Astro"        "EndoMural"    "Micro"        "Oligo"        "OPC"          "Excit_L2/3"   "Excit_L3"
