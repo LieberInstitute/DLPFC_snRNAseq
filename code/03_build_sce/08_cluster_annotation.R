@@ -302,6 +302,19 @@ my_plotMarkers(
 
 
 #### Assign annotation ####
+order_cell_types <- function(cell_types) {
+  cell_types <- unique(cell_types)
+  neun_mask <- grepl("Excit|Inhib", cell_types)
+  drop_mask <- grepl("Ambiguous|drop", cell_types)
+  
+  neun_ct <- cell_types[neun_mask]
+  glia_ct <- cell_types[!(neun_mask|drop_mask)]
+  drop_ct <- cell_types[drop_mask]
+  
+  ordered_cell_types <- c(sort(glia_ct), sort(neun_ct), sort(drop_ct))
+  return(ordered_cell_types)
+}
+
 ## mbkm annotation
 anno_k <- read.csv(here("processed-data", "03_build_sce", "DLPFC_k29_anno.csv"))
 table(anno_k$broad)
@@ -315,21 +328,24 @@ anno_k2 <- anno_k %>%
         ct = paste0(broad, "_", f_pad_zero(row_number(), width = 2)),
         n = n()
     ) %>%
-    ungroup() %>%
-    mutate(cellType = as.factor(ifelse(n > 1, ct, broad)))
+  ungroup() %>%
+  mutate(cellType = ifelse(n > 1, ct, broad),
+         cellType = factor(cellType, levels = order_cell_types(cellType)),
+         broad = factor(broad, levels = order_cell_types(broad)))
 
-anno_k2 %>%
-    select(broad, ct, cellType) %>%
-    arrange(cellType)
-
-anno_k2 %>% filter(n == 1)
+levels(anno_k2$broad)
+# [1] "Astro"      "EndoMural"  "MicroOligo" "Oligo"      "OPC"        "Excit"      "Inhib"      "drop" 
+levels(anno_k2$cellType)
+# [1] "Astro"      "EndoMural"  "MicroOligo" "Oligo_01"   "Oligo_02"   "OPC"        "Excit_01"   "Excit_02"  
+# [9] "Excit_03"   "Excit_04"   "Excit_05"   "Excit_06"   "Excit_07"   "Excit_08"   "Excit_09"   "Excit_10"  
+# [17] "Excit_11"   "Excit_12"   "Excit_13"   "Inhib_01"   "Inhib_02"   "Inhib_03"   "Inhib_04"   "Inhib_05"  
+# [25] "Inhib_06"   "drop_01"    "drop_02"    "drop_03"    "drop_04"  
 
 ## HC annotation
 anno_hc <- read.csv(here("processed-data", "03_build_sce", "DLPFC_HC_anno.csv"))
 table(anno_hc$broad)
-# Astro      drop EndoMural     Excit     Inhib     Micro     Oligo       OPC
-# 1         1         2        15         6         1         3         1
-
+# Ambiguous     Astro EndoMural     Excit     Inhib     Micro     Oligo       OPC 
+#         1         1         2        15         6         1         3         1
 
 anno_hc2 <- anno_hc %>%
     group_by(broad) %>%
@@ -338,73 +354,74 @@ anno_hc2 <- anno_hc %>%
         n = n()
     ) %>%
     ungroup() %>%
-    mutate(cellType = as.factor(ifelse(n > 1, ct, broad)))
+    mutate(cellType = ifelse(n > 1, ct, broad),
+           cellType = factor(cellType, levels = order_cell_types(cellType)),
+           broad = factor(broad, levels = order_cell_types(broad)))
 
-order_cell_types <- function(cell_types) {
-    neun_mask <- grepl("Excit|Inhib", cell_types)
-    neun_ct <- cell_types[neun_mask]
-    glia_ct <- cell_types[!neun_mask]
-    ordered_cell_types <- c(sort(glia_ct), sort(neun_ct))
-    return(ordered_cell_types)
-}
-
+levels(anno_hc2$broad)
+# [1] "Astro"     "EndoMural" "Micro"     "Oligo"     "OPC"       "Excit"     "Inhib"     "Ambiguous"
+levels(anno_hc2$cellType)
+# [1] "Astro"        "EndoMural_01" "EndoMural_02" "Micro"        "Oligo_01"     "Oligo_02"     "Oligo_03"    
+# [8] "OPC"          "Excit_01"     "Excit_02"     "Excit_03"     "Excit_04"     "Excit_05"     "Excit_06"    
+# [15] "Excit_07"     "Excit_08"     "Excit_09"     "Excit_10"     "Excit_11"     "Excit_12"     "Excit_13"    
+# [22] "Excit_14"     "Excit_15"     "Inhib_01"     "Inhib_02"     "Inhib_03"     "Inhib_04"     "Inhib_05"    
+# [29] "Inhib_06"     "Ambiguous"
 
 ## Assign to sce
-sce$cellType_broad_k <- factor(anno_k$broad[match(sce$kmeans, anno_k$cluster)])
-sce$cellType_k <- factor(anno_k2$cellType[match(sce$kmeans, anno_k2$cluster)])
+sce$cellType_broad_k <- anno_k2$broad[match(sce$kmeans, anno_k$cluster)]
+sce$cellType_k <- anno_k2$cellType[match(sce$kmeans, anno_k2$cluster)]
 
 table(sce$cellType_broad_k)
-# Astro       drop  EndoMural      Excit      Inhib MicroOligo      Oligo        OPC
-# 3557         23       1330      21233      10413       5541      33716       1791
+# Astro  EndoMural MicroOligo      Oligo        OPC      Excit      Inhib       drop 
+# 3557       1330       5541      33716       1791      21233      10413         23
 
 table(sce$cellType_k)
-# Astro    drop_01    drop_02    drop_03    drop_04  EndoMural   Excit_01   Excit_02   Excit_03   Excit_04
-# 3557         11          3          2          7       1330       5879       1058        548       1188
-# Excit_05   Excit_06   Excit_07   Excit_08   Excit_09   Excit_10   Excit_11   Excit_12   Excit_13   Inhib_01
-# 82        633       3198       2851        896       1581       1732       1292        295        132
-# Inhib_02   Inhib_03   Inhib_04   Inhib_05   Inhib_06 MicroOligo   Oligo_01   Oligo_02        OPC
-# 461       2242       6018       1311        249       5541      28085       5631       1791
+# Astro  EndoMural MicroOligo   Oligo_01   Oligo_02        OPC   Excit_01   Excit_02   Excit_03   Excit_04 
+# 3557       1330       5541      28085       5631       1791       5879       1058        548       1188 
+# Excit_05   Excit_06   Excit_07   Excit_08   Excit_09   Excit_10   Excit_11   Excit_12   Excit_13   Inhib_01 
+# 82        633       3198       2851        896       1581       1732       1292        295        132 
+# Inhib_02   Inhib_03   Inhib_04   Inhib_05   Inhib_06    drop_01    drop_02    drop_03    drop_04 
+# 461       2242       6018       1311        249         11          3          2          7 
 
 
-hc_levels <- order_cell_types(levels(anno_hc2$cellType))
-hc_broad_levels <- order_cell_types(unique(anno_hc2$broad))
+sce$cellType_broad_hc <- anno_hc2$broad[match(sce$collapsedCluster, anno_hc$cluster)]
+sce$cellType_hc <- anno_hc2$cellType[match(sce$collapsedCluster, anno_hc2$cluster)]
 
-sce$cellType_broad_hc <- factor(anno_hc$broad[match(sce$collapsedCluster, anno_hc$cluster)], levels = hc_broad_levels)
-sce$cellType_hc <- factor(anno_hc2$cellType[match(sce$collapsedCluster, anno_hc2$cluster)], levels = hc_levels)
 table(sce$cellType_broad_hc)
-# Astro      drop EndoMural     Micro     Oligo       OPC     Excit     Inhib
-# 3979     21157      2157      1601     10894      1940     24809     11067
+# Astro EndoMural     Micro     Oligo       OPC     Excit     Inhib Ambiguous 
+# 3979      2157      1601     10894      1940     24809     11067     21157
 
 table(sce$cellType_hc)
-# Astro         drop EndoMural_01 EndoMural_02        Micro     Oligo_01     Oligo_02     Oligo_03          OPC
-# 3979        21157          446         1711         1601         1868         4732         4294         1940
-# Excit_01     Excit_02     Excit_03     Excit_04     Excit_05     Excit_06     Excit_07     Excit_08     Excit_09
-# 7927         2487         1309         2171         2532          329          334         1463         2561
-# Excit_10     Excit_11     Excit_12     Excit_13     Excit_14     Excit_15     Inhib_01     Inhib_02     Inhib_03
-# 1079          482          420         1567           82           66         5366         1267         1310
-# Inhib_04     Inhib_05     Inhib_06
-# 565         1192         1367
+# Astro EndoMural_01 EndoMural_02        Micro     Oligo_01     Oligo_02     Oligo_03          OPC     Excit_01 
+# 3979          446         1711         1601         1868         4732         4294         1940         7927 
+# Excit_02     Excit_03     Excit_04     Excit_05     Excit_06     Excit_07     Excit_08     Excit_09     Excit_10 
+# 2487         1309         2171         2532          329          334         1463         2561         1079 
+# Excit_11     Excit_12     Excit_13     Excit_14     Excit_15     Inhib_01     Inhib_02     Inhib_03     Inhib_04 
+# 482          420         1567           82           66         5366         1267         1310          565 
+# Inhib_05     Inhib_06    Ambiguous 
+# 1192         1367        21157 
 
 ## Check out prop
 (prop_k <- 100 * round(table(sce$cellType_broad_k) / ncol(sce), 3))
-# Astro        drop  EndoMural       Excit       Inhib MicroOligo       Oligo         OPC
-# 4.6         0.0         1.7        27.4        13.4         7.1        43.4         2.3
+# Astro  EndoMural MicroOligo      Oligo        OPC      Excit      Inhib       drop 
+# 4.6        1.7        7.1       43.4        2.3       27.4       13.4        0.0 
 
 (prop_hc <- 100 * round(table(sce$cellType_broad_hc) / ncol(sce), 3))
-# Astro      drop EndoMural     Micro     Oligo       OPC     Excit     Inhib
-# 5.1      27.3       2.8       2.1      14.0       2.5      32.0      14.3
+# Astro EndoMural     Micro     Oligo       OPC     Excit     Inhib Ambiguous 
+# 5.1       2.8       2.1      14.0       2.5      32.0      14.3      27.3 
 
 as.data.frame(prop_k) %>% full_join(as.data.frame(prop_hc) %>% rename(Freq_HC = Freq))
-#         Var1 Freq Freq_HC
-# 1      Astro  4.6     5.1
-# 2       drop  0.0    27.3
-# 3  EndoMural  1.7     2.8
-# 4      Excit 27.4    32.0
-# 5      Inhib 13.4    14.3
-# 6 MicroOligo  7.1      NA
-# 7      Oligo 43.4    14.0 * QC looses lots of Oligo nuc
-# 8        OPC  2.3     2.5
-# 9      Micro   NA     2.1
+#          Var1 Freq Freq_HC
+# 1       Astro  4.6     5.1
+# 2   EndoMural  1.7     2.8
+# 3  MicroOligo  7.1      NA
+# 4       Oligo 43.4    14.0 # upon closer inspection many Oligo are classified as Ambig
+# 5         OPC  2.3     2.5
+# 6       Excit 27.4    32.0
+# 7       Inhib 13.4    14.3
+# 8        drop  0.0      NA
+# 9       Micro   NA     2.1
+# 10  Ambiguous   NA    27.3
 
 ## Tran, Maynard DLPFC dataset for refrence
 # Astro      Excit      Inhib Macrophage      Micro      Mural      Oligo        OPC      Tcell
@@ -412,6 +429,7 @@ as.data.frame(prop_k) %>% full_join(as.data.frame(prop_hc) %>% rename(Freq_HC = 
 
 ## Export all cell types for ref
 (ct <- sort(unique(as.character(c(sce$cellType_k, sce$cellType_hc)))))
+ct <- order_cell_types(ct)
 cat(ct, file = here("processed-data", "03_build_sce", "cell_types.txt"), sep = "\n")
 
 #### Match colData to other DLPFC datasets ####
