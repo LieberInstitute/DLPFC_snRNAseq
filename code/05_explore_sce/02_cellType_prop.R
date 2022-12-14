@@ -13,21 +13,19 @@ plot_dir <- here("plots", "05_explore_sce", "02_cellType_prop")
 # load(here("processed-data", "03_build_sce","cell_type_colors.Rdata"), verbose = TRUE)
 
 #### Load SCE ####
-sce <- HDF5Array::loadHDF5SummarizedExperiment(here("processed-data", "sce", "sce_DLPFC_annotated"))
+load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
 
-## get proptions before drop
-# forcats::fct_relevel(sce$cellType_hc, "drop", after = Inf)
-prop_drop <- as.data.frame(colData(sce)) |>
+## get proportions before dropping ambig
+prop_ambig <- as.data.frame(colData(sce)) |>
   group_by(cellType_hc, Sample, Position) |>
   summarize(n = n()) |>
   group_by(Sample) |>
-  mutate(prop = n / sum(n),
-         cellType_hc = forcats::fct_relevel(cellType_hc, "drop", after = Inf)) 
+  mutate(prop = n / sum(n)) 
 
-cell_type_colors_drop <- metadata(sce)$cell_type_colors[levels(prop_drop$cellType_hc)]
+cell_type_colors_ambig <- metadata(sce)$cell_type_colors[levels(prop_ambig$cellType_hc)]
 
-## Exclude drop cells
-sce <- sce[, sce$cellType_hc != "drop"]
+## Exclude ambig cells
+sce <- sce[, sce$cellType_hc != "Ambiguous"]
 sce$cellType_hc <- droplevels(sce$cellType_hc)
 sce$cellType_broad_hc <- droplevels(sce$cellType_broad_hc)
 
@@ -222,32 +220,32 @@ broad_prop_bar_pos <- plot_composition_bar(prop_broad,
 
 ggsave(broad_prop_bar_pos, filename = here(plot_dir, "prop_bar_broad_Position.png"))
 
-#### Plots Drop Plots ####
-prop_drop_plus <- prop_drop |>
-  mutate(drop = "Pre-drop") |>
-  bind_rows(prop_all |> mutate(drop = "Post-drop")) 
+#### Plots ambig Plots ####
+prop_ambig_plus <- prop_ambig |>
+  mutate(ambig = "Pre-drop") |>
+  bind_rows(prop_all |> mutate(ambig = "Post-drop")) 
 
 
-prop_drop_bar <- ggplot(data = prop_drop_plus, aes(x = Sample, y = prop, fill = cellType_hc)) +
+prop_ambig_bar <- ggplot(data = prop_ambig_plus, aes(x = Sample, y = prop, fill = cellType_hc)) +
   geom_bar(stat = "identity") +
   geom_text(aes(label = ifelse(prop > 0.02, format(round(prop, 3), 3), ""),
-                color = as.character(cellType_hc) == "drop"),
+                color = as.character(cellType_hc) == "ambig"),
             # geom_text(aes(label = ifelse(prop > 0.02, cellType, "")),
             size = 2.5,
             position = position_stack(vjust = 0.5)
             # color = "gray35"
   ) +
-  scale_fill_manual(values = c(cell_type_colors_drop)) +
+  scale_fill_manual(values = c(cell_type_colors_ambig)) +
   scale_color_manual(values = c(`TRUE` = "white", `FALSE` = "black")) +
   labs(y = "Proportion", fill = "Cell Type") +
-  facet_grid(fct_rev(drop) ~ Position, scales = "free", space = "free") +
+  facet_grid(fct_rev(ambig) ~ Position, scales = "free", space = "free") +
   # my_theme +
   theme_bw()+
   theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
   guides(color = FALSE, fill=guide_legend(ncol =1))
 
-ggsave(prop_drop_bar, filename = here(plot_dir,"prop_bar_drop_Position.png"), width = 11, height = 9)
-ggsave(prop_drop_bar, filename = here(plot_dir,"prop_bar_drop_Position.pdf"), width = 11, height = 9)
+ggsave(prop_ambig_bar, filename = here(plot_dir,"prop_bar_ambig_Position.png"), width = 11, height = 9)
+ggsave(prop_ambig_bar, filename = here(plot_dir,"prop_bar_ambig_Position.pdf"), width = 11, height = 9)
 
 #### Layer Annotation Proportions ####
 table(pd$cellType_layer)
@@ -394,4 +392,4 @@ print("Reproducibility information:")
 Sys.time()
 proc.time()
 options(width = 120)
-session_info()
+sessioninfo::session_info()
