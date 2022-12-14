@@ -4,17 +4,21 @@ Loading LIBD module for git-status-size/github
 Loading LIBD module for git-lfs/2.8.0
 Loading LIBD module for rmate/1.5.9
 Loading LIBD module for ruby/2.6.4p104
-Loading conda_R/4.2
+Loading conda_R/4.2.x
 **** Job starts ****
-Fri Oct 28 15:41:10 EDT 2022
+Wed Dec 14 16:14:13 EST 2022
 **** JHPCE info ****
 User: lhuuki
-Job id: 443744
+Job id: 1320260
 Job name: reduced_dim_plots
-Hostname: compute-095.cm.cluster
+Hostname: compute-098.cm.cluster
 Task id: undefined
-Unloading conda_R/4.2
+Unloading conda_R/4.2.x
 Loading conda_R/4.2
+
+The following have been reloaded with a version change:
+  1) conda_R/4.2.x => conda_R/4.2
+
 
 Currently Loaded Modules:
   1) matlab/R2019a     6) COMMUNITY_CENTOS7_DEFAULT_ENV  11) ruby/2.6.4p104
@@ -102,6 +106,12 @@ Loading required package: rafalib
 here() starts at /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq
 Loading objects:
   sce
+ [1] "Astro"        "EndoMural_01" "EndoMural_02" "Micro"        "Oligo_01"    
+ [6] "Oligo_02"     "Oligo_03"     "OPC"          "Excit_01"     "Excit_02"    
+[11] "Excit_03"     "Excit_04"     "Excit_05"     "Excit_06"     "Excit_07"    
+[16] "Excit_08"     "Excit_09"     "Excit_10"     "Excit_11"     "Excit_12"    
+[21] "Excit_13"     "Excit_14"     "Excit_15"     "Inhib_01"     "Inhib_02"    
+[26] "Inhib_03"     "Inhib_04"     "Inhib_05"     "Inhib_06"     "Ambiguous"   
 Loading required package: HDF5Array
 Loading required package: DelayedArray
 Loading required package: Matrix
@@ -127,6 +137,16 @@ The following object is masked from ‘package:rhdf5’:
 
     h5ls
 
+Saving 13 x 7 in image
+Saving 13 x 7 in image
+Saving 9 x 7 in image
+Saving 9 x 7 in image
+Saving 7 x 7 in image
+Saving 7 x 7 in image
+Saving 7 x 7 in image
+Saving 7 x 7 in image
+Saving 13 x 7 in image
+Saving 13 x 7 in image
 Saving 9 x 7 in image
 Saving 9 x 7 in image
 Saving 7 x 7 in image
@@ -139,36 +159,11 @@ Saving 9 x 7 in image
 Saving 9 x 7 in image
 Saving 7 x 7 in image
 Saving 7 x 7 in image
-Saving 7 x 7 in image
-Saving 7 x 7 in image
-Saving 13 x 7 in image
-Saving 13 x 7 in image
-Saving 9 x 7 in image
-Error in `f()`:
-! Insufficient values in manual scale. 13 needed but only 0 provided.
-Backtrace:
-     ▆
-  1. └─ggplot2::ggsave(...)
-  2.   ├─grid::grid.draw(plot)
-  3.   └─ggplot2:::grid.draw.ggplot(plot)
-  4.     ├─base::print(x)
-  5.     └─ggplot2:::print.ggplot(x)
-  6.       ├─ggplot2::ggplot_build(x)
-  7.       └─ggplot2:::ggplot_build.ggplot(x)
-  8.         └─base::lapply(data, scales_map_df, scales = npscales)
-  9.           └─ggplot2 (local) FUN(X[[i]], ...)
- 10.             ├─base::unlist(...)
- 11.             └─base::lapply(scales$scales, function(scale) scale$map_df(df = df))
- 12.               └─ggplot2 (local) FUN(X[[i]], ...)
- 13.                 └─scale$map_df(df = df)
- 14.                   └─ggplot2 (local) f(..., self = self)
- 15.                     └─base::lapply(aesthetics, function(j) self$map(df[[j]]))
- 16.                       └─ggplot2 (local) FUN(X[[i]], ...)
- 17.                         └─self$map(df[[j]])
- 18.                           └─ggplot2 (local) f(..., self = self)
- 19.                             └─self$palette(n)
- 20.                               └─ggplot2 (local) f(...)
- 21.                                 └─rlang::abort(glue("Insufficient values in manual scale. {n} needed but only {length(values)} provided."))
+[1] "Reproducibility information:"
+[1] "2022-12-14 16:17:58 EST"
+   user  system elapsed 
+133.075   2.659 223.455 
+Error in session_info() : could not find function "session_info"
 Execution halted
 **** Job ends ****
-Fri Oct 28 15:44:09 EDT 2022
+Wed Dec 14 16:17:59 EST 2022

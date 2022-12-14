@@ -5,8 +5,8 @@ library("patchwork")
 library("here")
 
 #### Load Data ####
-# load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
-sce <- HDF5Array::loadHDF5SummarizedExperiment(here("processed-data", "sce", "sce_DLPFC_annotated"))
+load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
+# sce <- HDF5Array::loadHDF5SummarizedExperiment(here("processed-data", "sce", "sce_DLPFC_annotated"))
 
 #### Set Up Plotting ####
 # my_theme <- theme_classic() +
@@ -23,10 +23,8 @@ my_theme <- theme_bw() +
 plot_dir <- here("plots", "05_explore_sce", "01_reduced_dim_plots")
 if (!dir.exists(plot_dir)) dir.create(plot_dir)
 
-#### TSNE with drop nuc ####
+#### TSNE with Ambiguous nuc ####
 levels(sce$cellType_hc)
-sce$cellType_hc <- forcats::fct_relevel(sce$cellType_hc, "drop", after = Inf)
-
 cell_type_colors <- metadata(sce)$cell_type_colors[levels(sce$cellType_hc)]
 
 TSNE_cellTypes_hc <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = cellType_hc)) +
@@ -36,6 +34,16 @@ TSNE_cellTypes_hc <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour =
   coord_equal() +
   labs(x = "TSNE Dimension 1", y = "TSNE Dimension 2")
 
+
+ggsave(TSNE_cellTypes_hc +
+         guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))), 
+       filename = here(plot_dir, "TSNE_cellType-Ambig.png"),
+       width = 9, height = 6)
+
+ggsave(TSNE_cellTypes_hc +
+         guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))), 
+       filename = here(plot_dir, "TSNE_cellType-Ambig.pdf"),
+       width = 9, height = 6)
 
 ## No legends
 TSNE_cellTypes_hc_no_legend <- TSNE_cellTypes_hc + theme(legend.position = "None")
@@ -48,7 +56,7 @@ ggsave(
   TSNE_cellTypes_hc_no_legend +
     TSNE_cellTypes_hc_facet +
     theme(axis.title.y = element_blank()),
-  filename = here(plot_dir, "TSNE_cellType_full_facet-drop.png"),
+  filename = here(plot_dir, "TSNE_cellType_full_facet-Ambig.png"),
   width = 13
 )
 
@@ -56,12 +64,12 @@ ggsave(
   TSNE_cellTypes_hc_no_legend +
     TSNE_cellTypes_hc_facet +
     theme(axis.title.y = element_blank()),
-  filename = here(plot_dir, "TSNE_cellType_full_facet-drop.pdf"),
+  filename = here(plot_dir, "TSNE_cellType_full_facet-Ambig.pdf"),
   width = 13
 )
 
-## Exclude drop nuc
-sce <- sce[, sce$cellType_hc != "drop"]
+#### Exclude Ambiguous nuc ####
+sce <- sce[, sce$cellType_hc != "Ambiguous"]
 sce$cellType_hc <- droplevels(sce$cellType_hc)
 
 ## Adjust color pallets
@@ -228,4 +236,4 @@ print("Reproducibility information:")
 Sys.time()
 proc.time()
 options(width = 120)
-session_info()
+sessioninfo::session_info()
