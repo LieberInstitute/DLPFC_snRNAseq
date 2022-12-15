@@ -21,7 +21,7 @@ if (!dir.exists(plot_dir)) dir.create(plot_dir)
 load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
 
 cell_type_colors <- metadata(sce)$cell_type_colors
-cell_type_colors_broad <- cell_type_colors_broad
+cell_type_colors_broad <- metadata(sce)$cell_type_colors_broad
 
 #### Replot with Annotations ####
 ## Plot clusters in TSNE
@@ -476,7 +476,7 @@ ggsave(dbs_excit13, filename = here(plot_dir, "qc_Excit_13_doublet_scores.png"))
 #
 # ggsave(prelim_doublets, filename = here(plot_dir, "prelim_doublets.png"), width = 30)
 
-# sgejobs::job_single('08_cluster_annotation', create_shell = TRUE, queue= 'bluejay', memory = '25G', command = "Rscript 08_cluster_annotation.R")
+sgejobs::job_single('08.5_cluster_annotation_explore', create_shell = TRUE, queue= 'bluejay', memory = '5G', command = "Rscript 08.5_cluster_annotation_explore.R")
 
 ## Reproducibility information
 print("Reproducibility information:")
