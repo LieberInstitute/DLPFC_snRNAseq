@@ -25,7 +25,7 @@ my_plotMarkers <- function(sce, marker_list, assay = "logcounts", cat = "cellTyp
     # if(m != markers) message("Missing...",paste(m[!m %in% markers], collapse = ", "))
     if(!identical(m, markers)) message("Missing markers...")
     print(
-      my_plotExpression(sce,
+      custom_plotExpression(sce,
                         genes = markers,
                         title = names(marker_list)[[i]],
                         cat = cat,
