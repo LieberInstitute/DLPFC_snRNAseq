@@ -2,8 +2,8 @@
 #$ -cwd
 #$ -l bluejay,mem_free=5G,h_vmem=5G,h_fsize=100G
 #$ -N cluster_annotation_explore
-#$ -o logs/08.5_cluster_annotation_explore.txt
-#$ -e logs/08.5_cluster_annotation_explore.txt
+#$ -o logs/09_cluster_annotation_explore.txt
+#$ -e logs/09_cluster_annotation_explore.txt
 #$ -m e
 
 echo "**** Job starts ****"
@@ -23,7 +23,7 @@ module load conda_R/4.2.x
 module list
 
 ## Edit with your job command
-Rscript 08.5_cluster_annotation_explore.R
+Rscript 09_cluster_annotation_explore.R
 
 echo "**** Job ends ****"
 date
