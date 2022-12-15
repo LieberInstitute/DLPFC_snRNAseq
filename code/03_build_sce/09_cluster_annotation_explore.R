@@ -24,59 +24,61 @@ cell_type_colors <- metadata(sce)$cell_type_colors
 cell_type_colors_broad <- metadata(sce)$cell_type_colors_broad
 
 #### Replot with Annotations ####
-## Plot clusters in TSNE
-TSNE_HC_cellTypes <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = cellType_hc)) +
-  geom_point(size = 0.2, alpha = 0.3) +
-  scale_color_manual(values = cell_type_colors[levels(sce$cellType_hc)], drop = TRUE) +
-  my_theme +
-  coord_equal()
-
-ggsave(
-  TSNE_HC_cellTypes +
-    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
-  filename = here(plot_dir, "TSNE_HC-29_cellType.png"), width = 10
-)
-
-
-TSNE_HC_cellTypes <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2)) +
-  geom_point(aes(colour = cellType_broad_hc), size = 0.2, alpha = 0.3) +
-  scale_color_manual(values = cell_type_colors_broad[levels(sce$cellType_broad_hc)], drop = TRUE) +
-  my_theme +
-  coord_equal()
-
-ggsave(
-  TSNE_HC_cellTypes +
-    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
-  filename = here(plot_dir, "TSNE_HC_broad_cellType.png"), width = 10
-)
-
-
-## UMAP
-UMAP_HC_cellTypes <- ggcells(sce, mapping = aes(x = UMAP.1, y = UMAP.2, colour = cellType_hc)) +
-  geom_point(size = 0.2, alpha = 0.3) +
-  scale_color_manual(values = cell_type_colors[levels(sce$cellType_hc)], drop = TRUE) +
-  my_theme +
-  coord_equal()
-
-ggsave(
-  UMAP_HC_cellTypes +
-    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
-  filename = here(plot_dir, "UMAP_HC_cellType.png"), width = 10
-)
-
-UMAP_HC_cellTypes <- ggcells(sce, mapping = aes(x = UMAP.1, y = UMAP.2)) +
-  geom_point(aes(colour = cellType_broad_hc), size = 0.2, alpha = 0.3) +
-  scale_color_manual(values = cell_type_colors_broad[levels(sce$cellType_broad_hc)], drop = TRUE) +
-  my_theme +
-  coord_equal()
-
-ggsave(
-  UMAP_HC_cellTypes +
-    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
-  filename = here(plot_dir, "UMAP_HC_broad_cellType.png"), width = 10
-)
+## HC reduce dims will be plotted in 05_explore_sce/01_reduced_dim_plots
+# ## Plot clusters in TSNE
+# TSNE_HC_cellTypes <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = cellType_hc)) +
+#   geom_point(size = 0.2, alpha = 0.3) +
+#   scale_color_manual(values = cell_type_colors[levels(sce$cellType_hc)], drop = TRUE) +
+#   my_theme +
+#   coord_equal()
+# 
+# ggsave(
+#   TSNE_HC_cellTypes +
+#     guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+#   filename = here(plot_dir, "TSNE_HC-29_cellType.png"), width = 10
+# )
+# 
+# 
+# TSNE_HC_cellTypes <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2)) +
+#   geom_point(aes(colour = cellType_broad_hc), size = 0.2, alpha = 0.3) +
+#   scale_color_manual(values = cell_type_colors_broad[levels(sce$cellType_broad_hc)], drop = TRUE) +
+#   my_theme +
+#   coord_equal()
+# 
+# ggsave(
+#   TSNE_HC_cellTypes +
+#     guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+#   filename = here(plot_dir, "TSNE_HC_broad_cellType.png"), width = 10
+# )
+# 
+# 
+# ## UMAP
+# UMAP_HC_cellTypes <- ggcells(sce, mapping = aes(x = UMAP.1, y = UMAP.2, colour = cellType_hc)) +
+#   geom_point(size = 0.2, alpha = 0.3) +
+#   scale_color_manual(values = cell_type_colors[levels(sce$cellType_hc)], drop = TRUE) +
+#   my_theme +
+#   coord_equal()
+# 
+# ggsave(
+#   UMAP_HC_cellTypes +
+#     guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+#   filename = here(plot_dir, "UMAP_HC_cellType.png"), width = 10
+# )
+# 
+# UMAP_HC_cellTypes <- ggcells(sce, mapping = aes(x = UMAP.1, y = UMAP.2)) +
+#   geom_point(aes(colour = cellType_broad_hc), size = 0.2, alpha = 0.3) +
+#   scale_color_manual(values = cell_type_colors_broad[levels(sce$cellType_broad_hc)], drop = TRUE) +
+#   my_theme +
+#   coord_equal()
+# 
+# ggsave(
+#   UMAP_HC_cellTypes +
+#     guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+#   filename = here(plot_dir, "UMAP_HC_broad_cellType.png"), width = 10
+# )
 
 #### Plot KM TSNE + UMAP ####
+## jsut plot mbkm here
 TSNE_km_cellTypes <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = cellType_k)) +
   geom_point(size = 0.2, alpha = 0.3) +
   scale_color_manual(values = cell_type_colors[levels(sce$cellType_k)], drop = TRUE) +
@@ -91,7 +93,8 @@ ggsave(
 
 
 #### Plot markers ####
-source("my_plotExpression.R")
+source("custom_plotExpression.R")
+source("my_plotMarkers.R")
 load(here("processed-data", "03_build_sce", "markers.mathys.tran.Rdata"), verbose = TRUE)
 
 my_plotMarkers(
