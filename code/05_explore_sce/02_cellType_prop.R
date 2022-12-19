@@ -278,11 +278,11 @@ barplot_n_nuc_layer <- n_nuc_layer |>
     geom_text(aes(label = anno), size = 2.5, position = position_stack(vjust = 0.5)) +
     scale_fill_manual(values = cell_type_colors) +
     my_theme +
-    theme(legend.position = "None", axis.text.x = element_text(angle = 45, hjust = 1), axis.title.x = element_blank()) +
-    labs(y = "Number of Nuclei", title)
+    theme(legend.position = "None", axis.text.x = element_text(angle = 45, hjust = 1)) +
+    labs(y = "Number of Nuclei", x = "Layer Cell Type Annotation")
 
-ggsave(barplot_n_nuc_layer, filename = here(plot_dir, "barplot_n_nuc_layer.png"), width = 10, height = 6)
-ggsave(barplot_n_nuc_layer, filename = here(plot_dir, "barplot_n_nuc_layer.pdf"), width = 12)
+ggsave(barplot_n_nuc_layer, filename = here(plot_dir, "barplot_n_nuc_layer.png"), width = 8)
+ggsave(barplot_n_nuc_layer, filename = here(plot_dir, "barplot_n_nuc_layer.pdf"), width = 8)
 
 ## Prop Bar
 prop_layer <- pd |>
@@ -360,7 +360,7 @@ layer_sample_prop_bar <- plot_composition_bar(prop_layer,
     min_prop_text = .03
 ) +
     labs(y = "Proportion") +
-    scale_fill_manual(values = c(metadata(sce)$cell_type_colors_layer, `NA` = "dark grey")) +
+    scale_fill_manual(values = metadata(sce)$cell_type_colors_layer) +
     theme_bw() +
     theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
 
@@ -375,13 +375,14 @@ layer_prop_bar_position <- ggplot(data = prop_layer, aes(x = Sample, y = prop, f
         position = position_stack(vjust = 0.5)
     ) +
     facet_grid(. ~ Position, scales = "free", space = "free") +
-    scale_fill_manual(values = c(metadata(sce)$cell_type_colors_layer, `NA` = "dark grey")) +
+    scale_fill_manual(values = metadata(sce)$cell_type_colors_layer) +
     labs(y = "Cell Type Proportion", fill = "Cell Type") +
     my_theme +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    theme(axis.text.x = element_text(angle = 45, hjust = 1),
+          legend.position = "None")
 
-ggsave(layer_prop_bar_position, filename = here(plot_dir, "prop_bar_layer_position.png"), width = 12, height = 5)
-ggsave(layer_prop_bar_position, filename = here(plot_dir, "prop_bar_layer_position.pdf"), width = 12)
+ggsave(layer_prop_bar_position, filename = here(plot_dir, "prop_bar_layer_position.png"), width = 10)
+ggsave(layer_prop_bar_position, filename = here(plot_dir, "prop_bar_layer_position.pdf"), width = 10)
 
 
 

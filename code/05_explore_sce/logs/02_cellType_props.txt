@@ -6,25 +6,21 @@ Loading LIBD module for rmate/1.5.9
 Loading LIBD module for ruby/2.6.4p104
 Loading conda_R/4.2.x
 **** Job starts ****
-Wed Dec 14 16:38:17 EST 2022
+Mon Dec 19 16:13:59 EST 2022
 **** JHPCE info ****
 User: lhuuki
-Job id: 1320581
+Job id: 1342218
 Job name: cellType_prop
 Hostname: compute-098.cm.cluster
 Task id: undefined
 Unloading conda_R/4.2.x
-Loading conda_R/4.2
-
-The following have been reloaded with a version change:
-  1) conda_R/4.2.x => conda_R/4.2
-
+Loading conda_R/4.2.x
 
 Currently Loaded Modules:
   1) matlab/R2019a     6) COMMUNITY_CENTOS7_DEFAULT_ENV  11) ruby/2.6.4p104
   2) stata/17          7) JHPCE_CENTOS7_DEFAULT_ENV      12) rmate/1.5.9
   3) JHPCE_tools/1.0   8) git-status-size/github         13) conda/3-4.11.0
-  4) sge/8.1.9         9) git/2.28.0                     14) conda_R/4.2
+  4) sge/8.1.9         9) git/2.28.0                     14) conda_R/4.2.x
   5) gcc/4.4.7        10) git-lfs/2.8.0
 
  
@@ -65,12 +61,12 @@ The following objects are masked from ‘package:stats’:
 
 The following objects are masked from ‘package:base’:
 
-    anyDuplicated, append, as.data.frame, basename, cbind, colnames,
-    dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,
-    grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,
-    order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,
-    rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,
-    union, unique, unsplit, which.max, which.min
+    anyDuplicated, aperm, append, as.data.frame, basename, cbind,
+    colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,
+    get, grep, grepl, intersect, is.unsorted, lapply, Map, mapply,
+    match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,
+    Position, rank, rbind, Reduce, rownames, sapply, setdiff, sort,
+    table, tapply, union, unique, unsplit, which.max, which.min
 
 Loading required package: S4Vectors
 
@@ -101,10 +97,10 @@ The following objects are masked from ‘package:matrixStats’:
     anyMissing, rowMedians
 
 ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
-✔ ggplot2 3.3.6      ✔ purrr   0.3.5 
+✔ ggplot2 3.4.0      ✔ purrr   0.3.5 
 ✔ tibble  3.1.8      ✔ dplyr   1.0.10
-✔ tidyr   1.2.1      ✔ stringr 1.4.1 
-✔ readr   2.1.2      ✔ forcats 0.5.2 
+✔ tidyr   1.2.1      ✔ stringr 1.5.0 
+✔ readr   2.1.3      ✔ forcats 0.5.2 
 ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 ✖ dplyr::collapse()   masks IRanges::collapse()
 ✖ dplyr::combine()    masks Biobase::combine(), BiocGenerics::combine()
@@ -146,7 +142,7 @@ The following object is masked from ‘package:purrr’:
 
 The following objects are masked from ‘package:base’:
 
-    aperm, apply, rowsum, scale, sweep
+    apply, rowsum, scale, sweep
 
 Loading required package: rhdf5
 
@@ -177,22 +173,24 @@ Saving 12 x 7 in image
 Saving 7 x 7 in image
 Saving 7 x 7 in image
 Warning message:
-`guides(<scale> = FALSE)` is deprecated. Please use `guides(<scale> = "none")` instead. 
+The `<scale>` argument of `guides()` cannot be `FALSE`. Use "none" instead as
+of ggplot2 3.3.4. 
 
        Astro    EndoMural        Micro        Oligo          OPC   Excit_L2/3 
         3979         2157         1601        10894         1940           82 
     Excit_L3 Excit_L3/4/5     Excit_L4     Excit_L5   Excit_L5/6     Excit_L6 
        10459         3043         2388         2505         2487         1792 
-       Inhib 
-       11067 
+ Excit_ambig        Inhib 
+        2053        11067 
 
-    L1    L1*     L2    L2*   L2/3     L3   L3/4  L3/4* L3/4/5     L4  L4/5* 
-  6136     66   1192   1932   5448  10459   1310   1567   3043   3655    420 
-    L5   L5/6     L6     WM  WM/L1 
-  2505   2487   1792  10894   3541 
+    L1    L1*  L1/WM     L2    L2*   L2/3     L3   L3/4  L3/4* L3/4/5     L4 
+  6136     66   3541   1192   1932   5448  10459   1310   1567   3043   3655 
+ L4/5*     L5   L5/6     L6     WM 
+   420   2505   2487   1792  10894 
 `summarise()` has grouped output by 'cellType_hc'. You can override using the
 `.groups` argument.
-Saving 12 x 7 in image
+Saving 8 x 7 in image
+Saving 8 x 7 in image
 Joining, by = "Sample"
 Saving 3 x 7 in image
 `summarise()` has grouped output by 'cellType_hc'. You can override using the
@@ -220,32 +218,29 @@ Saving 3 x 7 in image
 18 Excit_L5/6     0.0441  hc         Excit_02     Excit_02      11.2      2
 19 Excit_L6       0.00583 hc         Excit_06     Excit_06      12.2      2
 20 Excit_L6       0.0259  hc         Excit_08     Excit_08      12.3      3
-21 Inhib          0.0951  hc         Inhib_01     Inhib_01      13.2      2
-22 Inhib          0.0224  hc         Inhib_02     Inhib_02      13.3      3
-23 Inhib          0.0232  hc         Inhib_03     Inhib_03      13.4      4
-24 Inhib          0.0100  hc         Inhib_04     Inhib_04      13.5      5
-25 Inhib          0.0211  hc         Inhib_05     Inhib_05      13.6      6
-26 Inhib          0.0242  hc         Inhib_06     Inhib_06      13.7      7
-27 <NA>           0.00744 hc         Excit_12     Excit_12      12.7      2
-28 <NA>           0.0278  hc         Excit_13     Excit_13      12.8      3
-29 <NA>           0.00117 hc         Excit_15     Excit_15      12.9      4
-# A tibble: 4 × 7
-  cellType_layer    prop Annotation cellType cellType_hc order order2
-  <fct>            <dbl> <chr>      <fct>    <fct>       <dbl>  <int>
-1 <NA>           0.0364  Layer      Exclude  <NA>         12.6      1
-2 <NA>           0.00744 hc         Excit_12 Excit_12     12.7      2
-3 <NA>           0.0278  hc         Excit_13 Excit_13     12.8      3
-4 <NA>           0.00117 hc         Excit_15 Excit_15     12.9      4
+21 Excit_ambig    0.00744 hc         Excit_12     Excit_12      13.2      2
+22 Excit_ambig    0.0278  hc         Excit_13     Excit_13      13.3      3
+23 Excit_ambig    0.00117 hc         Excit_15     Excit_15      13.4      4
+24 Inhib          0.0951  hc         Inhib_01     Inhib_01      14.2      2
+25 Inhib          0.0224  hc         Inhib_02     Inhib_02      14.3      3
+26 Inhib          0.0232  hc         Inhib_03     Inhib_03      14.4      4
+27 Inhib          0.0100  hc         Inhib_04     Inhib_04      14.5      5
+28 Inhib          0.0211  hc         Inhib_05     Inhib_05      14.6      6
+29 Inhib          0.0242  hc         Inhib_06     Inhib_06      14.7      7
+# A tibble: 0 × 7
+# … with 7 variables: cellType_layer <fct>, prop <dbl>, Annotation <chr>,
+#   cellType <fct>, cellType_hc <fct>, order <dbl>, order2 <int>
 Saving 12 x 7 in image
 Saving 12 x 7 in image
-Saving 12 x 7 in image
+Saving 10 x 7 in image
+Saving 10 x 7 in image
 [1] "Reproducibility information:"
-[1] "2022-12-14 16:39:12 EST"
+[1] "2022-12-19 16:14:52 EST"
    user  system elapsed 
- 46.350   1.334  53.542 
+ 48.220   1.423  51.546 
 ─ Session info ───────────────────────────────────────────────────────────────────────────────────────────────────────
  setting  value
- version  R version 4.2.1 Patched (2022-08-30 r82775)
+ version  R version 4.2.2 Patched (2022-12-14 r83473)
  os       CentOS Linux 7 (Core)
  system   x86_64, linux-gnu
  ui       X11
@@ -253,124 +248,124 @@ Saving 12 x 7 in image
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       US/Eastern
- date     2022-12-14
- pandoc   2.19.2 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2/bin/pandoc
+ date     2022-12-19
+ pandoc   2.19.2 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2.x/bin/pandoc
 
 ─ Packages ───────────────────────────────────────────────────────────────────────────────────────────────────────────
  package              * version  date (UTC) lib source
  assertthat             0.2.1    2019-03-21 [2] CRAN (R 4.2.1)
  backports              1.4.1    2021-12-13 [2] CRAN (R 4.2.1)
- beachmat               2.12.0   2022-04-26 [2] Bioconductor
- Biobase              * 2.56.0   2022-04-26 [2] Bioconductor
- BiocGenerics         * 0.42.0   2022-04-26 [2] Bioconductor
- BiocNeighbors          1.14.0   2022-04-26 [2] Bioconductor
- BiocParallel           1.30.3   2022-06-05 [2] Bioconductor
- BiocSingular           1.12.0   2022-04-26 [2] Bioconductor
+ beachmat               2.14.0   2022-11-01 [2] Bioconductor
+ Biobase              * 2.58.0   2022-11-01 [2] Bioconductor
+ BiocGenerics         * 0.44.0   2022-11-01 [2] Bioconductor
+ BiocNeighbors          1.16.0   2022-11-01 [2] Bioconductor
+ BiocParallel           1.32.4   2022-12-01 [2] Bioconductor
+ BiocSingular           1.14.0   2022-11-01 [2] Bioconductor
  bitops                 1.0-7    2021-04-24 [2] CRAN (R 4.2.1)
- bluster                1.6.0    2022-04-26 [2] Bioconductor
- broom                  1.0.1    2022-08-29 [2] CRAN (R 4.2.1)
+ bluster                1.8.0    2022-11-01 [2] Bioconductor
+ broom                  1.0.2    2022-12-15 [2] CRAN (R 4.2.2)
  cellranger             1.1.0    2016-07-27 [2] CRAN (R 4.2.1)
- cli                    3.4.1    2022-09-23 [1] CRAN (R 4.2.1)
- cluster                2.1.4    2022-08-22 [3] CRAN (R 4.2.1)
- codetools              0.2-18   2020-11-04 [3] CRAN (R 4.2.1)
+ cli                    3.4.1    2022-09-23 [2] CRAN (R 4.2.1)
+ cluster                2.1.4    2022-08-22 [3] CRAN (R 4.2.2)
+ codetools              0.2-18   2020-11-04 [3] CRAN (R 4.2.2)
  colorspace             2.0-3    2022-02-21 [2] CRAN (R 4.2.1)
- crayon                 1.5.2    2022-09-29 [1] CRAN (R 4.2.1)
+ crayon                 1.5.2    2022-09-29 [2] CRAN (R 4.2.1)
  DBI                    1.1.3    2022-06-18 [2] CRAN (R 4.2.1)
  dbplyr                 2.2.1    2022-06-27 [2] CRAN (R 4.2.1)
- DeconvoBuddies       * 0.99.0   2022-09-06 [1] Github (lahuuki/DeconvoBuddies@1454932)
- DelayedArray         * 0.22.0   2022-04-26 [2] Bioconductor
- DelayedMatrixStats     1.18.2   2022-10-13 [1] Bioconductor
- digest                 0.6.29   2021-12-01 [2] CRAN (R 4.2.1)
- dplyr                * 1.0.10   2022-09-01 [1] CRAN (R 4.2.1)
+ DeconvoBuddies       * 0.99.0   2022-12-08 [1] Github (lahuuki/DeconvoBuddies@f510065)
+ DelayedArray         * 0.24.0   2022-11-01 [2] Bioconductor
+ DelayedMatrixStats     1.20.0   2022-11-01 [2] Bioconductor
+ dplyr                * 1.0.10   2022-09-01 [2] CRAN (R 4.2.1)
  dqrng                  0.3.0    2021-05-01 [2] CRAN (R 4.2.1)
- edgeR                  3.38.4   2022-08-07 [2] Bioconductor
+ edgeR                  3.40.1   2022-12-14 [2] Bioconductor
  ellipsis               0.3.2    2021-04-29 [2] CRAN (R 4.2.1)
  fansi                  1.0.3    2022-03-24 [2] CRAN (R 4.2.1)
  farver                 2.1.1    2022-07-06 [2] CRAN (R 4.2.1)
  forcats              * 0.5.2    2022-08-19 [2] CRAN (R 4.2.1)
  fs                     1.5.2    2021-12-08 [2] CRAN (R 4.2.1)
- gargle                 1.2.0    2021-07-02 [2] CRAN (R 4.2.1)
+ gargle                 1.2.1    2022-09-08 [2] CRAN (R 4.2.1)
  generics               0.1.3    2022-07-05 [2] CRAN (R 4.2.1)
- GenomeInfoDb         * 1.32.4   2022-09-06 [1] Bioconductor
- GenomeInfoDbData       1.2.8    2022-08-30 [2] Bioconductor
- GenomicRanges        * 1.48.0   2022-04-26 [2] Bioconductor
- ggplot2              * 3.3.6    2022-05-03 [2] CRAN (R 4.2.1)
+ GenomeInfoDb         * 1.34.4   2022-12-01 [2] Bioconductor
+ GenomeInfoDbData       1.2.9    2022-09-29 [2] Bioconductor
+ GenomicRanges        * 1.50.2   2022-12-16 [2] Bioconductor
+ ggplot2              * 3.4.0    2022-11-04 [2] CRAN (R 4.2.2)
  glue                   1.6.2    2022-02-24 [2] CRAN (R 4.2.1)
  googledrive            2.0.0    2021-07-08 [2] CRAN (R 4.2.1)
  googlesheets4          1.0.1    2022-08-13 [2] CRAN (R 4.2.1)
- gtable                 0.3.1    2022-09-01 [1] CRAN (R 4.2.1)
+ gtable                 0.3.1    2022-09-01 [2] CRAN (R 4.2.1)
  haven                  2.5.1    2022-08-22 [2] CRAN (R 4.2.1)
- HDF5Array            * 1.24.2   2022-08-02 [2] Bioconductor
+ HDF5Array            * 1.26.0   2022-11-01 [2] Bioconductor
  here                 * 1.0.1    2020-12-13 [2] CRAN (R 4.2.1)
  hms                    1.1.2    2022-08-19 [2] CRAN (R 4.2.1)
  httr                   1.4.4    2022-08-17 [2] CRAN (R 4.2.1)
- igraph                 1.3.4    2022-07-19 [2] CRAN (R 4.2.1)
- IRanges              * 2.30.1   2022-08-18 [2] Bioconductor
- irlba                  2.3.5.1  2022-10-03 [1] CRAN (R 4.2.1)
- jsonlite               1.8.3    2022-10-21 [1] CRAN (R 4.2.1)
+ igraph                 1.3.5    2022-09-22 [2] CRAN (R 4.2.1)
+ IRanges              * 2.32.0   2022-11-01 [2] Bioconductor
+ irlba                  2.3.5.1  2022-10-03 [2] CRAN (R 4.2.1)
+ jsonlite               1.8.4    2022-12-06 [2] CRAN (R 4.2.2)
  labeling               0.4.2    2020-10-20 [2] CRAN (R 4.2.1)
- lattice                0.20-45  2021-09-22 [3] CRAN (R 4.2.1)
- lifecycle              1.0.3    2022-10-07 [1] CRAN (R 4.2.1)
- limma                  3.52.4   2022-09-27 [1] Bioconductor
+ lattice                0.20-45  2021-09-22 [3] CRAN (R 4.2.2)
+ lifecycle              1.0.3    2022-10-07 [2] CRAN (R 4.2.1)
+ limma                  3.54.0   2022-11-01 [2] Bioconductor
  locfit                 1.5-9.6  2022-07-11 [2] CRAN (R 4.2.1)
- lubridate              1.8.0    2021-10-07 [2] CRAN (R 4.2.1)
+ lubridate              1.9.0    2022-11-06 [2] CRAN (R 4.2.2)
  magrittr               2.0.3    2022-03-30 [2] CRAN (R 4.2.1)
- Matrix               * 1.5-3    2022-11-11 [1] CRAN (R 4.2.1)
- MatrixGenerics       * 1.8.1    2022-06-26 [2] Bioconductor
- matrixStats          * 0.62.0   2022-04-19 [2] CRAN (R 4.2.1)
- metapod                1.4.0    2022-04-26 [2] Bioconductor
- modelr                 0.1.9    2022-08-19 [2] CRAN (R 4.2.1)
+ Matrix               * 1.5-3    2022-11-11 [2] CRAN (R 4.2.2)
+ MatrixGenerics       * 1.10.0   2022-11-01 [2] Bioconductor
+ matrixStats          * 0.63.0   2022-11-18 [2] CRAN (R 4.2.2)
+ metapod                1.6.0    2022-11-01 [2] Bioconductor
+ modelr                 0.1.10   2022-11-11 [2] CRAN (R 4.2.2)
  munsell                0.5.0    2018-06-12 [2] CRAN (R 4.2.1)
  patchwork            * 1.1.2    2022-08-19 [2] CRAN (R 4.2.1)
  pillar                 1.8.1    2022-08-19 [2] CRAN (R 4.2.1)
  pkgconfig              2.0.3    2019-09-22 [2] CRAN (R 4.2.1)
- purrr                * 0.3.5    2022-10-06 [1] CRAN (R 4.2.1)
+ purrr                * 0.3.5    2022-10-06 [2] CRAN (R 4.2.1)
  R6                     2.5.1    2021-08-19 [2] CRAN (R 4.2.1)
- rafalib                1.0.0    2015-08-09 [1] CRAN (R 4.2.1)
- ragg                   1.2.2    2022-02-21 [2] CRAN (R 4.2.1)
+ rafalib                1.0.0    2015-08-09 [1] CRAN (R 4.2.2)
+ ragg                   1.2.4    2022-10-24 [2] CRAN (R 4.2.2)
  RColorBrewer           1.1-3    2022-04-03 [2] CRAN (R 4.2.1)
  Rcpp                   1.0.9    2022-07-08 [2] CRAN (R 4.2.1)
- RCurl                  1.98-1.9 2022-10-03 [1] CRAN (R 4.2.1)
- readr                * 2.1.2    2022-01-30 [2] CRAN (R 4.2.1)
+ RCurl                  1.98-1.9 2022-10-03 [2] CRAN (R 4.2.1)
+ readr                * 2.1.3    2022-10-01 [2] CRAN (R 4.2.1)
  readxl                 1.4.1    2022-08-17 [2] CRAN (R 4.2.1)
  reprex                 2.0.2    2022-08-17 [2] CRAN (R 4.2.1)
- rhdf5                * 2.40.0   2022-04-26 [2] Bioconductor
- rhdf5filters           1.8.0    2022-04-26 [2] Bioconductor
- Rhdf5lib               1.18.2   2022-05-15 [2] Bioconductor
- rlang                  1.0.6    2022-09-24 [1] CRAN (R 4.2.1)
+ rhdf5                * 2.42.0   2022-11-01 [2] Bioconductor
+ rhdf5filters           1.10.0   2022-11-01 [2] Bioconductor
+ Rhdf5lib               1.20.0   2022-11-01 [2] Bioconductor
+ rlang                  1.0.6    2022-09-24 [2] CRAN (R 4.2.1)
  rprojroot              2.0.3    2022-04-02 [2] CRAN (R 4.2.1)
  rsvd                   1.0.5    2021-04-16 [2] CRAN (R 4.2.1)
  rvest                  1.0.3    2022-08-19 [2] CRAN (R 4.2.1)
- S4Vectors            * 0.34.0   2022-04-26 [2] Bioconductor
- ScaledMatrix           1.4.1    2022-09-11 [1] Bioconductor
+ S4Vectors            * 0.36.1   2022-12-05 [2] Bioconductor
+ ScaledMatrix           1.6.0    2022-11-01 [2] Bioconductor
  scales                 1.2.1    2022-08-20 [2] CRAN (R 4.2.1)
- scran                  1.24.0   2022-04-26 [2] Bioconductor
- scuttle                1.6.3    2022-08-23 [2] Bioconductor
+ scran                  1.26.1   2022-12-14 [2] Bioconductor
+ scuttle                1.8.3    2022-12-14 [1] Bioconductor
  sessioninfo            1.2.2    2021-12-06 [2] CRAN (R 4.2.1)
- SingleCellExperiment * 1.18.1   2022-10-02 [1] Bioconductor
- sparseMatrixStats      1.8.0    2022-04-26 [2] Bioconductor
+ SingleCellExperiment * 1.20.0   2022-11-01 [2] Bioconductor
+ sparseMatrixStats      1.10.0   2022-11-01 [2] Bioconductor
  statmod                1.4.37   2022-08-12 [2] CRAN (R 4.2.1)
  stringi                1.7.8    2022-07-11 [2] CRAN (R 4.2.1)
- stringr              * 1.4.1    2022-08-20 [2] CRAN (R 4.2.1)
- SummarizedExperiment * 1.26.1   2022-04-29 [2] Bioconductor
+ stringr              * 1.5.0    2022-12-02 [2] CRAN (R 4.2.2)
+ SummarizedExperiment * 1.28.0   2022-11-01 [2] Bioconductor
  systemfonts            1.0.4    2022-02-11 [2] CRAN (R 4.2.1)
  textshaping            0.3.6    2021-10-13 [2] CRAN (R 4.2.1)
  tibble               * 3.1.8    2022-07-22 [2] CRAN (R 4.2.1)
- tidyr                * 1.2.1    2022-09-08 [1] CRAN (R 4.2.1)
- tidyselect             1.2.0    2022-10-10 [1] CRAN (R 4.2.1)
+ tidyr                * 1.2.1    2022-09-08 [2] CRAN (R 4.2.1)
+ tidyselect             1.2.0    2022-10-10 [2] CRAN (R 4.2.1)
  tidyverse            * 1.3.2    2022-07-18 [2] CRAN (R 4.2.1)
+ timechange             0.1.1    2022-11-04 [2] CRAN (R 4.2.2)
  tzdb                   0.3.0    2022-03-28 [2] CRAN (R 4.2.1)
  utf8                   1.2.2    2021-07-24 [2] CRAN (R 4.2.1)
- vctrs                  0.5.1    2022-11-16 [1] CRAN (R 4.2.1)
+ vctrs                  0.5.1    2022-11-16 [2] CRAN (R 4.2.2)
  withr                  2.5.0    2022-03-03 [2] CRAN (R 4.2.1)
  xml2                   1.3.3    2021-11-30 [2] CRAN (R 4.2.1)
- XVector                0.36.0   2022-04-26 [2] Bioconductor
- zlibbioc               1.42.0   2022-04-26 [2] Bioconductor
+ XVector                0.38.0   2022-11-01 [2] Bioconductor
+ zlibbioc               1.44.0   2022-11-01 [2] Bioconductor
 
- [1] /users/lhuuki/R/4.2
- [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2/R/4.2/lib64/R/site-library
- [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2/R/4.2/lib64/R/library
+ [1] /users/lhuuki/R/4.2.x
+ [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2.x/R/4.2.x/lib64/R/site-library
+ [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2.x/R/4.2.x/lib64/R/library
 
 ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Wed Dec 14 16:39:13 EST 2022
+Mon Dec 19 16:14:53 EST 2022
