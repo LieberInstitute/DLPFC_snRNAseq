@@ -137,9 +137,11 @@ save(cell_type_colors_broad, cell_type_colors, file = here("processed-data", "03
 ## Add colors for layer annotation cell types
 library("SingleCellExperiment")
 load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
-(cell_types_layer <- levels(sce$cellType_layer))
+(cell_types_layer_all <- levels(sce$cellType_layer))
 # [1] "Astro"        "EndoMural"    "Micro"        "Oligo"        "OPC"          "Excit_L2/3"   "Excit_L3"
-# [8] "Excit_L3/4/5" "Excit_L4"     "Excit_L5"     "Excit_L5/6"   "Excit_L6"     "Inhib"
+# [8] "Excit_L3/4/5" "Excit_L4"     "Excit_L5"     "Excit_L5/6"   "Excit_L6"     "Excit_ambig"  "Inhib"
+
+cell_types_layer <- cell_types_layer_all[cell_types_layer_all != "Excit_ambig"]
 
 cell_type_colors_layer <- expand_cell_colors(cell_type_colors_broad, cell_types_layer)
 
@@ -166,6 +168,13 @@ dev.off()
 # png(here("plots", "cell_colors", "cell_type_colors_layer_brew.png"))
 # preview_colors(cell_type_colors_layer)
 # dev.off()
+
+cell_type_colors_layer <- c(cell_type_colors_layer, Excit_ambig = "#A0A7A7")
+cell_type_colors_layer <- cell_type_colors_layer[cell_types_layer_all]
+# Astro    EndoMural        Micro        Oligo          OPC   Excit_L2/3     Excit_L3 Excit_L3/4/5     Excit_L4 
+# "#3BB273"    "#FF56AF"    "#663894"    "#E07000"    "#D2B037"    "#D0D1E6"    "#A6BDDB"    "#74A9CF"    "#3690C0" 
+# Excit_L5   Excit_L5/6     Excit_L6  Excit_ambig        Inhib 
+# "#0570B0"    "#045A8D"    "#023858"    "#A0A7A7"    "#E94F37"
 
 ## Save
 save(cell_type_colors_layer, file = here("processed-data", "03_build_sce", "cell_type_colors_layer.Rdata"))
