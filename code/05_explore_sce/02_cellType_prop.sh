@@ -1,6 +1,6 @@
 #!/bin/bash
 #$ -cwd
-#$ -l bluejay,mem_free=10G,h_vmem=10G,h_fsize=100G
+#$ -l bluejay,mem_free=5G,h_vmem=5G,h_fsize=100G
 #$ -N cellType_prop
 #$ -o logs/02_cellType_props.txt
 #$ -e logs/02_cellType_props.txt
@@ -17,7 +17,7 @@ echo "Hostname: ${HOSTNAME}"
 echo "Task id: ${SGE_TASK_ID}"
 
 ## Load the R module (absent since the JHPCE upgrade to CentOS v7)
-module load conda_R/4.2
+module load conda_R/4.2.x
 
 ## List current modules for reproducibility
 module list
