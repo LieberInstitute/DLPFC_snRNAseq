@@ -126,7 +126,8 @@ libd_intermediate_layer_colors <- c(
   "L4/5" = "#BD8339",
   "L5/6" = "#FFB300",
   "L6/WM" = "#7A3D00",
-  "WM/L1" = "#650136", # Glia cells?
+  "L1/WM" = "#650136", # Glia cells?
+  # "WM/L1" = "#650136", # Glia cells?
   "No Assigment" = "gray"
 )
 
@@ -167,7 +168,11 @@ col_ha <- HeatmapAnnotation(df = azimuth_anno |> select(-azimuth),
                             show_legend = c(TRUE, FALSE))
 
 #### Complex Heatmap ####
+
 jacc.mat <- jacc.mat[hc_annotations$cellType_hc, azimuth_anno$azimuth]
+## Mark 0s as NAs
+# jacc.mat[jacc.mat == 0] <- NA
+
 
 pdf(here(plot_dir, "azimuth_v_hc_annotation_complex.pdf"), height = 8, width = 12)
 # png(here(plot_dir, "azimuth_v_hc_annotation_complex.png"), height = 800, width = 800)
@@ -177,7 +182,8 @@ Heatmap(jacc.mat,
     # right_annotation = hc_count,
     bottom_annotation = col_ha,
     # bottom_annotation = az_count,
-    col = viridis(100)
+    col = c("black",viridisLite::plasma(100)),
+    na_col = "black"
 )
 dev.off()
 
@@ -189,7 +195,7 @@ layer_annotations <-  pd_layer |>
   group_by(cellType_layer) |> 
   count() |>
   ## what to do if cell types have multiple layer assignments?
-  mutate(Layer = ifelse(grepl("Excit", cellType_layer),gsub("Excit_","", cellType_layer),NA)) |>
+  mutate(Layer = ifelse(grepl("Excit_L", cellType_layer),gsub("Excit_","", cellType_layer),NA)) |>
   ungroup() |>
   select(cellType_layer, Layer)
 
@@ -208,7 +214,7 @@ Heatmap(jacc.mat.layer,
         # right_annotation = hc_count,
         bottom_annotation = col_ha,
         # bottom_annotation = az_count,
-        col = viridis(100)
+        col = c("black",viridisLite::plasma(100)),
 )
 dev.off()
 
