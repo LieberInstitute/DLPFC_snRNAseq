@@ -725,7 +725,7 @@ Heatmap(mean_logcounts_z,
     right_annotation = row_ha_mean,
     top_annotation = column_ha,
     column_split = layer_markers_top$cellType.target,
-    column_names_gp = gpar(fontsize = 10),
+    column_names_gp = gpar(fontsize = 9.5, fontface = "italic"),
     # show_column_names = FALSE,
     show_row_names = FALSE
 )
