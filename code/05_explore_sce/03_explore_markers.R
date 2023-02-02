@@ -28,7 +28,8 @@ load(here("processed-data", "03_build_sce", "subtype_markers.Rdata"), verbose = 
 # subtype_markers ## findMarkers - cell subtype - 'All' and "Any' settings
 
 #### set up plotting ####
-source(here("code", "03_build_sce", "my_plotExpression.R"))
+source(here("code", "03_build_sce", "custom_plotExpression.R"))
+source(here("code", "03_build_sce", "my_plotMarkers.R"))
 
 plot_dir <- here("plots", "05_explore_sce", "03_explore_markers")
 if (!dir.exists(plot_dir)) dir.create(plot_dir)
