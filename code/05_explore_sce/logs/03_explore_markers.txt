@@ -1,0 +1,497 @@
+Adding LIBD modules
+Loading git
+Loading LIBD module for git-status-size/github
+Loading LIBD module for git-lfs/2.8.0
+Loading LIBD module for rmate/1.5.9
+Loading LIBD module for ruby/2.6.4p104
+Loading conda_R/4.2.x
+**** Job starts ****
+Thu Jan  5 11:47:00 EST 2023
+**** JHPCE info ****
+User: lhuuki
+Job id: 1394911
+Job name: explore_markers
+Hostname: compute-095.cm.cluster
+Task id: undefined
+Unloading conda_R/4.2.x
+Loading conda_R/4.2.x
+
+Currently Loaded Modules:
+  1) matlab/R2019a     6) COMMUNITY_CENTOS7_DEFAULT_ENV  11) ruby/2.6.4p104
+  2) stata/17          7) JHPCE_CENTOS7_DEFAULT_ENV      12) rmate/1.5.9
+  3) JHPCE_tools/1.0   8) git-status-size/github         13) conda/3-4.11.0
+  4) sge/8.1.9         9) git/2.28.0                     14) conda_R/4.2.x
+  5) gcc/4.4.7        10) git-lfs/2.8.0
+
+ 
+
+Loading required package: SummarizedExperiment
+Loading required package: MatrixGenerics
+Loading required package: matrixStats
+
+Attaching package: ‘MatrixGenerics’
+
+The following objects are masked from ‘package:matrixStats’:
+
+    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
+    colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+    colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
+    colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
+    colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+    colWeightedMeans, colWeightedMedians, colWeightedSds,
+    colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+    rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+    rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+    rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
+    rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+    rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
+    rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+    rowWeightedSds, rowWeightedVars
+
+Loading required package: GenomicRanges
+Loading required package: stats4
+Loading required package: BiocGenerics
+
+Attaching package: ‘BiocGenerics’
+
+The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+The following objects are masked from ‘package:base’:
+
+    anyDuplicated, aperm, append, as.data.frame, basename, cbind,
+    colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,
+    get, grep, grepl, intersect, is.unsorted, lapply, Map, mapply,
+    match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,
+    Position, rank, rbind, Reduce, rownames, sapply, setdiff, sort,
+    table, tapply, union, unique, unsplit, which.max, which.min
+
+Loading required package: S4Vectors
+
+Attaching package: ‘S4Vectors’
+
+The following objects are masked from ‘package:base’:
+
+    expand.grid, I, unname
+
+Loading required package: IRanges
+Loading required package: GenomeInfoDb
+Loading required package: Biobase
+Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation("Biobase")', and for packages 'citation("pkgname")'.
+
+
+Attaching package: ‘Biobase’
+
+The following object is masked from ‘package:MatrixGenerics’:
+
+    rowMedians
+
+The following objects are masked from ‘package:matrixStats’:
+
+    anyMissing, rowMedians
+
+Loading required package: rafalib
+── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+✔ ggplot2 3.4.0      ✔ purrr   1.0.0 
+✔ tibble  3.1.8      ✔ dplyr   1.0.10
+✔ tidyr   1.2.1      ✔ stringr 1.5.0 
+✔ readr   2.1.3      ✔ forcats 0.5.2 
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::collapse()   masks IRanges::collapse()
+✖ dplyr::combine()    masks Biobase::combine(), BiocGenerics::combine()
+✖ dplyr::count()      masks matrixStats::count()
+✖ dplyr::desc()       masks IRanges::desc()
+✖ tidyr::expand()     masks S4Vectors::expand()
+✖ dplyr::filter()     masks stats::filter()
+✖ dplyr::first()      masks S4Vectors::first()
+✖ dplyr::lag()        masks stats::lag()
+✖ ggplot2::Position() masks BiocGenerics::Position(), base::Position()
+✖ purrr::reduce()     masks GenomicRanges::reduce(), IRanges::reduce()
+✖ dplyr::rename()     masks S4Vectors::rename()
+✖ dplyr::slice()      masks IRanges::slice()
+Loading required package: ggrepel
+Loading required package: grid
+========================================
+ComplexHeatmap version 2.14.0
+Bioconductor page: http://bioconductor.org/packages/ComplexHeatmap/
+Github page: https://github.com/jokergoo/ComplexHeatmap
+Documentation: http://jokergoo.github.io/ComplexHeatmap-reference
+
+If you use it in published research, please cite either one:
+- Gu, Z. Complex Heatmap Visualization. iMeta 2022.
+- Gu, Z. Complex heatmaps reveal patterns and correlations in multidimensional 
+    genomic data. Bioinformatics 2016.
+
+
+The new InteractiveComplexHeatmap package can directly export static 
+complex heatmaps into an interactive Shiny app with zero effort. Have a try!
+
+This message can be suppressed by:
+  suppressPackageStartupMessages(library(ComplexHeatmap))
+========================================
+
+here() starts at /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq
+Loading objects:
+  sce
+Loading required package: HDF5Array
+Loading required package: DelayedArray
+Loading required package: Matrix
+
+Attaching package: ‘Matrix’
+
+The following objects are masked from ‘package:tidyr’:
+
+    expand, pack, unpack
+
+The following object is masked from ‘package:S4Vectors’:
+
+    expand
+
+
+Attaching package: ‘DelayedArray’
+
+The following object is masked from ‘package:purrr’:
+
+    simplify
+
+The following objects are masked from ‘package:base’:
+
+    apply, rowsum, scale, sweep
+
+Loading required package: rhdf5
+
+Attaching package: ‘HDF5Array’
+
+The following object is masked from ‘package:rhdf5’:
+
+    h5ls
+
+Loading objects:
+  markers_1vALL
+  markers_mean_ratio
+  markers_mean_ratio_broad
+Loading objects:
+  markers_1vALL_sample
+Loading objects:
+  subtype_markers
+        Astro Endo.Mural_01 Endo.Mural_02      Excit_01      Excit_02 
+          482           914            13            53            21 
+     Excit_03      Excit_04      Excit_05      Excit_06      Excit_07 
+           81            42             0           237           185 
+     Excit_08      Excit_09      Excit_10      Excit_11      Excit_12 
+           86             0           742           103           144 
+     Excit_13      Excit_14      Excit_15      Inhib_01      Inhib_02 
+          442             0             0           240           131 
+     Inhib_03      Inhib_04      Inhib_05      Inhib_06         Micro 
+            5           178            97            74          1016 
+     Oligo_01      Oligo_02      Oligo_03           OPC 
+           13           889             0           277 
+      Astro        Endo.Mural_01 Endo.Mural_02 Excit_01     Excit_02    
+ [1,] "AC012405.1" "ATP10A"      "COL6A3"      "AC095050.1" "AC011754.2"
+ [2,] "ITGB4"      "ABCB1"       "TAGLN"       "AL157944.1" "LINC01435" 
+ [3,] "SLC16A9"    "FLT1"        "BMP5"        "AC009975.2" "PDE4D"     
+ [4,] "RNF182"     "COBLL1"      "MYH11"       "CUX2"       "SORCS1"    
+ [5,] "TNC"        "LEF1"        "KCNK17"      "LINC02015"  "AC099517.1"
+ [6,] "AL136366.1" "THSD4"       "COL1A1"      "AC117453.1" "HS3ST2"    
+ [7,] "BBOX1"      "SLC7A1"      "ADAMTS1"     "AC016042.1" "AC007368.1"
+ [8,] "EDNRB"      "RGS5"        "SRPX2"       "LINC01378"  "AC011754.1"
+ [9,] "AL627316.1" "GPCPD1"      "ITK"         "PLEKHS1"    "ARHGEF28"  
+[10,] "AC103874.1" "EPAS1"       "AC099782.2"  "NDST3"      "IL17REL"   
+      Excit_03     Excit_04     Excit_05     Excit_06     Excit_07    
+ [1,] "AL450352.1" "CNGB3"      "AL121929.1" "SMYD1"      "NPSR1-AS1" 
+ [2,] "COL22A1"    "AP003066.1" "AC026474.1" "ZNF804B"    "FER1L6-AS2"
+ [3,] "CCDC168"    "CASC15"     "AC090371.2" "AL136119.1" "ITGA8"     
+ [4,] "AL356295.1" "LINC01680"  "ANXA8L1"    "OLFML2B"    "IFNG-AS1"  
+ [5,] "DCC"        "AC073091.3" "AC061975.4" "SORBS2"     "GRM4"      
+ [6,] "LINC01725"  "AC016687.2" "AC111182.2" "NTNG2"      "AC068587.4"
+ [7,] "AL353595.1" "AL158835.1" "TRAV38-1"   "MCTP2"      "TRMT9B"    
+ [8,] "AC073365.1" "ATP12A"     "AC007278.1" "LINC02197"  "ASIC2"     
+ [9,] "SLC22A10"   "TRABD2A"    "LINC01981"  "RGS12"      "LINC01885" 
+[10,] "ABCA4"      "AC016687.3" "IFNA4"      "KCTD16"     "GHR"       
+      Excit_08     Excit_09     Excit_10 Excit_11     Excit_12     Excit_13    
+ [1,] "LINC02718"  "IDS"        "YWHAB"  "NTNG1"      "TRPM3"      "AC132872.1"
+ [2,] "LINC02726"  "FBXL16"     "CALM1"  "FOXP2"      "GPR151"     "MIR4458HG" 
+ [3,] "AL358335.2" "ADRA2A"     "STMN2"  "AC019068.1" "KLHL1"      "MYLPF"     
+ [4,] "AC002331.1" "INSYN1"     "CREG2"  "SCN7A"      "POU4F1"     "PHPT1"     
+ [5,] "NPFFR2"     "MTURN"      "MAP1B"  "SULF1"      "TMEM163"    "ATP5ME"    
+ [6,] "FRMPD4"     "DDN"        "LMO4"   "CYP27C1"    "AC233296.1" "GFAP"      
+ [7,] "AC104689.2" "SOWAHA"     "BEX1"   "COL6A5"     "RASGEF1B"   "MIF-AS1"   
+ [8,] "HS3ST4"     "AP002449.1" "KCNA2"  "SLITRK6"    "CDH8"       "SAT2"      
+ [9,] "MCTP1"      "RPL22"      "SCN8A"  "EMB"        "PRKD1"      "ARL2"      
+[10,] "LINC01606"  "FP565260.6" "BASP1"  "TCF7L2"     "LINC01497"  "MIF"       
+      Excit_14     Excit_15     Inhib_01     Inhib_02    Inhib_03    
+ [1,] "AC129926.2" "GEM"        "OTX2-AS1"   "DPP10-AS3" "TFAP2D"    
+ [2,] "SLC12A8"    "HSPB1"      "OTX2"       "MYO5B"     "EBF3"      
+ [3,] "CCDC196"    "AC016722.2" "LINC01210"  "ZNF804A"   "NR5A2"     
+ [4,] "AC023824.3" "HSPD1"      "AL161757.4" "CNTNAP3B"  "VWA5B1"    
+ [5,] "BX890604.2" "GTPBP1"     "GATA3"      "LRRC38"    "SIM1"      
+ [6,] "AC124290.1" "AC008105.1" "CASR"       "ERBB4"     "AC010086.3"
+ [7,] "TSIX"       "HSPA9"      "TSPAN18"    "ANK1"      "LHX1-DT"   
+ [8,] "CNTD1"      "WNT10B"     "AC007159.1" "SCN1A-AS1" "KRT8"      
+ [9,] "CACNG3"     "YARS"       "SOX14"      "NHS"       "NMD3"      
+[10,] "AC005972.3" "SRSF3"      "AC245187.2" "CNTNAP3"   "PITX2"     
+      Inhib_04     Inhib_05     Inhib_06     Micro        Oligo_01   
+ [1,] "AC137770.1" "AL391832.4" "NMU"        "APBB1IP"    "MTRNR2L12"
+ [2,] "AC132803.1" "PROX1"      "FLT3"       "ADAM28"     "MT-ND3"   
+ [3,] "PRELID2"    "PPP1R1C"    "AC113347.4" "AC008691.1" "MT-CO3"   
+ [4,] "LINC01344"  "PROX1-AS1"  "CDH9"       "FYB1"       "MT-CO1"   
+ [5,] "ROR2"       "KMO"        "AC073332.1" "DLEU1"      "MT-ND2"   
+ [6,] "PKP2"       "CXCL14"     "AC011586.2" "CSF2RA"     "MT-CO2"   
+ [7,] "PTCHD4"     "VIP"        "GRIK3"      "LINC01374"  "MT-CYB"   
+ [8,] "HAPLN1"     "CHRNA2"     "AC076968.2" "SYK"        "MT-ND5"   
+ [9,] "PDGFD"      "AL450338.2" "TRIM67"     "CX3CR1"     "MT-ATP6"  
+[10,] "FGF13"      "AC020930.1" "SATB1-AS1"  "LNCAROD"    "MT-ND4"   
+      Oligo_02      Oligo_03     OPC         
+ [1,] "SYNJ2"       "PAIP2B"     "AC004852.2"
+ [2,] "SHROOM4"     "AC026401.2" "SMOC1"     
+ [3,] "AC008571.2"  "NKAP"       "FERMT1"    
+ [4,] "FAM107B"     "AC090515.5" "STK32A"    
+ [5,] "PRR5L"       "TMEM95"     "COL9A1"    
+ [6,] "MOG"         "LINC00463"  "PDGFRA"    
+ [7,] "LINC00639"   "FCRLA"      "AL512308.1"
+ [8,] "SLC7A14-AS1" "FAM225A"    "BEST3"     
+ [9,] "LRP2"        "SLC26A9"    "AL445250.1"
+[10,] "LINC01170"   "AC090503.1" "CACNG4"    
+        Astro Endo.Mural_01 Endo.Mural_02      Excit_01      Excit_02 
+        FALSE         FALSE         FALSE         FALSE         FALSE 
+     Excit_03      Excit_04      Excit_05      Excit_06      Excit_07 
+        FALSE         FALSE          TRUE         FALSE         FALSE 
+     Excit_08      Excit_09      Excit_10      Excit_11      Excit_12 
+        FALSE          TRUE         FALSE         FALSE         FALSE 
+     Excit_13      Excit_14      Excit_15      Inhib_01      Inhib_02 
+        FALSE          TRUE          TRUE         FALSE         FALSE 
+     Inhib_03      Inhib_04      Inhib_05      Inhib_06         Micro 
+        FALSE         FALSE         FALSE         FALSE         FALSE 
+     Oligo_01      Oligo_02      Oligo_03           OPC 
+        FALSE         FALSE          TRUE         FALSE 
+plotting: /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/plots/05_explore_sce/03_explore_markers/markers_1vALL_top10.pdf
+Astro
+Endo.Mural_01
+Endo.Mural_02
+Excit_01
+Excit_02
+Excit_03
+Excit_04
+Excit_05
+Excit_06
+Excit_07
+Excit_08
+Excit_09
+Excit_10
+Excit_11
+Excit_12
+Excit_13
+Excit_14
+Excit_15
+Inhib_01
+Inhib_02
+Inhib_03
+Inhib_04
+Inhib_05
+Inhib_06
+Micro
+Oligo_01
+Oligo_02
+Oligo_03
+OPC
+null device 
+          1 
+Astro
+n nuc=3979, n genes FDR<0.05=482
+Endo.Mural_01
+n nuc=0, n genes FDR<0.05=914
+Endo.Mural_02
+n nuc=0, n genes FDR<0.05=13
+Excit_01
+n nuc=7927, n genes FDR<0.05=53
+Excit_02
+n nuc=2487, n genes FDR<0.05=21
+Excit_03
+n nuc=1309, n genes FDR<0.05=81
+Excit_04
+n nuc=2171, n genes FDR<0.05=42
+Excit_05
+n nuc=2532, n genes FDR<0.05=0
+Excit_06
+n nuc=329, n genes FDR<0.05=237
+Excit_07
+n nuc=334, n genes FDR<0.05=185
+Excit_08
+n nuc=1463, n genes FDR<0.05=86
+Excit_09
+n nuc=2561, n genes FDR<0.05=0
+Excit_10
+n nuc=1079, n genes FDR<0.05=742
+Excit_11
+n nuc=482, n genes FDR<0.05=103
+Excit_12
+n nuc=420, n genes FDR<0.05=144
+Excit_13
+n nuc=1567, n genes FDR<0.05=442
+Excit_14
+n nuc=82, n genes FDR<0.05=0
+Excit_15
+n nuc=66, n genes FDR<0.05=0
+Inhib_01
+n nuc=5366, n genes FDR<0.05=240
+Inhib_02
+n nuc=1267, n genes FDR<0.05=131
+Inhib_03
+n nuc=1310, n genes FDR<0.05=5
+Inhib_04
+n nuc=565, n genes FDR<0.05=178
+Inhib_05
+n nuc=1192, n genes FDR<0.05=97
+Inhib_06
+n nuc=1367, n genes FDR<0.05=74
+Micro
+n nuc=1601, n genes FDR<0.05=1016
+Oligo_01
+n nuc=1868, n genes FDR<0.05=13
+Oligo_02
+n nuc=4732, n genes FDR<0.05=889
+Oligo_03
+n nuc=4294, n genes FDR<0.05=0
+OPC
+n nuc=1940, n genes FDR<0.05=277
+Warning messages:
+1: One or more p-values is 0. Converting to 10^-1 * current lowest non-zero p-value... 
+2: One or more p-values is 0. Converting to 10^-1 * current lowest non-zero p-value... 
+3: One or more p-values is 0. Converting to 10^-1 * current lowest non-zero p-value... 
+null device 
+          1 
+  cellType.target       gene p.value_1vALL     FDR_1vALL summary.logFC_1vALL
+1           Astro AC012405.1 2.229583e-118 8.160497e-114           0.4273925
+2           Astro      ITGB4 2.015016e-110 3.687580e-106           0.2189336
+3           Astro    SLC16A9  1.148270e-81  1.400928e-77           0.2557755
+4           Astro     RNF182  1.981230e-81  1.812875e-77           0.1530592
+5           Astro        TNC  1.329933e-61  9.735377e-58           0.2517694
+6           Astro AL136366.1  3.721927e-61  2.270438e-57           0.1070652
+   cellType.target     n
+1            Astro 36601
+2     EndoMural_01 36601
+3     EndoMural_02 36601
+4         Excit_01 36601
+5         Excit_02 36601
+6         Excit_03 36601
+7         Excit_04 36601
+8         Excit_05 36601
+9         Excit_06 36601
+10        Excit_07 36601
+11        Excit_08 36601
+12        Excit_09 36601
+13        Excit_10 36601
+14        Excit_11 36601
+15        Excit_12 36601
+16        Excit_13 36601
+17        Excit_14 36601
+18        Excit_15 36601
+19        Inhib_01 36601
+20        Inhib_02 36601
+21        Inhib_03 36601
+22        Inhib_04 36601
+23        Inhib_05 36601
+24        Inhib_06 36601
+25           Micro 36601
+26        Oligo_01 36601
+27        Oligo_02 36601
+28        Oligo_03 36601
+29             OPC 36601
+# A tibble: 29 × 2
+   cellType.target n_markers
+   <chr>               <int>
+ 1 Excit_05                0
+ 2 Excit_09                0
+ 3 Excit_14                0
+ 4 Excit_15                0
+ 5 Oligo_03                0
+ 6 Inhib_03                5
+ 7 EndoMural_02           13
+ 8 Oligo_01               13
+ 9 Excit_02               21
+10 Excit_04               42
+# … with 19 more rows
+# A tibble: 29 × 2
+   cellType.target n_markers
+   <fct>               <int>
+ 1 Excit_05                0
+ 2 Oligo_03                0
+ 3 Endo.Mural_02           1
+ 4 Excit_15                1
+ 5 Excit_09                4
+ 6 Inhib_03                6
+ 7 Oligo_01               13
+ 8 Excit_14               47
+ 9 Excit_02               68
+10 Excit_04               80
+# … with 19 more rows
+# A tibble: 453 × 8
+   gene    cellType.target mean.target cellType  mean ratio rank_ratio anno_ra…¹
+   <chr>   <fct>                 <dbl> <fct>    <dbl> <dbl>      <int> <chr>    
+ 1 FBXL16  Excit_09              0.706 Excit_10 0.641 1.10           1 Excit_09…
+ 2 IDS     Excit_09              1.91  Excit_10 1.82  1.05           2 Excit_09…
+ 3 MTURN   Excit_09              1.05  Excit_10 1.00  1.05           3 Excit_09…
+ 4 CBX6    Excit_09              0.775 Excit_10 0.768 1.01           4 Excit_09…
+ 5 TPPP    Excit_09              0.844 Excit_10 0.844 0.999          5 Excit_09…
+ 6 MAP1A   Excit_09              1.35  Excit_10 1.36  0.990          6 Excit_09…
+ 7 JUND    Excit_09              0.772 Excit_10 0.781 0.989          7 Excit_09…
+ 8 CAMK2N1 Excit_09              1.61  Excit_10 1.64  0.978          8 Excit_09…
+ 9 ADCY1   Excit_09              0.979 Excit_10 1.00  0.976          9 Excit_09…
+10 NFIX    Excit_09              0.735 Excit_10 0.757 0.971         10 Excit_09…
+# … with 443 more rows, and abbreviated variable name ¹​anno_ratio
+plotting: /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/plots/05_explore_sce/03_explore_markers/markers_mean_ratio_top10.pdf
+Astro
+Endo.Mural_01
+Endo.Mural_02
+Excit_01
+Excit_02
+Excit_03
+Excit_04
+Excit_05
+Excit_06
+Excit_07
+Excit_08
+Excit_09
+Excit_10
+Excit_11
+Excit_12
+Excit_13
+Excit_14
+Excit_15
+Inhib_01
+Inhib_02
+Inhib_03
+Inhib_04
+Inhib_05
+Inhib_06
+Micro
+Oligo_01
+Oligo_02
+Oligo_03
+OPC
+null device 
+          1 
+plotting: /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/plots/05_explore_sce/03_explore_markers/markers_mean_ratio_broad_top10.pdf
+Astro
+Endo.Mural
+Excit
+Inhib
+Micro
+Oligo
+OPC
+null device 
+          1 
+plotting: /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq/plots/05_explore_sce/03_explore_markers/markers_mean_ratio_broad_broad_top10.pdf
+Astro
+Error in h(simpleError(msg, call)) : 
+  error in evaluating the argument 'x' in selecting a method for function 'print': object 'cell_type_colors_broad' not found
+Calls: my_plotMarkers ... print -> custom_plotExpression -> .handleSimpleError -> h
+Execution halted
+**** Job ends ****
+Thu Jan  5 13:08:05 EST 2023
