@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/400502841.svg)](https://zenodo.org/badge/latestdoi/400502841)
+
 # DLPFC_snRNAseq
 
 This GitHub repository is part of the `spatialDLPFC` project and is documented at https://github.com/LieberInstitute/spatialDLPFC.
