@@ -15,4 +15,7 @@ Some experimental code that summarizing CCC analysis are in `Archive/interpret_C
 
 ### NOTE:
 We use the same code to run brain piece analysis (R2) and sample-specific analysis (R3). see https://github.com/LieberInstitute/DLPFC_snRNAseq/issues/21
+
 You need to change `01_start_CCC.R` and `01_2_CCC_with_LIANA` when switching from one to another. To do this: you can global search `R2` or `R3` within this folder.
+
+There are two helper functions to visualize the results of LIANA, in `fun_liana_circ.R` and `fun_liana_heatmap.R` respectively.
