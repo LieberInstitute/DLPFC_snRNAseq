@@ -12,13 +12,15 @@ col_data <- colData(sce) |> as.data.frame()
 
 
 # Sample Summary Statistics
-col_data |> group_by(subject) |> summarize(n = n_distinct(region))
+col_data |>
+    group_by(subject) |>
+    summarize(n = n_distinct(region))
 
 
 # Sample Br2720
 # Why when I do this subsetting, we have loading all these packages again?
 # Which object is doing this annoying thing!
-sce_Br2720 <- sce[, sce$subject=="Br2720"]
+sce_Br2720 <- sce[, sce$subject == "Br2720"]
 
 
 library(RSoptSC)
@@ -34,7 +36,7 @@ library(RSoptSC)
 library(scater)
 set.seed(1000)
 lib_Br2720 <- librarySizeFactors(sce_Br2720)
-sizeFactors(sce_Br2720)<-lib_Br2720
+sizeFactors(sce_Br2720) <- lib_Br2720
 sce_Br2720 <- logNormCounts(sce_Br2720)
 
 ## HVG
@@ -43,28 +45,31 @@ dec_sce <- modelGeneVar(sce_Br2720)
 # Examine Mean-variance relationship
 fit.pbmc <- metadata(dec_sce)
 pdf("~/mean_var.pdf")
-plot(fit.pbmc$mean, fit.pbmc$var, xlab="Mean of log-expression",
-     ylab="Variance of log-expression")
-curve(fit.pbmc$trend(x), col="dodgerblue", add=TRUE, lwd=2)
+plot(fit.pbmc$mean, fit.pbmc$var,
+    xlab = "Mean of log-expression",
+    ylab = "Variance of log-expression"
+)
+curve(fit.pbmc$trend(x), col = "dodgerblue", add = TRUE, lwd = 2)
 dev.off()
 ## The mean variance relationship looks normal that is abnormal
 
 # Highly Variable Genes
-#TODO: edit this to a much larger number
-hvg_names <- getTopHVGs(dec_sce, n=10)
+# TODO: edit this to a much larger number
+hvg_names <- getTopHVGs(dec_sce, n = 10)
 
-#TODO: remove the filter on number of cells
-hvg_sce_Br2720 <- sce_Br2720[hvg_names,1:1000]
+# TODO: remove the filter on number of cells
+hvg_sce_Br2720 <- sce_Br2720[hvg_names, 1:1000]
 
 
 
 ## Compute the Similarity Matrix  ----
 
-S <- SimilarityM(lambda = 0.05,
-                 data = logcounts(hvg_sce_Br2720),
-                 dims = 3,
-                 pre_embed_method = 'tsne',
-                 perplexity = 20,
-                 pca_center = TRUE,
-                 pca_scale = TRUE)
-
+S <- SimilarityM(
+    lambda = 0.05,
+    data = logcounts(hvg_sce_Br2720),
+    dims = 3,
+    pre_embed_method = "tsne",
+    perplexity = 20,
+    pca_center = TRUE,
+    pca_scale = TRUE
+)

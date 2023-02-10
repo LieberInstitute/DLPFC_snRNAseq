@@ -47,8 +47,10 @@ scn_fld_path <- here("processed-data/07_ccc/")
 # crn_scn <- c("Anterior", "Middle", "Posterior")
 # crn_scn |>
 # walk(.f = function(scn){
-liana_res <- readRDS(here(scn_fld_path,
-                          "liana_consensus.rds"))
+liana_res <- readRDS(here(
+    scn_fld_path,
+    "liana_consensus.rds"
+))
 liana_trunc <- liana_res %>%
     # only keep interactions concordant between methods
     filter(aggregate_rank <= 0.01)
@@ -64,39 +66,51 @@ liana_trunc |>
         row.names = FALSE
     )
 
-nrow(liana_trunc); #6588
+nrow(liana_trunc)
+# 6588
 
-liana_trunc |> transmute(
-    pair = glue::glue("{ligand.complex}_{receptor.complex}")
-) |>
+liana_trunc |>
+    transmute(
+        pair = glue::glue("{ligand.complex}_{receptor.complex}")
+    ) |>
     summarize(n_distinct(pair))
 
 
 # Create Folder
-if(!dir.exists(plot_path))
+if (!dir.exists(plot_path)) {
     dir.create(plot_path, recursive = TRUE)
+}
 
 # Save Heatmap
-pdf(file = here(plot_path, "/liana_heatmap_overall.pdf"),
+pdf(
+    file = here(plot_path, "/liana_heatmap_overall.pdf"),
     width = 9,
-    height = 8)
+    height = 8
+)
 plot_liana_heatmap(
     liana_trunc |>
-        mutate(source = factor(
-            source,
-            levels = c("Astro",  "EndoMural", "Micro",
-                       "Oligo", "OPC", "Excit_L2/3",
-                       "Excit_L3", "Excit_L3/4/5", "Excit_L4",
-                       "Excit_L5","Excit_L5/6","Excit_L6","Inhib")),
+        mutate(
+            source = factor(
+                source,
+                levels = c(
+                    "Astro", "EndoMural", "Micro",
+                    "Oligo", "OPC", "Excit_L2/3",
+                    "Excit_L3", "Excit_L3/4/5", "Excit_L4",
+                    "Excit_L5", "Excit_L5/6", "Excit_L6", "Inhib"
+                )
+            ),
             target = factor(
                 target,
-                levels = c("Astro",  "EndoMural", "Micro",
-                           "Oligo", "OPC", "Excit_L2/3",
-                           "Excit_L3", "Excit_L3/4/5", "Excit_L4",
-                           "Excit_L5","Excit_L5/6","Excit_L6","Inhib"))
+                levels = c(
+                    "Astro", "EndoMural", "Micro",
+                    "Oligo", "OPC", "Excit_L2/3",
+                    "Excit_L3", "Excit_L3/4/5", "Excit_L4",
+                    "Excit_L5", "Excit_L5/6", "Excit_L6", "Inhib"
+                )
+            )
         ) |>
         liana:::.get_freq(),
-    cell_col = cell_type_colors_layer#,
+    cell_col = cell_type_colors_layer # ,
     # row_dend_reorder = FALSE,
     # column_dend_reorder = FALSE
 ) |>
@@ -112,8 +126,10 @@ lig_gene <- "EFNA5"
 rec_gene <- "EPHA5"
 
 lig_rec_df <- liana_trunc |>
-    filter(ligand.complex == lig_gene,
-           receptor.complex == rec_gene)
+    filter(
+        ligand.complex == lig_gene,
+        receptor.complex == rec_gene
+    )
 
 
 full_join(
@@ -130,23 +146,32 @@ full_join(
 #     # width = 9,
 #     # height = 8
 #     )
-png(file = here(plot_path, "/liana_circ_plot_EFNA5-EPHA5.png"),
-     height = 1200,
-     width = 1200,units = "px")
+png(
+    file = here(plot_path, "/liana_circ_plot_EFNA5-EPHA5.png"),
+    height = 1200,
+    width = 1200, units = "px"
+)
 
 lig_rec_df |>
-    mutate(source = factor(
-        source,
-        levels = c("Astro",  "EndoMural", "Micro",
-                   "Oligo", "OPC", "Excit_L2/3",
-                   "Excit_L3", "Excit_L3/4/5", "Excit_L4",
-                   "Excit_L5","Excit_L5/6","Excit_L6","Inhib")),
+    mutate(
+        source = factor(
+            source,
+            levels = c(
+                "Astro", "EndoMural", "Micro",
+                "Oligo", "OPC", "Excit_L2/3",
+                "Excit_L3", "Excit_L3/4/5", "Excit_L4",
+                "Excit_L5", "Excit_L5/6", "Excit_L6", "Inhib"
+            )
+        ),
         target = factor(
             target,
-            levels = c("Astro",  "EndoMural", "Micro",
-                       "Oligo", "OPC", "Excit_L2/3",
-                       "Excit_L3", "Excit_L3/4/5", "Excit_L4",
-                       "Excit_L5","Excit_L5/6","Excit_L6","Inhib"))
+            levels = c(
+                "Astro", "EndoMural", "Micro",
+                "Oligo", "OPC", "Excit_L2/3",
+                "Excit_L3", "Excit_L3/4/5", "Excit_L4",
+                "Excit_L5", "Excit_L5/6", "Excit_L6", "Inhib"
+            )
+        )
     ) |>
     plot_liana_circ(
         cell_col = cell_type_colors_layer
@@ -165,76 +190,92 @@ dev.off()
 
 # Plot Pie Chart for Sender -----------------------------------------------
 
-ggsave(filename = here(plot_path, "liana_pie_EFNA5-EPHA5_sender_nolegend.pdf"),
-       plot = lig_rec_df |>
-           mutate(source = factor(
-               source,
-               levels = c("Astro",  "EndoMural", "Micro",
-                          "Oligo", "OPC", "Excit_L2/3",
-                          "Excit_L3", "Excit_L3/4/5", "Excit_L4",
-                          "Excit_L5","Excit_L5/6","Excit_L6","Inhib")),
-               target = factor(
-                   target,
-                   levels = c("Astro",  "EndoMural", "Micro",
-                              "Oligo", "OPC", "Excit_L2/3",
-                              "Excit_L3", "Excit_L3/4/5", "Excit_L4",
-                              "Excit_L5","Excit_L5/6","Excit_L6","Inhib"))
-           ) |>
-           ggplot() +
-           geom_bar(aes(x = factor(1), fill = source),
-                    stat = "count"
-                    , show.legend = FALSE
-           ) +
-           coord_polar("y", start=0) +
-           scale_fill_manual(
-               values = cell_type_colors_layer
-           ) +
-           labs(title = "Source") +
-           theme_void() +
-           theme(plot.title = element_text(hjust = 0.5,size = 20))
-       # theme_bw() +
-       #     theme(axis.text.y = element_blank(),
-       #           axis.title.y = element_blank(),
-       #           axis.ticks.y = element_blank(),
-       #           axis.title.x = element_blank(),
-       #           axis.text.x = element_blank())
+ggsave(
+    filename = here(plot_path, "liana_pie_EFNA5-EPHA5_sender_nolegend.pdf"),
+    plot = lig_rec_df |>
+        mutate(
+            source = factor(
+                source,
+                levels = c(
+                    "Astro", "EndoMural", "Micro",
+                    "Oligo", "OPC", "Excit_L2/3",
+                    "Excit_L3", "Excit_L3/4/5", "Excit_L4",
+                    "Excit_L5", "Excit_L5/6", "Excit_L6", "Inhib"
+                )
+            ),
+            target = factor(
+                target,
+                levels = c(
+                    "Astro", "EndoMural", "Micro",
+                    "Oligo", "OPC", "Excit_L2/3",
+                    "Excit_L3", "Excit_L3/4/5", "Excit_L4",
+                    "Excit_L5", "Excit_L5/6", "Excit_L6", "Inhib"
+                )
+            )
+        ) |>
+        ggplot() +
+        geom_bar(aes(x = factor(1), fill = source),
+            stat = "count",
+            show.legend = FALSE
+        ) +
+        coord_polar("y", start = 0) +
+        scale_fill_manual(
+            values = cell_type_colors_layer
+        ) +
+        labs(title = "Source") +
+        theme_void() +
+        theme(plot.title = element_text(hjust = 0.5, size = 20))
+    # theme_bw() +
+    #     theme(axis.text.y = element_blank(),
+    #           axis.title.y = element_blank(),
+    #           axis.ticks.y = element_blank(),
+    #           axis.title.x = element_blank(),
+    #           axis.text.x = element_blank())
 )
 
 # Plot Pie Chart for Target -----------------------------------------------
 
-ggsave(filename = here(plot_path, "liana_pie_EFNA5-EPHA5_target.pdf"),
-       plot = lig_rec_df |>
-           mutate(source = factor(
-               source,
-               levels = c("Astro",  "EndoMural", "Micro",
-                          "Oligo", "OPC", "Excit_L2/3",
-                          "Excit_L3", "Excit_L3/4/5", "Excit_L4",
-                          "Excit_L5","Excit_L5/6","Excit_L6","Inhib")),
-               target = factor(
-                   target,
-                   levels = c("Astro",  "EndoMural", "Micro",
-                              "Oligo", "OPC", "Excit_L2/3",
-                              "Excit_L3", "Excit_L3/4/5", "Excit_L4",
-                              "Excit_L5","Excit_L5/6","Excit_L6","Inhib"))
-           ) |>
-           ggplot() +
-           geom_bar(aes(x = factor(1), fill = target),
-                    stat = "count"
-                    # , show.legend = FALSE
-           ) +
-           coord_polar("y", start=0) +
-           scale_fill_manual(
-               values = cell_type_colors_layer
-           ) +
-           labs(title = "Target") +
-           theme_void() +
-           theme(plot.title = element_text(hjust = 0.5,size = 20))
-       # theme_bw() +
-       #     theme(axis.text.y = element_blank(),
-       #           axis.title.y = element_blank(),
-       #           axis.ticks.y = element_blank(),
-       #           axis.title.x = element_blank(),
-       #           axis.text.x = element_blank())
+ggsave(
+    filename = here(plot_path, "liana_pie_EFNA5-EPHA5_target.pdf"),
+    plot = lig_rec_df |>
+        mutate(
+            source = factor(
+                source,
+                levels = c(
+                    "Astro", "EndoMural", "Micro",
+                    "Oligo", "OPC", "Excit_L2/3",
+                    "Excit_L3", "Excit_L3/4/5", "Excit_L4",
+                    "Excit_L5", "Excit_L5/6", "Excit_L6", "Inhib"
+                )
+            ),
+            target = factor(
+                target,
+                levels = c(
+                    "Astro", "EndoMural", "Micro",
+                    "Oligo", "OPC", "Excit_L2/3",
+                    "Excit_L3", "Excit_L3/4/5", "Excit_L4",
+                    "Excit_L5", "Excit_L5/6", "Excit_L6", "Inhib"
+                )
+            )
+        ) |>
+        ggplot() +
+        geom_bar(aes(x = factor(1), fill = target),
+            stat = "count"
+            # , show.legend = FALSE
+        ) +
+        coord_polar("y", start = 0) +
+        scale_fill_manual(
+            values = cell_type_colors_layer
+        ) +
+        labs(title = "Target") +
+        theme_void() +
+        theme(plot.title = element_text(hjust = 0.5, size = 20))
+    # theme_bw() +
+    #     theme(axis.text.y = element_blank(),
+    #           axis.title.y = element_blank(),
+    #           axis.ticks.y = element_blank(),
+    #           axis.title.x = element_blank(),
+    #           axis.text.x = element_blank())
 )
 
 

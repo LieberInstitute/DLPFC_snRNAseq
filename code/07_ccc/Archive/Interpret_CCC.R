@@ -7,19 +7,19 @@ scn_fld_path <- here("processed-data/07_ccc/")
 # crn_scn |> map(
 #     .f = function(scn){
 
-        # liana_res <- readRDS(paste0(scn_fld_path, scn, "/liana_consensus.rds"))
-        # liana_trunc <- liana_res %>%
-        #     # only keep interactions concordant between methods
-        #     filter(aggregate_rank <= 0.01)
-        #
-        # # Create Folder
-        # if(!dir.exists(paste0(plot_path, scn)))
-        #     dir.create(paste0(plot_path,scn), recursive = TRUE)
-        #
-        # # Save Heatmap
-        # jpeg(filename = paste0(plot_path,scn, "/overall.jpeg"))
-        # heat_freq(liana_trunc)
-        # dev.off()
+# liana_res <- readRDS(paste0(scn_fld_path, scn, "/liana_consensus.rds"))
+# liana_trunc <- liana_res %>%
+#     # only keep interactions concordant between methods
+#     filter(aggregate_rank <= 0.01)
+#
+# # Create Folder
+# if(!dir.exists(paste0(plot_path, scn)))
+#     dir.create(paste0(plot_path,scn), recursive = TRUE)
+#
+# # Save Heatmap
+# jpeg(filename = paste0(plot_path,scn, "/overall.jpeg"))
+# heat_freq(liana_trunc)
+# dev.off()
 #     }
 # )
 
@@ -37,8 +37,10 @@ liana_trunc <- liana_res %>%
 
 heat_freq(liana_trunc)
 
-melissa_ligand_genes <- c("SEMA6D", "FSHB", "BMP3", "EFNA5", "MDK", "DKK1", "HLA-DRA",
-                          "HLA-DQA1", "HLA-DQB1", "HLA-DMA", "LRFN5", "FYN")
+melissa_ligand_genes <- c(
+    "SEMA6D", "FSHB", "BMP3", "EFNA5", "MDK", "DKK1", "HLA-DRA",
+    "HLA-DQA1", "HLA-DQB1", "HLA-DMA", "LRFN5", "FYN"
+)
 
 liana_trunc |>
     filter(ligand.complex %in% melissa_ligand_genes) |>
@@ -47,22 +49,24 @@ liana_trunc |>
     unique()
 
 tmp <- liana_trunc |>
-    filter(ligand.complex == "EFNA5",
-           receptor.complex == "EPHA5")
+    filter(
+        ligand.complex == "EFNA5",
+        receptor.complex == "EPHA5"
+    )
 
 
-xtabs(~source + target, data = tmp)
+xtabs(~ source + target, data = tmp)
 tmp |> chord_freq()
 tmp |> liana_dotplot()
 
-    mutate(LR_pair = glue::glue("{ligand.complex}-{receptor.complex}")) |>
+mutate(LR_pair = glue::glue("{ligand.complex}-{receptor.complex}")) |>
     pull(LR_pair) |>
     unique()
 
 
 
 
-    heat_freq()
+heat_freq()
 
 
 
@@ -89,9 +93,11 @@ crn_sec <- c("Anterior", "Middle", "Posterior")
 
 full_dat <- map_dfr(
     crn_sec,
-    .f = function(sec){
-        fl_path <- here("processed-data", "CCC", sec,
-                        "liana_consensus.rds")
+    .f = function(sec) {
+        fl_path <- here(
+            "processed-data", "CCC", sec,
+            "liana_consensus.rds"
+        )
 
         readRDS(fl_path) |>
             mutate(crn_sec = sec)
@@ -118,22 +124,27 @@ trunc_src_tgt_dat <- full_dat |>
 
 
 # Most frequent LR Pair ------------------------------------------------------
-trunc_dat |> group_by(LR_pair) |>
+trunc_dat |>
+    group_by(LR_pair) |>
     summarize(n = n(), n_sec = n_distinct(crn_sec)) |>
     dplyr::arrange(desc(n), desc(n_sec))
 
 # When requiring them matching ST Pair
-trunc_src_tgt_dat |> group_by(LR_pair, ST_pair) |>
+trunc_src_tgt_dat |>
+    group_by(LR_pair, ST_pair) |>
     summarize(n_sec = n_distinct(crn_sec)) |>
     dplyr::arrange(desc(n_sec))
 
 # Among LR pair presented in all Sec.
-trunc_src_tgt_dat |> group_by(LR_pair, ST_pair) |>
+trunc_src_tgt_dat |>
+    group_by(LR_pair, ST_pair) |>
     summarize(n_sec = n_distinct(crn_sec)) |>
     dplyr::arrange(desc(n_sec)) |>
-    filter(n_sec ==3) |>
-    summarise(n_st_pair = n_distinct(ST_pair),
-              perc_st_pair = glue("{n_st_pair}/49")) |>
+    filter(n_sec == 3) |>
+    summarise(
+        n_st_pair = n_distinct(ST_pair),
+        perc_st_pair = glue("{n_st_pair}/49")
+    ) |>
     arrange(desc(n_st_pair))
 
 # Among LR pairs that presents in all three sec
@@ -144,11 +155,13 @@ trunc_src_tgt_dat |> group_by(LR_pair, ST_pair) |>
 
 
 # Most Popular L ------------------------------------------------------
-trunc_dat |> group_by(ligand.complex) |>
+trunc_dat |>
+    group_by(ligand.complex) |>
     summarize(n = n(), n_sec = n_distinct(crn_sec)) |>
     dplyr::arrange(desc(n), desc(n_sec))
 
 # Most Popular R  ------------------------------------------------------
-trunc_dat |> group_by(receptor.complex) |>
+trunc_dat |>
+    group_by(receptor.complex) |>
     summarize(n = n(), n_sec = n_distinct(crn_sec)) |>
     dplyr::arrange(desc(n), desc(n_sec))
