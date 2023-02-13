@@ -46,6 +46,7 @@ meta_df <- data.frame(
     "libraryVersion" = NA,
     "libraryType" = NA,
     "isStranded" = NA,
+    "isResequenced" = NA,
     "readStrandOrigin" = NA,
     "readLength" = NA,
     "runType" = "pairedEnd",
