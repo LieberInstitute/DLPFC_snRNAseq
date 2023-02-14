@@ -1,15 +1,15 @@
 **** Job starts ****
-Wed Sep 21 15:24:24 EDT 2022
+Tue Feb 14 13:41:33 EST 2023
 **** JHPCE info ****
 User: neagles
-Job id: 38905
+Job id: 2962007
 Job name: write_biospecimen
-Hostname: compute-105.cm.cluster
-Loading conda_R/devel
+Hostname: compute-144.cm.cluster
+Loading conda_R/4.2.x
 here() starts at /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq
 ─ Session info ───────────────────────────────────────────────────────────────
  setting  value
- version  R Under development (unstable) (2021-11-06 r81149)
+ version  R version 4.2.2 Patched (2023-02-14 r83833)
  os       CentOS Linux 7 (Core)
  system   x86_64, linux-gnu
  ui       X11
@@ -17,32 +17,32 @@ here() starts at /dcs04/lieber/lcolladotor/deconvolution_LIBD4030/DLPFC_snRNAseq
  collate  en_US.UTF-8
  ctype    en_US.UTF-8
  tz       US/Eastern
- date     2022-09-21
- pandoc   2.11.0.4 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-devel/bin/pandoc
+ date     2023-02-14
+ pandoc   2.19.2 @ /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2.x/bin/pandoc
 
 ─ Packages ───────────────────────────────────────────────────────────────────
  package     * version date (UTC) lib source
- cellranger    1.1.0   2016-07-27 [2] CRAN (R 4.1.0)
- cli           3.4.0   2022-09-08 [2] CRAN (R 4.2.0)
- fansi         1.0.3   2022-03-24 [2] CRAN (R 4.2.0)
- glue          1.6.2   2022-02-24 [2] CRAN (R 4.2.0)
- here        * 1.0.1   2020-12-13 [1] CRAN (R 4.2.0)
- lifecycle     1.0.2   2022-09-09 [2] CRAN (R 4.2.0)
- magrittr      2.0.3   2022-03-30 [2] CRAN (R 4.2.0)
- pillar        1.8.1   2022-08-19 [2] CRAN (R 4.2.0)
- pkgconfig     2.0.3   2019-09-22 [2] CRAN (R 4.1.0)
- readxl      * 1.4.1   2022-08-17 [2] CRAN (R 4.2.0)
- rlang         1.0.5   2022-08-31 [2] CRAN (R 4.2.0)
- rprojroot     2.0.3   2022-04-02 [2] CRAN (R 4.2.0)
- sessioninfo * 1.2.2   2021-12-06 [2] CRAN (R 4.2.0)
- tibble        3.1.8   2022-07-22 [2] CRAN (R 4.2.0)
- utf8          1.2.2   2021-07-24 [2] CRAN (R 4.2.0)
- vctrs         0.4.1   2022-04-13 [2] CRAN (R 4.2.0)
+ cellranger    1.1.0   2016-07-27 [2] CRAN (R 4.2.1)
+ cli           3.6.0   2023-01-09 [2] CRAN (R 4.2.2)
+ fansi         1.0.4   2023-01-22 [2] CRAN (R 4.2.2)
+ glue          1.6.2   2022-02-24 [2] CRAN (R 4.2.1)
+ here        * 1.0.1   2020-12-13 [2] CRAN (R 4.2.1)
+ lifecycle     1.0.3   2022-10-07 [2] CRAN (R 4.2.1)
+ magrittr      2.0.3   2022-03-30 [2] CRAN (R 4.2.1)
+ pillar        1.8.1   2022-08-19 [2] CRAN (R 4.2.1)
+ pkgconfig     2.0.3   2019-09-22 [2] CRAN (R 4.2.1)
+ readxl      * 1.4.2   2023-02-09 [2] CRAN (R 4.2.2)
+ rlang         1.0.6   2022-09-24 [2] CRAN (R 4.2.1)
+ rprojroot     2.0.3   2022-04-02 [2] CRAN (R 4.2.1)
+ sessioninfo * 1.2.2   2021-12-06 [2] CRAN (R 4.2.1)
+ tibble        3.1.8   2022-07-22 [2] CRAN (R 4.2.1)
+ utf8          1.2.3   2023-01-31 [2] CRAN (R 4.2.2)
+ vctrs         0.5.2   2023-01-23 [2] CRAN (R 4.2.2)
 
- [1] /users/neagles/R/devel
- [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-devel/R/devel/lib64/R/site-library
- [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.6.14/envs/svnR-devel/R/devel/lib64/R/library
+ [1] /users/neagles/R/4.2.x
+ [2] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2.x/R/4.2.x/lib64/R/site-library
+ [3] /jhpce/shared/jhpce/core/conda/miniconda3-4.11.0/envs/svnR-4.2.x/R/4.2.x/lib64/R/library
 
 ──────────────────────────────────────────────────────────────────────────────
 **** Job ends ****
-Wed Sep 21 15:24:28 EDT 2022
+Tue Feb 14 13:41:36 EST 2023
