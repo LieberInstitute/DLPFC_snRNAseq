@@ -1,4 +1,3 @@
-
 library("patchwork")
 #' Plot Reduced Dim of SCE
 #' wrapper function for ggcells adding facet wrap to selected category
@@ -46,9 +45,10 @@ plot_reducedDim_qc <- function(sce, type = "TSNE", color_by = "sum", title = "")
 }
 
 
-plotExpressionCustom <- function(sce, features, features_name, anno_name = "cellType",
-    point_alpha = 0.2, point_size = 0.7, ncol = 2, xlab = NULL,
-    exprs_values = "logcounts", scales = "fixed") {
+plotExpressionCustom <- function(
+        sce, features, features_name, anno_name = "cellType",
+        point_alpha = 0.2, point_size = 0.7, ncol = 2, xlab = NULL,
+        exprs_values = "logcounts", scales = "fixed") {
     scater::plotExpression(sce,
         exprs_values = exprs_values,
         features = features,

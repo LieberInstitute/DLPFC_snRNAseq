@@ -12,7 +12,7 @@ library("patchwork")
 
 # Plotting set up
 my_theme <- theme_bw() +
-  theme(text = element_text(size = 15))
+    theme(text = element_text(size = 15))
 
 plot_dir <- here("plots", "03_build_sce", "09_cluster_annotation_explore")
 if (!dir.exists(plot_dir)) dir.create(plot_dir)
@@ -31,46 +31,46 @@ cell_type_colors_broad <- metadata(sce)$cell_type_colors_broad
 #   scale_color_manual(values = cell_type_colors[levels(sce$cellType_hc)], drop = TRUE) +
 #   my_theme +
 #   coord_equal()
-# 
+#
 # ggsave(
 #   TSNE_HC_cellTypes +
 #     guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
 #   filename = here(plot_dir, "TSNE_HC-29_cellType.png"), width = 10
 # )
-# 
-# 
+#
+#
 # TSNE_HC_cellTypes <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2)) +
 #   geom_point(aes(colour = cellType_broad_hc), size = 0.2, alpha = 0.3) +
 #   scale_color_manual(values = cell_type_colors_broad[levels(sce$cellType_broad_hc)], drop = TRUE) +
 #   my_theme +
 #   coord_equal()
-# 
+#
 # ggsave(
 #   TSNE_HC_cellTypes +
 #     guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
 #   filename = here(plot_dir, "TSNE_HC_broad_cellType.png"), width = 10
 # )
-# 
-# 
+#
+#
 # ## UMAP
 # UMAP_HC_cellTypes <- ggcells(sce, mapping = aes(x = UMAP.1, y = UMAP.2, colour = cellType_hc)) +
 #   geom_point(size = 0.2, alpha = 0.3) +
 #   scale_color_manual(values = cell_type_colors[levels(sce$cellType_hc)], drop = TRUE) +
 #   my_theme +
 #   coord_equal()
-# 
+#
 # ggsave(
 #   UMAP_HC_cellTypes +
 #     guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
 #   filename = here(plot_dir, "UMAP_HC_cellType.png"), width = 10
 # )
-# 
+#
 # UMAP_HC_cellTypes <- ggcells(sce, mapping = aes(x = UMAP.1, y = UMAP.2)) +
 #   geom_point(aes(colour = cellType_broad_hc), size = 0.2, alpha = 0.3) +
 #   scale_color_manual(values = cell_type_colors_broad[levels(sce$cellType_broad_hc)], drop = TRUE) +
 #   my_theme +
 #   coord_equal()
-# 
+#
 # ggsave(
 #   UMAP_HC_cellTypes +
 #     guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
@@ -80,15 +80,15 @@ cell_type_colors_broad <- metadata(sce)$cell_type_colors_broad
 #### Plot KM TSNE + UMAP ####
 ## jsut plot mbkm here
 TSNE_km_cellTypes <- ggcells(sce, mapping = aes(x = TSNE.1, y = TSNE.2, colour = cellType_k)) +
-  geom_point(size = 0.2, alpha = 0.3) +
-  scale_color_manual(values = cell_type_colors[levels(sce$cellType_k)], drop = TRUE) +
-  my_theme +
-  coord_equal()
+    geom_point(size = 0.2, alpha = 0.3) +
+    scale_color_manual(values = cell_type_colors[levels(sce$cellType_k)], drop = TRUE) +
+    my_theme +
+    coord_equal()
 
 ggsave(
-  TSNE_km_cellTypes +
-    guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
-  filename = here(plot_dir, "TSNE_mbkm-29_cellType.png"), width = 10
+    TSNE_km_cellTypes +
+        guides(colour = guide_legend(override.aes = list(size = 2, alpha = 1))),
+    filename = here(plot_dir, "TSNE_mbkm-29_cellType.png"), width = 10
 )
 
 
@@ -98,19 +98,19 @@ source("my_plotMarkers.R")
 load(here("processed-data", "03_build_sce", "markers.mathys.tran.Rdata"), verbose = TRUE)
 
 my_plotMarkers(
-  sce = sce,
-  marker_list = markers.mathys.tran,
-  cat = "cellType_hc",
-  fill_colors = cell_type_colors,
-  pdf_fn = here(plot_dir, "markers_mathys_hc_29_ct.pdf")
+    sce = sce,
+    marker_list = markers.mathys.tran,
+    cat = "cellType_hc",
+    fill_colors = cell_type_colors,
+    pdf_fn = here(plot_dir, "markers_mathys_hc_29_ct.pdf")
 )
 
 my_plotMarkers(
-  sce = sce,
-  marker_list = markers.mathys.tran,
-  cat = "cellType_k",
-  fill_colors = cell_type_colors,
-  pdf_fn = here(plot_dir, "markers_mathys_mb_kmeans_29.pdf")
+    sce = sce,
+    marker_list = markers.mathys.tran,
+    cat = "cellType_k",
+    fill_colors = cell_type_colors,
+    pdf_fn = here(plot_dir, "markers_mathys_mb_kmeans_29.pdf")
 )
 
 
@@ -122,22 +122,22 @@ cluster_compare <- table(sce$kmeans, sce$collapsedCluster)
 cluster_compare_prop <- sweep(cluster_compare, 2, colSums(cluster_compare), `/`)
 
 hc_anno <- colData(sce) |>
-  as.data.frame() |>
-  count(collapsedCluster, broad = cellType_broad_hc) |>
-  tibble::column_to_rownames("collapsedCluster")
+    as.data.frame() |>
+    count(collapsedCluster, broad = cellType_broad_hc) |>
+    tibble::column_to_rownames("collapsedCluster")
 
 km_anno <- colData(sce) |>
-  as.data.frame() |>
-  count(kmeans, broad = cellType_broad_k) |>
-  tibble::column_to_rownames("kmeans")
+    as.data.frame() |>
+    count(kmeans, broad = cellType_broad_k) |>
+    tibble::column_to_rownames("kmeans")
 
 broad_pallet <- cell_type_colors_broad[unique(c(hc_anno$broad, km_anno$broad))]
 
 png(here(plot_dir, "heatmap_cluster_compare.png"), height = 800, width = 800)
 pheatmap(cluster_compare_prop,
-         annotation_col = hc_anno,
-         annotation_row = km_anno,
-         annotation_colors = list(broad = broad_pallet)
+    annotation_col = hc_anno,
+    annotation_row = km_anno,
+    annotation_colors = list(broad = broad_pallet)
 )
 dev.off()
 
@@ -146,18 +146,18 @@ jacc.mat <- linkClustersMatrix(sce$kmeans, sce$collapsedCluster)
 
 png(here(plot_dir, "heatmap_cluster_compare_jacc.png"), height = 800, width = 800)
 pheatmap(jacc.mat,
-         annotation_col = hc_anno,
-         annotation_row = km_anno,
-         annotation_colors = list(broad = broad_pallet)
+    annotation_col = hc_anno,
+    annotation_row = km_anno,
+    annotation_colors = list(broad = broad_pallet)
 )
 dev.off()
 
 ## best cluster pairing
 best <- max.col(jacc.mat, ties.method = "first")
 DataFrame(
-  Cluster = rownames(jacc.mat),
-  Corresponding = colnames(jacc.mat)[best],
-  Index = jacc.mat[cbind(seq_len(nrow(jacc.mat)), best)]
+    Cluster = rownames(jacc.mat),
+    Corresponding = colnames(jacc.mat)[best],
+    Index = jacc.mat[cbind(seq_len(nrow(jacc.mat)), best)]
 )
 
 ## compare cell types
@@ -165,20 +165,20 @@ ct_tab <- table(sce$cellType_k, sce$cellType_hc)
 ct_tab_prop <- sweep(ct_tab, 2, colSums(ct_tab), `/`)
 
 hc_ct_anno <- table(sce$cellType_hc) |>
-  as.data.frame() |>
-  rename(ct = Var1, n = Freq)
+    as.data.frame() |>
+    rename(ct = Var1, n = Freq)
 rownames(hc_ct_anno) <- hc_ct_anno$ct
 
 km_ct_anno <- table(sce$cellType_k) |>
-  as.data.frame() |>
-  rename(ct = Var1, n = Freq)
+    as.data.frame() |>
+    rename(ct = Var1, n = Freq)
 rownames(km_ct_anno) <- km_ct_anno$ct
 
 png(here(plot_dir, "heatmap_cellType_compare.png"), height = 800, width = 800)
 pheatmap(ct_tab_prop,
-         annotation_col = hc_ct_anno,
-         annotation_row = km_ct_anno,
-         annotation_colors = list(ct = cell_type_colors)
+    annotation_col = hc_ct_anno,
+    annotation_row = km_ct_anno,
+    annotation_colors = list(ct = cell_type_colors)
 )
 dev.off()
 
@@ -186,9 +186,9 @@ jacc.mat.ct <- linkClustersMatrix(sce$cellType_k, sce$cellType_hc)
 
 png(here(plot_dir, "heatmap_cellType_compare_jacc.png"), height = 800, width = 800)
 pheatmap(jacc.mat.ct,
-         annotation_col = hc_ct_anno,
-         annotation_row = km_ct_anno,
-         annotation_colors = list(ct = cell_type_colors)
+    annotation_col = hc_ct_anno,
+    annotation_row = km_ct_anno,
+    annotation_colors = list(ct = cell_type_colors)
 )
 dev.off()
 
@@ -198,20 +198,20 @@ dev.off()
 ctb_tab_prop <- sweep(ctb_tab, 2, colSums(ctb_tab), `/`)
 
 hc_broad_anno <- table(sce$cellType_broad_hc) |>
-  as.data.frame() |>
-  rename(broad = Var1, n = Freq)
+    as.data.frame() |>
+    rename(broad = Var1, n = Freq)
 rownames(hc_broad_anno) <- hc_broad_anno$broad
 
 km_broad_anno <- table(sce$cellType_broad_k) |>
-  as.data.frame() |>
-  rename(broad = Var1, n = Freq)
+    as.data.frame() |>
+    rename(broad = Var1, n = Freq)
 rownames(km_broad_anno) <- km_broad_anno$broad
 
 png(here(plot_dir, "heatmap_cellType_broad_compare.png"), height = 800, width = 800)
 pheatmap(ctb_tab_prop,
-         annotation_col = hc_broad_anno,
-         annotation_row = km_broad_anno,
-         annotation_colors = list(broad = broad_pallet)
+    annotation_col = hc_broad_anno,
+    annotation_row = km_broad_anno,
+    annotation_colors = list(broad = broad_pallet)
 )
 dev.off()
 
@@ -219,9 +219,9 @@ jacc.mat.broad <- linkClustersMatrix(sce$cellType_broad_k, sce$cellType_broad_hc
 
 png(here(plot_dir, "heatmap_cellType_broad_compare_jacc.png"), height = 800, width = 800)
 pheatmap(jacc.mat.broad,
-         annotation_col = hc_broad_anno,
-         annotation_row = km_broad_anno,
-         annotation_colors = list(broad = broad_pallet)
+    annotation_col = hc_broad_anno,
+    annotation_row = km_broad_anno,
+    annotation_colors = list(broad = broad_pallet)
 )
 dev.off()
 
@@ -234,29 +234,29 @@ pairwiseRand(sce$cellType_broad_k, sce$cellType_broad_hc, mode = "index")
 
 #### Explore UMI ####
 UMI_ct_k <- ggcells(sce, mapping = aes(x = cellType_k, y = sum, fill = cellType_k)) +
-  geom_boxplot() +
-  scale_fill_manual(values = cell_type_colors[levels(sce$cellType_k)], drop = TRUE) +
-  my_theme +
-  theme(
-    legend.position = "None", axis.title.x = element_blank(),
-    axis.text.x = element_text(angle = 90, hjust = 1)
-  )
+    geom_boxplot() +
+    scale_fill_manual(values = cell_type_colors[levels(sce$cellType_k)], drop = TRUE) +
+    my_theme +
+    theme(
+        legend.position = "None", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 1)
+    )
 
 ggsave(UMI_ct_k, filename = here(plot_dir, "qc_UMI_mbkm-29_cellType.png"), width = 10)
 
 
 UMI_ct_hc <- ggcells(sce, mapping = aes(
-  x = reorder(cellType_hc, sum, FUN = median),
-  y = sum, fill = cellType_hc
+    x = reorder(cellType_hc, sum, FUN = median),
+    y = sum, fill = cellType_hc
 )) +
-  geom_boxplot() +
-  scale_fill_manual(values = cell_type_colors) +
-  my_theme +
-  theme(
-    legend.position = "None", axis.title.x = element_blank(),
-    axis.text.x = element_text(angle = 45, hjust = 1)
-  ) +
-  labs(y = "Total UMIs")
+    geom_boxplot() +
+    scale_fill_manual(values = cell_type_colors) +
+    my_theme +
+    theme(
+        legend.position = "None", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+    ) +
+    labs(y = "Total UMIs")
 
 ggsave(UMI_ct_hc, filename = here(plot_dir, "qc_UMI_HC_cellType.png"), height = 3)
 ggsave(UMI_ct_hc, filename = here(plot_dir, "qc_UMI_HC_cellType.pdf"), height = 3)
@@ -264,49 +264,49 @@ ggsave(UMI_ct_hc, filename = here(plot_dir, "qc_UMI_HC_cellType.pdf"), height = 
 
 #### Explore doublet scores
 dbs_ct_k <- ggcells(sce, mapping = aes(x = cellType_k, y = doubletScore, fill = cellType_k)) +
-  geom_boxplot() +
-  scale_fill_manual(values = cell_type_colors) +
-  my_theme +
-  theme(
-    legend.position = "None", axis.title.x = element_blank(),
-    axis.text.x = element_text(angle = 90, hjust = 1)
-  )
+    geom_boxplot() +
+    scale_fill_manual(values = cell_type_colors) +
+    my_theme +
+    theme(
+        legend.position = "None", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 1)
+    )
 
 ggsave(dbs_ct_k, filename = here(plot_dir, "qc_doubletScore_mbkm-29_cellType.png"), width = 10)
 
 
 dbs_ct_hc <- ggcells(sce,
-                     mapping = aes(
-                       x = reorder(cellType_hc, doubletScore, FUN = median),
-                       y = doubletScore,
-                       fill = cellType_hc
-                     )
+    mapping = aes(
+        x = reorder(cellType_hc, doubletScore, FUN = median),
+        y = doubletScore,
+        fill = cellType_hc
+    )
 ) +
-  geom_boxplot() +
-  scale_fill_manual(values = cell_type_colors) +
-  my_theme +
-  theme(
-    legend.position = "None", axis.title.x = element_blank(),
-    axis.text.x = element_text(angle = 45, hjust = 1)
-  ) +
-  labs(y = "Doublet Score")
+    geom_boxplot() +
+    scale_fill_manual(values = cell_type_colors) +
+    my_theme +
+    theme(
+        legend.position = "None", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+    ) +
+    labs(y = "Doublet Score")
 
 ggsave(dbs_ct_hc, filename = here(plot_dir, "qc_doubletScore_HC_cellType.png"), height = 3)
 ggsave(dbs_ct_hc, filename = here(plot_dir, "qc_doubletScore_HC_cellType.pdf"), height = 3)
 
 #### Explore Mito rate ####
 mito_ct_hc <- ggcells(sce, mapping = aes(
-  x = reorder(cellType_hc, subsets_Mito_percent, FUN = median),
-  y = subsets_Mito_percent, fill = cellType_hc
+    x = reorder(cellType_hc, subsets_Mito_percent, FUN = median),
+    y = subsets_Mito_percent, fill = cellType_hc
 )) +
-  geom_boxplot() +
-  scale_fill_manual(values = cell_type_colors) +
-  my_theme +
-  theme(
-    legend.position = "None", axis.title.x = element_blank(),
-    axis.text.x = element_text(angle = 45, hjust = 1)
-  ) +
-  labs(y = "Percent Mito")
+    geom_boxplot() +
+    scale_fill_manual(values = cell_type_colors) +
+    my_theme +
+    theme(
+        legend.position = "None", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 45, hjust = 1)
+    ) +
+    labs(y = "Percent Mito")
 
 ggsave(mito_ct_hc, filename = here(plot_dir, "qc_mitoRate_HC_cellType.png"), height = 3)
 ggsave(mito_ct_hc, filename = here(plot_dir, "qc_mitoRate_HC_cellType.pdf"), height = 3)
@@ -319,9 +319,9 @@ cellType.idx <- splitit(sce$cellType_hc)
 # sapply(c("Excit", "Inhib", "MSN"), function(x){grep(x, names(cellType.idx))})
 
 sapply(cellType.idx, function(x) {
-  quantile(sce$doubletScore[x])
+    quantile(sce$doubletScore[x])
 })[, order(sapply(cellType.idx, function(x) {
-  quantile(sce$doubletScore[x])["50%"]
+    quantile(sce$doubletScore[x])["50%"]
 }))]
 #       Excit_15    Micro  Oligo_03 Excit_09     Astro       OPC Excit_10   Oligo_02 Excit_13  Excit_11 EndoMural_02
 # 0%   0.0086180 0.000000  0.000000  0.00000  0.000000  0.000000 0.000000  0.0000000 0.000000  0.050708     0.000000
@@ -343,9 +343,9 @@ sapply(cellType.idx, function(x) {
 # 100% 12.068628 13.872384 9.825768 8.841504 6.457070 8.640852 5.808176 4.430430
 
 sapply(cellType.idx, function(x) {
-  quantile(sce$sum[x])
+    quantile(sce$sum[x])
 })[, order(sapply(cellType.idx, function(x) {
-  quantile(sce$sum[x])["50%"]
+    quantile(sce$sum[x])["50%"]
 }))]
 #      Excit_15  drop Excit_09 Oligo_03 Oligo_01 Micro EndoMural_02   Astro Excit_13 Oligo_02 Excit_10 Excit_05      OPC
 # 0%        678   220      462      359   300.00   350        407.0   276.0    648.0    968.0      533   292.00   397.00
@@ -367,9 +367,9 @@ sapply(cellType.idx, function(x) {
 # 100% 179194.0 203794.0 188090.0   152333 296099.0
 
 sapply(cellType.idx, function(x) {
-  quantile(sce$subsets_Mito_percent[x])
+    quantile(sce$subsets_Mito_percent[x])
 })[, order(sapply(cellType.idx, function(x) {
-  quantile(sce$subsets_Mito_percent[x])["50%"]
+    quantile(sce$subsets_Mito_percent[x])["50%"]
 }))]
 #         Excit_06    Excit_08    Excit_02   Excit_07   Excit_01   Inhib_04   Excit_03   Inhib_05    Excit_04  Inhib_06
 # 0%   0.002438608 0.001886792 0.002068851 0.00000000 0.00000000 0.00000000 0.00000000 0.00000000 0.003583716 0.0000000
@@ -416,22 +416,22 @@ table(unfactor(sce$prelimCluster)[sce$cellType_hc == "Excit_13"])
 # 446 249  58 162  28 462 121  41
 
 my_plotMarkers(
-  sce = sce[, sce$cellType_hc == "Excit_13"],
-  marker_list = markers.mathys.tran[c("astrocyte", "excit_neuron")],
-  cat = "prelimCluster",
-  pdf_fn = here(plot_dir, "markers_Excit_13_check.pdf")
+    sce = sce[, sce$cellType_hc == "Excit_13"],
+    marker_list = markers.mathys.tran[c("astrocyte", "excit_neuron")],
+    cat = "prelimCluster",
+    pdf_fn = here(plot_dir, "markers_Excit_13_check.pdf")
 )
 
 dbs_excit13 <- ggcells(sce[, sce$cellType_hc == "Excit_13"],
-                       mapping = aes(x = prelimCluster, y = doubletScore, fill = prelimCluster)
+    mapping = aes(x = prelimCluster, y = doubletScore, fill = prelimCluster)
 ) +
-  geom_boxplot() +
-  geom_hline(yintercept = 5, color = "red", linetype = "dashed") +
-  theme_bw() +
-  theme(
-    legend.position = "None", axis.title.x = element_blank(),
-    axis.text.x = element_text(angle = 90, hjust = 1)
-  )
+    geom_boxplot() +
+    geom_hline(yintercept = 5, color = "red", linetype = "dashed") +
+    theme_bw() +
+    theme(
+        legend.position = "None", axis.title.x = element_blank(),
+        axis.text.x = element_text(angle = 90, hjust = 1)
+    )
 
 ggsave(dbs_excit13, filename = here(plot_dir, "qc_Excit_13_doublet_scores.png"))
 
@@ -479,7 +479,7 @@ ggsave(dbs_excit13, filename = here(plot_dir, "qc_Excit_13_doublet_scores.png"))
 #
 # ggsave(prelim_doublets, filename = here(plot_dir, "prelim_doublets.png"), width = 30)
 
-sgejobs::job_single('09_cluster_annotation_explore', create_shell = TRUE, queue= 'bluejay', memory = '5G', command = "Rscript 09_cluster_annotation_explore.R")
+sgejobs::job_single("09_cluster_annotation_explore", create_shell = TRUE, queue = "bluejay", memory = "5G", command = "Rscript 09_cluster_annotation_explore.R")
 
 ## Reproducibility information
 print("Reproducibility information:")

@@ -1,4 +1,3 @@
-
 library("SingleCellExperiment")
 library("scuttle")
 library("edgeR")

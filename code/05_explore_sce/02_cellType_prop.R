@@ -1,4 +1,3 @@
-
 library("SingleCellExperiment")
 library("DeconvoBuddies")
 library("tidyverse")
@@ -17,10 +16,10 @@ load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
 
 ## get proportions before dropping ambig
 prop_ambig <- as.data.frame(colData(sce)) |>
-  group_by(cellType_hc, Sample, Position) |>
-  summarize(n = n()) |>
-  group_by(Sample) |>
-  mutate(prop = n / sum(n)) 
+    group_by(cellType_hc, Sample, Position) |>
+    summarize(n = n()) |>
+    group_by(Sample) |>
+    mutate(prop = n / sum(n))
 
 cell_type_colors_ambig <- metadata(sce)$cell_type_colors[levels(prop_ambig$cellType_hc)]
 
@@ -36,7 +35,7 @@ cell_type_colors_layer <- metadata(sce)$cell_type_colors_layer[levels(sce$cellTy
 pd <- as.data.frame(colData(sce))
 
 table(pd$cellType_broad_hc)
-# Astro EndoMural     Micro     Oligo       OPC     Excit     Inhib 
+# Astro EndoMural     Micro     Oligo       OPC     Excit     Inhib
 # 3979      2157      1601     10894      1940     24809     11067
 
 n_nuc <- pd |>
@@ -222,30 +221,33 @@ ggsave(broad_prop_bar_pos, filename = here(plot_dir, "prop_bar_broad_Position.pn
 
 #### Plots ambig Plots ####
 prop_ambig_plus <- prop_ambig |>
-  mutate(ambig = "Pre-drop") |>
-  bind_rows(prop_all |> mutate(ambig = "Post-drop")) 
+    mutate(ambig = "Pre-drop") |>
+    bind_rows(prop_all |> mutate(ambig = "Post-drop"))
 
 
 prop_ambig_bar <- ggplot(data = prop_ambig_plus, aes(x = Sample, y = prop, fill = cellType_hc)) +
-  geom_bar(stat = "identity") +
-  geom_text(aes(label = ifelse(prop > 0.02, format(round(prop, 3), 3), ""),
-                color = as.character(cellType_hc) == "ambig"),
-            # geom_text(aes(label = ifelse(prop > 0.02, cellType, "")),
-            size = 2.5,
-            position = position_stack(vjust = 0.5)
-            # color = "gray35"
-  ) +
-  scale_fill_manual(values = c(cell_type_colors_ambig)) +
-  scale_color_manual(values = c(`TRUE` = "white", `FALSE` = "black")) +
-  labs(y = "Proportion", fill = "Cell Type") +
-  facet_grid(fct_rev(ambig) ~ Position, scales = "free", space = "free") +
-  # my_theme +
-  theme_bw()+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
-  guides(color = FALSE, fill=guide_legend(ncol =1))
+    geom_bar(stat = "identity") +
+    geom_text(
+        aes(
+            label = ifelse(prop > 0.02, format(round(prop, 3), 3), ""),
+            color = as.character(cellType_hc) == "ambig"
+        ),
+        # geom_text(aes(label = ifelse(prop > 0.02, cellType, "")),
+        size = 2.5,
+        position = position_stack(vjust = 0.5)
+        # color = "gray35"
+    ) +
+    scale_fill_manual(values = c(cell_type_colors_ambig)) +
+    scale_color_manual(values = c(`TRUE` = "white", `FALSE` = "black")) +
+    labs(y = "Proportion", fill = "Cell Type") +
+    facet_grid(fct_rev(ambig) ~ Position, scales = "free", space = "free") +
+    # my_theme +
+    theme_bw() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    guides(color = FALSE, fill = guide_legend(ncol = 1))
 
-ggsave(prop_ambig_bar, filename = here(plot_dir,"prop_bar_ambig_Position.png"), width = 11, height = 9)
-ggsave(prop_ambig_bar, filename = here(plot_dir,"prop_bar_ambig_Position.pdf"), width = 11, height = 9)
+ggsave(prop_ambig_bar, filename = here(plot_dir, "prop_bar_ambig_Position.png"), width = 11, height = 9)
+ggsave(prop_ambig_bar, filename = here(plot_dir, "prop_bar_ambig_Position.pdf"), width = 11, height = 9)
 
 #### Layer Annotation Proportions ####
 table(pd$cellType_layer)
@@ -305,42 +307,55 @@ ggsave(layer_prop_bar_all, filename = here(plot_dir, "prop_bar_layer_ALL.png"), 
 
 #### compare hc v layer ####
 prop_compare <- pd |>
-  group_by(cellType_layer) |>
-  summarize(prop = n()/nrow(pd)) |>
-  mutate(Annotation = "Layer", 
-         cellType = as.character(cellType_layer))  |>
-  bind_rows(pd |>
-              group_by(cellType_hc, cellType_layer) |>
-              summarize(prop = n()/nrow(pd)) |>
-              mutate(Annotation = "hc", 
-                     cellType = as.character(cellType_hc))) |>
-  replace_na(list(cellType = "Exclude")) |>
-  group_by(cellType_layer) |>
-  mutate(order = as.numeric(cellType_layer),
-         order2 = row_number()) |>
-  replace_na(list(order = 12.5)) |> ## cheat Excluded cells to be between Excit & Inhib
-  ungroup() |>
-  mutate(order = order + (order2*.1),
-         cellType = factor(cellType, levels=unique(cellType[order(order)])))
+    group_by(cellType_layer) |>
+    summarize(prop = n() / nrow(pd)) |>
+    mutate(
+        Annotation = "Layer",
+        cellType = as.character(cellType_layer)
+    ) |>
+    bind_rows(pd |>
+        group_by(cellType_hc, cellType_layer) |>
+        summarize(prop = n() / nrow(pd)) |>
+        mutate(
+            Annotation = "hc",
+            cellType = as.character(cellType_hc)
+        )) |>
+    replace_na(list(cellType = "Exclude")) |>
+    group_by(cellType_layer) |>
+    mutate(
+        order = as.numeric(cellType_layer),
+        order2 = row_number()
+    ) |>
+    replace_na(list(order = 12.5)) |> ## cheat Excluded cells to be between Excit & Inhib
+    ungroup() |>
+    mutate(
+        order = order + (order2 * .1),
+        cellType = factor(cellType, levels = unique(cellType[order(order)]))
+    )
 
-prop_compare |> filter(Annotation == "hc") |> arrange(cellType_layer)|> print(n=29)
+prop_compare |>
+    filter(Annotation == "hc") |>
+    arrange(cellType_layer) |>
+    print(n = 29)
 prop_compare |> filter(is.na(cellType_layer))
 
 
 prop_compare_bar <- ggplot(data = prop_compare, aes(x = Annotation, y = prop, fill = cellType)) +
-  geom_bar(stat = "identity", width = .99) +
-  geom_text(aes(label = ifelse(prop > 0.02, format(round(prop, 3), 3), "")),
-            # geom_text(aes(label = ifelse(prop > 0.02, cellType, "")),
-            size = 3,
-            position = position_stack(vjust = 0.5)
-  ) +
-  scale_fill_manual(values = c(cell_type_colors, cell_type_colors_layer)) +
-  labs(y = "Proportion", fill = "Cell Type") +
-  my_theme +
-  scale_y_continuous(limits = c(0, 1), expand = expansion(mult = c(0.01,0.01))) + ## reduce white space in boarder 
-  theme(panel.grid = element_blank(), 
+    geom_bar(stat = "identity", width = .99) +
+    geom_text(aes(label = ifelse(prop > 0.02, format(round(prop, 3), 3), "")),
+        # geom_text(aes(label = ifelse(prop > 0.02, cellType, "")),
+        size = 3,
+        position = position_stack(vjust = 0.5)
+    ) +
+    scale_fill_manual(values = c(cell_type_colors, cell_type_colors_layer)) +
+    labs(y = "Proportion", fill = "Cell Type") +
+    my_theme +
+    scale_y_continuous(limits = c(0, 1), expand = expansion(mult = c(0.01, 0.01))) + ## reduce white space in boarder
+    theme(
+        panel.grid = element_blank(),
         # panel.border = element_blank(),
-        legend.position = "None")
+        legend.position = "None"
+    )
 
 ggsave(prop_compare_bar, filename = here(plot_dir, "prop_compare_bar.png"), width = 2, height = 8)
 ggsave(prop_compare_bar, filename = here(plot_dir, "prop_compare_bar.pdf"), width = 2, height = 8)
@@ -348,7 +363,7 @@ ggsave(prop_compare_bar, filename = here(plot_dir, "prop_compare_bar.pdf"), widt
 
 # prop_bar_fineVlayer <- prop_bar_all + theme(legend.position = "None") + labs(y = "Mean Proption - hc annotation k=29") +
 #     layer_prop_bar_all + labs(y = "Mean Proption - layer annotation k=13")
-# 
+#
 # ggsave(prop_bar_fineVlayer, filename = here(plot_dir, "prop_bar_fineVlayer_ALL.png"))
 # ggsave(prop_bar_fineVlayer, filename = here(plot_dir, "prop_bar_fineVlayer_ALL.pdf"))
 
@@ -378,8 +393,10 @@ layer_prop_bar_position <- ggplot(data = prop_layer, aes(x = Sample, y = prop, f
     scale_fill_manual(values = metadata(sce)$cell_type_colors_layer) +
     labs(y = "Cell Type Proportion", fill = "Cell Type") +
     my_theme +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1),
-          legend.position = "None")
+    theme(
+        axis.text.x = element_text(angle = 45, hjust = 1),
+        legend.position = "None"
+    )
 
 ggsave(layer_prop_bar_position, filename = here(plot_dir, "prop_bar_layer_position.png"), width = 10)
 ggsave(layer_prop_bar_position, filename = here(plot_dir, "prop_bar_layer_position.pdf"), width = 10)

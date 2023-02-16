@@ -1,4 +1,3 @@
-
 #' Plot SCE Expression of marker genes over clusters
 #'
 #' @param sce A SingleCellExperiment object containing expression values

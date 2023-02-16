@@ -1,4 +1,3 @@
-
 markers.mathys.tran <- list(
     "neuron" = c("SYT1", "SNAP25", "GRIN1", "CAMK2A", "NRGN"),
     "excit_neuron" = c("SLC17A7", "SLC17A6", "SLC17A8"), # a7 coritical a6 sub-subcortical

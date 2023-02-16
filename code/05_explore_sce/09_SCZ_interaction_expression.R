@@ -16,9 +16,9 @@ if (!dir.exists(plot_dir)) dir.create(plot_dir)
 load(here("processed-data", "05_explore_sce", "08_pseudobulk_cellTypes", "sce_pseudo-cellType_layer.Rdata"), verbose = TRUE)
 ## Check out colData
 table(sce_pseudo$cellType_layer)
-# Astro    EndoMural        Micro        Oligo          OPC   Excit_L2/3     Excit_L3 Excit_L3/4/5     Excit_L4 
-# 18           17           18           19           19            1           19           17           16 
-# Excit_L5   Excit_L5/6     Excit_L6        Inhib 
+# Astro    EndoMural        Micro        Oligo          OPC   Excit_L2/3     Excit_L3 Excit_L3/4/5     Excit_L4
+# 18           17           18           19           19            1           19           17           16
+# Excit_L5   Excit_L5/6     Excit_L6        Inhib
 # 16           16           16           19
 
 
@@ -39,43 +39,40 @@ colnames(cat) <- c("sample_id", "cat")
 expression_long <- cbind(expression_long, cat)
 
 pdf(here(plot_dir, "spatialDLPFC_SCZ_interactions.pdf"))
-for(i in 1:nrow(SCZ_interactions)){
-  
-  interaction <- SCZ_interactions[i,]
-  interaction_title <- paste(interaction[[1]], "->", interaction[[2]])
-  message(i, " ", interaction_title)
-  
-  expression_temp <- expression_long |>
-    filter(Var1 %in% interaction) |>
-    mutate(Var1 = factor(Var1, levels = interaction))
-  
-  expression_violin <- ggplot(data = expression_temp, aes(x = cat, y = value, fill = cat)) +
-    geom_violin(scale = "width", alpha = 0.5) +
-    geom_jitter(aes(color = cat), size = .3) +
-    facet_wrap(~Var1, ncol = 1, scales = "free_y") +
-    labs(
-      title = interaction_title,
-      y = "Expression (logcounts)"
-    ) +
-    theme_bw() +
-    theme(
-      legend.position = "None",
-      axis.title.x = element_blank(),
-      axis.text.x = element_text(angle = 90, hjust = 1),
-      strip.text.x = element_text(face = "italic"),
-      text = element_text(size = 15)
-    ) +
-    stat_summary(
-      fun = median,
-      # fun.min = median,
-      # fun.max = median,
-      geom = "crossbar",
-      width = 0.3
-    ) +
-    scale_color_manual(values = metadata(sce_pseudo)$cell_type_colors_layer) +
-    scale_fill_manual(values = metadata(sce_pseudo)$cell_type_colors_layer)
-  print(expression_violin)
+for (i in 1:nrow(SCZ_interactions)) {
+    interaction <- SCZ_interactions[i, ]
+    interaction_title <- paste(interaction[[1]], "->", interaction[[2]])
+    message(i, " ", interaction_title)
+
+    expression_temp <- expression_long |>
+        filter(Var1 %in% interaction) |>
+        mutate(Var1 = factor(Var1, levels = interaction))
+
+    expression_violin <- ggplot(data = expression_temp, aes(x = cat, y = value, fill = cat)) +
+        geom_violin(scale = "width", alpha = 0.5) +
+        geom_jitter(aes(color = cat), size = .3) +
+        facet_wrap(~Var1, ncol = 1, scales = "free_y") +
+        labs(
+            title = interaction_title,
+            y = "Expression (logcounts)"
+        ) +
+        theme_bw() +
+        theme(
+            legend.position = "None",
+            axis.title.x = element_blank(),
+            axis.text.x = element_text(angle = 90, hjust = 1),
+            strip.text.x = element_text(face = "italic"),
+            text = element_text(size = 15)
+        ) +
+        stat_summary(
+            fun = median,
+            # fun.min = median,
+            # fun.max = median,
+            geom = "crossbar",
+            width = 0.3
+        ) +
+        scale_color_manual(values = metadata(sce_pseudo)$cell_type_colors_layer) +
+        scale_fill_manual(values = metadata(sce_pseudo)$cell_type_colors_layer)
+    print(expression_violin)
 }
 dev.off()
-
-
