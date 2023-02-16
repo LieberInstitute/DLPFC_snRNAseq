@@ -66,4 +66,4 @@ Code relevant to preparing data & metadata tables to upload to [synapse](www.syn
 Build and launch [iSEE app ](https://libd.shinyapps.io/spatialDLPFC_snRNA-seq/)
 
 ### 07_ccc
-Code relevant to cell-to-cell compunication analysis
+Code relevant to cell-to-cell communication analysis
