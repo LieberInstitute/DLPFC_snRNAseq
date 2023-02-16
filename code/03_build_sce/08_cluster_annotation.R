@@ -246,7 +246,8 @@ load(here("processed-data", "03_build_sce", "markers.mathys.tran.Rdata"), verbos
 all(unlist(markers.mathys.tran) %in% rowData(sce)$gene_name)
 # [1] TRUE
 
-source("my_plotExpression.R")
+source(here("code","03_build_sce","my_plotMarkers.R"))
+source(here("code","03_build_sce","custom_plotExpression.R"))
 
 ## Mathys
 my_plotMarkers(
