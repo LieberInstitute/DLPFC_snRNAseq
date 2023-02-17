@@ -4,10 +4,10 @@ library("sessioninfo")
 
 ## load data
 load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
-sce <- HDF5Array::loadHDF5SummarizedExperiment(here("processed-data", "sce", "sce_DLPFC"))
-rhdf5::h5ls(here("processed-data", "sce", "sce_DLPFC", "assays.h5"))
-sce_h5 <- rhdf5::h5read(here("processed-data", "sce", "sce_DLPFC", "assays.h5"), "assay001")
-sce <- zellkonverter::readH5AD(here("processed-data", "sce", "sce_DLPFC", "assays.h5"))
+# sce <- HDF5Array::loadHDF5SummarizedExperiment(here("processed-data", "sce", "sce_DLPFC"))
+# rhdf5::h5ls(here("processed-data", "sce", "sce_DLPFC_annotated", "assays.h5"))
+# sce_h5 <- rhdf5::h5read(here("processed-data", "sce", "sce_DLPFC", "assays.h5"), "assay001")
+# sce <- zellkonverter::readH5AD(here("processed-data", "sce", "sce_DLPFC", "assays.h5"))
 
 names(assays(sce))
 # counts binomial_deviance_residuals logcounts
