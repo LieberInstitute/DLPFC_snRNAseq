@@ -9,8 +9,27 @@ library(glue)
 
 # sce color ---------------------------------------------------------------
 sce <- readRDS(here("processed-data/sce/sce_DLPFC_annotated/se.rds"))
-cell_type_colors_layer <- metadata(sce)$cell_type_colors_layer[levels(sce$cellType_layer)]
+
+# Was removed from meta
+# cell_type_colors_layer <- metadata(sce)$cell_type_colors_layer[levels(sce$cellType_layer)]
 # cell_type_colors_broad <- metadata(sce)$cell_type_colors_broad[levels(sce$cellType_broad_hc)]
+
+cell_type_colors_layer <- c(
+    "Astro" = "#3BB273",
+    "EndoMural" = "#FF56AF",
+    "Micro" = "#663894",
+    "Oligo" = "#E07000",
+    "OPC" = "#D2B037",
+    "Excit_L2/3" = "#D0D1E6",
+    "Excit_L3" = "#A6BDDB",
+    "Excit_L3/4/5" ="#74A9CF",
+    "Excit_L4" = "#3690C0",
+    "Excit_L5" = "#0570B0",
+    "Excit_L5/6" = "#045A8D",
+    "Excit_L6" = "#023858",
+    "Excit_ambig" = "#A0A7A7",
+    "Inhib" = "#E94F37"
+)
 
 
 # factor_cell_type_broad <- function(vec){
@@ -217,8 +236,8 @@ ggsave(
         ) |>
         ggplot() +
         geom_bar(aes(x = factor(1), fill = source),
-            stat = "count",
-            show.legend = FALSE
+                 stat = "count",
+                 show.legend = FALSE
         ) +
         coord_polar("y", start = 0) +
         scale_fill_manual(
@@ -262,8 +281,8 @@ ggsave(
         ) |>
         ggplot() +
         geom_bar(aes(x = factor(1), fill = target),
-            stat = "count"
-            # , show.legend = FALSE
+                 stat = "count"
+                 # , show.legend = FALSE
         ) +
         coord_polar("y", start = 0) +
         scale_fill_manual(
