@@ -141,6 +141,7 @@ full_join(
 
 # xtabs(~source + target, data = tmp)
 
+source(here("code/07_ccc/fun_liana_circ.R"))
 
 # pdf(filename = here(plot_path, "/liana_circ_plot_EFNA5-EPHA5.pdf")#,
 #     # width = 9,
@@ -174,7 +175,8 @@ lig_rec_df |>
         )
     ) |>
     plot_liana_circ(
-        cell_col = cell_type_colors_layer
+        cell_col = cell_type_colors_layer,
+        transparency = 0
     ) |>
     print()
 
