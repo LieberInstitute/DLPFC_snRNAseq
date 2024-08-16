@@ -1,5 +1,7 @@
 # Raw-data
 
+If you are looking for the FASTQs on Globus, use https://research.libd.org/globus/jhpce_spatialDLPFC/index.html and navigate to raw-data/FASTQ_Globus.
+
 # Sample (library prep) information
 
 ## Round 1
