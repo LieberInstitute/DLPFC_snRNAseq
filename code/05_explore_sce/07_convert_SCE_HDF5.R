@@ -10,11 +10,17 @@ load(here("processed-data", "sce", "sce_DLPFC.Rdata"), verbose = TRUE)
 # sce <- zellkonverter::readH5AD(here("processed-data", "sce", "sce_DLPFC", "assays.h5"))
 
 names(assays(sce))
-# counts binomial_deviance_residuals logcounts
+# counts c logcounts
 
 message("Size with all assasy: ")
 lobstr::obj_size(sce)
 # 311.00 MB
+
+## remove binomial_deviance_residuals
+assays(sce)$binomial_deviance_residuals <- NULL
+
+message("Size without binomial_deviance_residuals: ")
+lobstr::obj_size(sce)
 
 ## print details
 message("\n **** SCE details ****")
@@ -31,15 +37,14 @@ saveHDF5SummarizedExperiment(sce, here("processed-data", "sce", "sce_DLPFC_annot
 
 # Just save log counts
 assays(sce)$counts <- NULL
-assays(sce)$binomial_deviance_residuals <- NULL
 
 message("Size with only logcounts: ")
 lobstr::obj_size(sce)
 # 181.85 MB
 
-message(Sys.time(), "- Saving Data")
-saveHDF5SummarizedExperiment(sce, here("processed-data", "sce", "sce_DLPFC_annotated-logcounts_only"), replace = TRUE)
-## to load
+# message(Sys.time(), "- Saving Data")
+# saveHDF5SummarizedExperiment(sce, here("processed-data", "sce", "sce_DLPFC_annotated-logcounts_only"), replace = TRUE)
+# ## to load
 # sce <- HDF5Array::loadHDF5SummarizedExperiment(here("processed-data", "sce", "sce_DLPFC_annotated-logcounts_only"))
 # sce <- HDF5Array::loadHDF5SummarizedExperiment(here("processed-data", "sce", "sce_DLPFC_annotated"))
 
